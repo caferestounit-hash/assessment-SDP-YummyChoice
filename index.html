@@ -161,15 +161,27 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <button onclick="openView('view-form')" class="card p-4 flex items-center gap-3 text-left active:bg-amber-50">
+                    <!-- Form Baru -->
+                    <button onclick="startNewForm()" class="card p-4 flex items-center gap-3 text-left active:bg-amber-50">
                         <span class="w-12 h-12 shrink-0 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-pen"/></svg></span>
                         <span class="flex-1 min-w-0">
-                            <span class="block font-extrabold text-slate-900">Form Penilaian</span>
-                            <span class="block text-xs text-slate-500">Isi 11 kriteria presentasi trainee SDP</span>
+                            <span class="block font-extrabold text-slate-900">Form Penilaian Baru</span>
+                            <span class="block text-xs text-slate-500">Mulai isi 11 kriteria evaluasi baru</span>
                         </span>
                         <svg class="ic text-slate-300"><use href="#i-chevron-right"/></svg>
                     </button>
 
+                    <!-- Draft Tersimpan (BARU) -->
+                    <button onclick="openView('view-draft')" class="card p-4 flex items-center gap-3 text-left active:bg-sky-50">
+                        <span class="w-12 h-12 shrink-0 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-save"/></svg></span>
+                        <span class="flex-1 min-w-0">
+                            <span class="block font-extrabold text-slate-900">Draft Tersimpan</span>
+                            <span class="block text-xs text-slate-500">Lanjutkan/edit form yang belum selesai</span>
+                        </span>
+                        <span id="badge-count-draft" class="px-2.5 py-0.5 bg-sky-100 text-sky-800 rounded-full text-xs font-black">0</span>
+                    </button>
+
+                    <!-- Riwayat Terkirim -->
                     <button onclick="openView('view-riwayat')" class="card p-4 flex items-center gap-3 text-left active:bg-amber-50">
                         <span class="w-12 h-12 shrink-0 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-history"/></svg></span>
                         <span class="flex-1 min-w-0">
@@ -179,6 +191,7 @@
                         <span id="badge-count-riwayat" class="px-2.5 py-0.5 bg-teal-100 text-teal-800 rounded-full text-xs font-black">0</span>
                     </button>
 
+                    <!-- Rekap Laporan -->
                     <button onclick="openView('view-rekap')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-slate-50">
                         <span class="w-12 h-12 shrink-0 rounded-xl bg-slate-900 text-white flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-table"/></svg></span>
                         <span class="flex-1 min-w-0">
@@ -188,6 +201,7 @@
                         <svg class="ic text-slate-300"><use href="#i-chevron-right"/></svg>
                     </button>
 
+                    <!-- Tempat Sampah -->
                     <button onclick="openView('view-trash')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-red-50">
                         <span class="w-12 h-12 shrink-0 rounded-xl bg-red-100 text-red-600 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-trash"/></svg></span>
                         <span class="flex-1 min-w-0">
@@ -197,6 +211,18 @@
                         <span id="badge-count-trash" class="px-2.5 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-black">0</span>
                     </button>
                 </div>
+            </div>
+
+            <!-- ========== VIEW: DRAFT ========== -->
+            <div id="view-draft" class="sub-pane hidden space-y-3">
+                <div class="flex items-center gap-3">
+                    <button onclick="goToHome()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
+                    <div>
+                        <h2 class="text-lg font-extrabold text-slate-900 leading-tight">Draft Tersimpan</h2>
+                        <p class="text-xs text-slate-500">Lanjutkan pengisian form yang tertunda</p>
+                    </div>
+                </div>
+                <div id="draft-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
             </div>
 
             <!-- ========== VIEW: FORM ========== -->
@@ -526,7 +552,7 @@
         const PASSKEYS = { yummychoice: 'USER', kitakeren: 'ETD' };
         const DRAFT_KEY = 'yc_sdp_form_draft';
         const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
-        const totalSteps = 13;          // 1 data diri + 11 kriteria + 1 rekap
+        const totalSteps = 13;          
         const SUMMARY_STEP = 12;
 
         // ================= HELPER =================
@@ -571,6 +597,8 @@
         let currentUserRole = null;
         let assessmentList = [];
         let trashList = [];
+        let draftList = [];
+        let currentDraftId = null;
         let currentStep = 0;
         let fromSummary = false;
         let autosaveTimer = null;
@@ -578,7 +606,6 @@
         window.addEventListener('DOMContentLoaded', () => {
             renderKriteriaForm();
             loadInitialData();
-            restoreDraft();
             checkSession();
             const form = $('assessment-form');
             form.addEventListener('input', scheduleAutosave);
@@ -810,7 +837,7 @@
             toast('Ringkasan penilaian berhasil disalin', 'success');
         }
 
-        // ================= DRAFT (AUTOSAVE) =================
+        // ================= MULTI-DRAFT (AUTOSAVE) =================
         function collectDraft() {
             const peran = document.querySelector('input[name="peran_penguji"]:checked');
             const scores = {}, komentars = {};
@@ -820,9 +847,10 @@
                 komentars[item.id] = $(`komentar_kriteria_${item.id}`).value;
             });
             return {
+                id: currentDraftId || ('DRF-' + Date.now()),
                 namaPenguji: $('penguji-nama').value, namaPeserta: $('peserta-nama').value,
                 peranPenguji: peran ? peran.value : '', sdpBagian: $('sdp-bagian').value, sdpCabang: $('sdp-cabang').value,
-                scores, komentars, step: Math.min(currentStep, SUMMARY_STEP - 1), savedAt: new Date().toISOString()
+                scores, komentars, step: Math.min(currentStep, SUMMARY_STEP - 1), savedAt: new Date().toLocaleString('id-ID')
             };
         }
 
@@ -836,42 +864,114 @@
         function saveDraft(silent) {
             clearTimeout(autosaveTimer);
             const d = collectDraft();
-            if (isDraftEmpty(d)) { removeKey(DRAFT_KEY); $('draft-indicator').classList.add('hidden'); if (silent !== true) toast('Belum ada isian untuk disimpan', 'info'); return; }
-            writeJSON(DRAFT_KEY, d);
+            if (isDraftEmpty(d)) { 
+                if (silent !== true) toast('Belum ada isian untuk disimpan', 'info'); 
+                return; 
+            }
+            currentDraftId = d.id;
+            const idx = draftList.findIndex(x => x.id === currentDraftId);
+            if (idx > -1) draftList[idx] = d; else draftList.unshift(d);
+            
+            writeJSON('yc_sdp_drafts', draftList);
             $('draft-indicator').classList.remove('hidden');
+            renderDraftCards();
             if (silent !== true) toast('Draft berhasil disimpan', 'success');
         }
 
-        function restoreDraft() {
-            const d = readJSON(DRAFT_KEY, null);
+        function resumeDraft(id) {
+            const d = draftList.find(x => x.id === id);
             if (!d) return;
+            
+            resetForm(true); // reset visually first, but maintain structure
+            currentDraftId = id;
+            
             $('penguji-nama').value = d.namaPenguji || '';
             $('peserta-nama').value = d.namaPeserta || '';
             $('sdp-bagian').value = d.sdpBagian || '';
             $('sdp-cabang').value = d.sdpCabang || '';
+            
             if (d.peranPenguji) {
                 const radio = [...document.querySelectorAll('input[name="peran_penguji"]')].find(r => r.value === d.peranPenguji);
                 if (radio) radio.checked = true;
             }
-            Object.keys(d.scores || {}).forEach(id => {
-                const val = d.scores[id];
+            
+            Object.keys(d.scores || {}).forEach(kId => {
+                const val = d.scores[kId];
                 if (val) {
-                    const radio = document.querySelector(`input[name="skor_kriteria_${id}"][value="${val}"]`);
-                    if (radio) { radio.checked = true; updateKriteriaSelection(parseInt(id, 10), val); }
+                    const radio = document.querySelector(`input[name="skor_kriteria_${kId}"][value="${val}"]`);
+                    if (radio) { radio.checked = true; updateKriteriaSelection(parseInt(kId, 10), val); }
                 }
             });
-            Object.keys(d.komentars || {}).forEach(id => {
-                const el = $(`komentar_kriteria_${id}`);
-                if (el && d.komentars[id]) el.value = d.komentars[id];
+            
+            Object.keys(d.komentars || {}).forEach(kId => {
+                const el = $(`komentar_kriteria_${kId}`);
+                if (el && d.komentars[kId]) el.value = d.komentars[kId];
             });
-            if (Number.isInteger(d.step) && d.step >= 0 && d.step < SUMMARY_STEP) { currentStep = d.step; showStep(currentStep); }
+            
+            let targetStep = (Number.isInteger(d.step) && d.step >= 0 && d.step < SUMMARY_STEP) ? d.step : 0;
+            currentStep = targetStep;
+            showStep(currentStep);
+            
             $('draft-indicator').classList.remove('hidden');
+            openView('view-form');
         }
 
-        function discardDraft() {
-            if (!confirm('Kosongkan seluruh isian form ini?')) return;
+        function deleteDraft(id) {
+            if (!confirm('Hapus draft ini secara permanen?')) return;
+            draftList = draftList.filter(x => x.id !== id);
+            writeJSON('yc_sdp_drafts', draftList);
+            
+            // Jika yg dihapus kebetulan sedang dibuka, bersihkan form
+            if (currentDraftId === id) resetForm(); 
+            
+            renderDraftCards();
+            toast('Draft dihapus', 'info');
+        }
+
+        function discardDraft(force) {
+            if (!force && !confirm('Kosongkan seluruh isian form ini?')) return;
+            if (currentDraftId) {
+                draftList = draftList.filter(x => x.id !== currentDraftId);
+                writeJSON('yc_sdp_drafts', draftList);
+                renderDraftCards();
+            }
             resetForm();
             toast('Form dikosongkan', 'info');
+        }
+        
+        function renderDraftCards() {
+            const c = $('draft-cards-container');
+            $('badge-count-draft').textContent = draftList.length;
+
+            if (!draftList.length) {
+                c.innerHTML = `
+                    <div class="col-span-full card p-8 text-center space-y-1">
+                        ${ic('folder', '!w-9 !h-9 text-slate-300')}
+                        <p class="text-sm font-bold text-slate-800">Belum ada draft tersimpan</p>
+                        <p class="text-xs text-slate-500">Form yang belum disubmit akan tersimpan otomatis di sini.</p>
+                    </div>`;
+                return;
+            }
+
+            c.innerHTML = draftList.map(item => `
+                <div class="card p-4 border-l-4 border-l-sky-500 space-y-3">
+                    <div class="flex justify-between items-start gap-2">
+                        <div class="min-w-0">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-sky-100 text-sky-800 uppercase">${item.id}</span>
+                            <h3 class="font-extrabold text-base text-slate-900 mt-1.5 truncate">${esc(item.namaPeserta) || '(Tanpa Nama Peserta)'}</h3>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-600 space-y-1 border-b border-slate-100 pb-3">
+                        <div><strong class="text-slate-900">Penguji:</strong> ${esc(item.namaPenguji) || '-'}</div>
+                        <div><strong class="text-slate-900">Penempatan:</strong> ${esc(item.sdpBagian) || '-'} / ${esc(item.sdpCabang) || '-'}</div>
+                        <div class="text-[10px] text-slate-400 mt-1.5">${ic('clock', '!w-3 !h-3')} Disimpan: ${item.savedAt}</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 pt-0.5">
+                        <button onclick="resumeDraft('${item.id}')" class="h-10 bg-sky-50 active:bg-sky-100 text-sky-700 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5">${ic('edit', '!w-4 !h-4')}Lanjutkan</button>
+                        <button onclick="deleteDraft('${item.id}')" class="h-10 bg-red-50 active:bg-red-100 text-red-600 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5">${ic('trash', '!w-4 !h-4')}Hapus</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         // ================= DATA =================
@@ -881,7 +981,18 @@
             const now = Date.now();
             const kept = trashList.filter(i => now - (i.deletedTimestamp || now) < THIRTY_DAYS);
             if (kept.length !== trashList.length) { trashList = kept; saveTrash(); }
+
+            // Migrasi dari draft lama tunggal ke list multi-draft
+            draftList = readJSON('yc_sdp_drafts', []);
+            const legacyDraft = readJSON('yc_sdp_form_draft', null);
+            if (legacyDraft && !Array.isArray(legacyDraft)) {
+                legacyDraft.id = 'DRF-' + Date.now();
+                draftList.unshift(legacyDraft);
+                removeKey('yc_sdp_form_draft');
+                writeJSON('yc_sdp_drafts', draftList);
+            }
         }
+        
         const saveAssessments = () => writeJSON('yc_sdp_assessments', assessmentList);
         const saveTrash = () => writeJSON('yc_sdp_trash', trashList);
 
@@ -930,7 +1041,13 @@
             renderAll();
         }
 
-        function renderAll() { renderRiwayatCards(); renderRekapTable(); renderTrashItems(); updateLaporanStats(); }
+        function renderAll() { 
+            renderRiwayatCards(); 
+            renderRekapTable(); 
+            renderTrashItems(); 
+            updateLaporanStats(); 
+            renderDraftCards();
+        }
 
         // ================= NAVIGASI VIEW =================
         function goToHome() {
@@ -948,6 +1065,11 @@
             $('form-actions').classList.toggle('hidden', viewId !== 'view-form');
             if (viewId === 'view-form') { if (currentStep === SUMMARY_STEP) renderSummary(); showStep(currentStep); }
             else window.scrollTo(0, 0);
+        }
+        
+        function startNewForm() {
+            resetForm(false); // Buat slate form benar-benar bersih dan baru
+            openView('view-form');
         }
 
         // ================= KIRIM FORM =================
@@ -975,7 +1097,6 @@
                 createdDate: Date.now()
             };
 
-            // Mengubah status UI ke Loading
             const btnSubmit = $('btn-submit');
             const originalContent = btnSubmit.innerHTML;
             btnSubmit.innerHTML = `<svg class="ic animate-spin"><use href="#i-rotate"/></svg><span>Mengirim...</span>`;
@@ -997,10 +1118,14 @@
                     reqFirebase = window.fsAddDoc(window.fsCollection(window.db, "hasil_form_penilaian"), payload);
                 }
 
-                // Mengeksekusi pengiriman GAS & Firebase secara bersamaan (paralel)
                 await Promise.all([reqGas, reqFirebase]);
 
-                // 3. Simpan di histori device penguji
+                // Hapus draft aktif (karena form sudah sukses dikirim)
+                if (currentDraftId) {
+                    draftList = draftList.filter(x => x.id !== currentDraftId);
+                    writeJSON('yc_sdp_drafts', draftList);
+                }
+
                 assessmentList.unshift(payload);
                 saveAssessments();
                 resetForm();
@@ -1012,13 +1137,12 @@
                 console.error("Gagal sinkronisasi ke server:", error);
                 toast('Gagal mengirim data. Pastikan koneksi internet aktif.', 'warn');
             } finally {
-                // Mengembalikan UI tombol
                 btnSubmit.innerHTML = originalContent;
                 btnSubmit.disabled = false;
             }
         }
 
-        function resetForm() {
+        function resetForm(keepCurrentDraftId = false) {
             clearTimeout(autosaveTimer);
             $('assessment-form').reset();
             $('realtime-score').textContent = '0.0';
@@ -1031,10 +1155,14 @@
                 clearError(item.id);
             });
             clearError(0);
-            removeKey(DRAFT_KEY);
+            
             $('draft-indicator').classList.add('hidden');
             fromSummary = false;
             currentStep = 0;
+            
+            if (!keepCurrentDraftId) {
+                currentDraftId = null;
+            }
             showStep(0);
         }
 
