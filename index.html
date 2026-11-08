@@ -56,6 +56,8 @@
         .pop { animation: pop .35s ease-out; }
         @media (prefers-reduced-motion: reduce) { .pop { animation: none; } }
 
+        .seg-btn { color: #64748b; transition: background .15s, color .15s; }
+        .seg-btn.active { background: #fff; color: #6d28d9; box-shadow: 0 1px 4px rgba(15,23,42,.12); }
         @media print {
             header, footer, #form-actions, #toast, .no-print { display: none !important; }
             body { background: #fff !important; }
@@ -106,6 +108,34 @@
         <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
         <symbol id="i-message" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
         <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/></symbol>
+        <!-- Ikon bagian SDP (b-*) & ikon menu baru -->
+        <symbol id="b-briefcase" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+        <symbol id="b-factory" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/></symbol>
+        <symbol id="b-wrench" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
+        <symbol id="b-headset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/><path d="M21 16v2a4 4 0 0 1-4 4h-5"/></symbol>
+        <symbol id="b-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+        <symbol id="b-truck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></symbol>
+        <symbol id="b-shield-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+        <symbol id="b-flask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></symbol>
+        <symbol id="b-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></symbol>
+        <symbol id="b-life-buoy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/></symbol>
+        <symbol id="b-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
+        <symbol id="b-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></symbol>
+        <symbol id="b-cog" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></symbol>
+        <symbol id="b-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol>
+        <symbol id="b-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+        <symbol id="b-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></symbol>
+        <symbol id="b-utensils" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></symbol>
+        <symbol id="b-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></symbol>
+        <symbol id="b-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+        <symbol id="b-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01"/></symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+        <symbol id="i-chevron-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></symbol>
+        <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+        <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></symbol>
+        <symbol id="i-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></symbol>
+        <symbol id="i-file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+        <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
     </svg>
 
     <!-- TOAST -->
@@ -210,6 +240,26 @@
                         </span>
                         <span id="badge-count-trash" class="px-2.5 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-black">0</span>
                     </button>
+
+                    <!-- Kelola Data (ETD) -->
+                    <button onclick="openView('view-kelola')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-teal-50">
+                        <span class="w-12 h-12 shrink-0 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-settings"/></svg></span>
+                        <span class="flex-1 min-w-0">
+                            <span class="block font-extrabold text-slate-900">Kelola Data <span class="ml-1 px-1.5 py-0.5 bg-slate-900 text-white rounded text-[9px] font-black align-middle">ETD</span></span>
+                            <span class="block text-xs text-slate-500">Atur daftar Bagian SDP & logonya</span>
+                        </span>
+                        <svg class="ic text-slate-300"><use href="#i-chevron-right"/></svg>
+                    </button>
+
+                    <!-- Buat Laporan Assessment (ETD) -->
+                    <button onclick="openView('view-laporan')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-violet-50 sm:col-span-2 !border-violet-200 bg-gradient-to-r from-violet-50 to-white">
+                        <span class="w-12 h-12 shrink-0 rounded-xl bg-violet-600 text-white flex items-center justify-center shadow"><svg class="ic !w-6 !h-6"><use href="#i-file-text"/></svg></span>
+                        <span class="flex-1 min-w-0">
+                            <span class="block font-extrabold text-slate-900">Buat Laporan Assessment <span class="ml-1 px-1.5 py-0.5 bg-violet-600 text-white rounded text-[9px] font-black align-middle">BARU</span></span>
+                            <span class="block text-xs text-slate-500">Susun laporan manual per peserta dari data assessment, output PDF</span>
+                        </span>
+                        <svg class="ic text-slate-300"><use href="#i-chevron-right"/></svg>
+                    </button>
                 </div>
             </div>
 
@@ -300,17 +350,8 @@
                             <label for="sdp-bagian" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">4. Bagian SDP Trainee <span class="text-rose-500">*</span></label>
                             <select id="sdp-bagian" class="field">
                                 <option value="">Pilih bagian SDP</option>
-                                <option value="ADMIN">ADMIN</option>
-                                <option value="DEVELOPMENT CK">DEVELOPMENT CK</option>
-                                <option value="GA/SUPPORT">GA/SUPPORT</option>
-                                <option value="HRD & LICENSE">HRD & LICENSE</option>
-                                <option value="LOGISTIK">LOGISTIK</option>
-                                <option value="PRODUKSI">PRODUKSI</option>
-                                <option value="QC">QC</option>
-                                <option value="PRODUCT DEVELOPMENT">PRODUCT DEVELOPMENT</option>
-                                <option value="COMMERCIAL">COMMERCIAL</option>
-                                <option value="BUSINESS SUPPORT">BUSINESS SUPPORT</option>
                             </select>
+                            <div id="bagian-preview" class="hidden mt-2 items-center gap-2.5 px-3 py-2 rounded-xl bg-slate-50 border border-slate-100"></div>
                         </div>
 
                         <div>
@@ -466,6 +507,156 @@
                 <div id="trash-list-container" class="space-y-2"></div>
             </div>
 
+            <!-- ========== VIEW: KELOLA DATA (ETD) ========== -->
+            <div id="view-kelola" class="sub-pane hidden space-y-3">
+                <div class="flex items-center gap-3">
+                    <button onclick="goToHome()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
+                    <div>
+                        <h2 class="text-lg font-extrabold text-slate-900 leading-tight">Kelola Data</h2>
+                        <p class="text-xs text-slate-500">Data master yang dipakai pada form penilaian</p>
+                    </div>
+                </div>
+
+                <div class="card p-4 space-y-4">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-extrabold text-slate-900">Bagian SDP Trainee</h3>
+                                <span id="bagian-count" class="px-2 py-0.5 bg-teal-100 text-teal-800 rounded-full text-xs font-black">0</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-0.5">Menjadi pilihan pada pertanyaan "Bagian SDP Trainee" di form.</p>
+                        </div>
+                        <button onclick="openBagianModal()" class="h-10 px-3.5 shrink-0 bg-yc-600 active:bg-yc-800 text-white font-bold rounded-xl text-sm flex items-center gap-1.5">
+                            <svg class="ic !w-4 !h-4"><use href="#i-plus"/></svg>Tambah
+                        </button>
+                    </div>
+                    <div id="bagian-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100">
+                        <span id="bagian-sync-status" class="text-[11px] font-semibold text-slate-400"></span>
+                        <button onclick="resetBagianDefault()" class="text-xs font-bold text-slate-500 underline">Kembalikan ke daftar awal</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== VIEW: BUAT LAPORAN ASSESSMENT (ETD) ========== -->
+            <div id="view-laporan" class="sub-pane hidden space-y-3">
+                <div class="flex items-center gap-3">
+                    <button onclick="goToHome()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
+                    <div class="flex-1 min-w-0">
+                        <h2 class="text-lg font-extrabold text-slate-900 leading-tight">Buat Laporan Assessment</h2>
+                        <p class="text-xs text-slate-500">Laporan manual ETD per peserta SDP</p>
+                    </div>
+                </div>
+
+                <!-- Hero + alur -->
+                <div class="rounded-2xl bg-gradient-to-br from-violet-700 via-violet-800 to-slate-900 text-white p-4 space-y-3 overflow-hidden relative">
+                    <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full bg-white/10"></div>
+                    <div class="absolute right-10 -bottom-10 w-24 h-24 rounded-full bg-amber-400/20"></div>
+                    <div class="relative">
+                        <div class="text-[10px] font-bold uppercase tracking-widest text-violet-200">Laporan Hasil Assessment</div>
+                        <p class="text-sm text-violet-100 mt-1 max-w-md">Gabungkan nilai dari semua penilai, tambahkan analisis ETD, lalu pratinjau dalam format kertas A4.</p>
+                    </div>
+                    <div class="relative grid grid-cols-3 gap-2 text-center">
+                        <div class="rounded-xl bg-white/10 px-2 py-2"><div class="text-base font-black">1</div><div class="text-[10px] font-bold leading-tight">Pilih peserta</div></div>
+                        <div class="rounded-xl bg-white/10 px-2 py-2"><div class="text-base font-black">2</div><div class="text-[10px] font-bold leading-tight">Lengkapi analisis ETD</div></div>
+                        <div class="rounded-xl bg-white/10 px-2 py-2"><div class="text-base font-black">3</div><div class="text-[10px] font-bold leading-tight">Pratinjau & PDF</div></div>
+                    </div>
+                </div>
+
+                <!-- Tahap 1: pilih peserta -->
+                <div id="report-picker" class="space-y-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <h3 class="font-extrabold text-slate-900 text-sm">1. Pilih peserta SDP</h3>
+                        <span id="report-picker-count" class="text-[11px] font-bold text-slate-400"></span>
+                    </div>
+                    <input type="search" id="rp-search" oninput="renderReportPicker()" placeholder="Cari nama peserta / bagian" class="field !py-2.5">
+                    <div id="report-picker-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+                </div>
+
+                <!-- Tahap 2-3: editor + pratinjau -->
+                <div id="report-workspace" class="hidden space-y-3">
+                    <div class="card p-3 flex items-center gap-3">
+                        <span id="rp-who-logo"></span>
+                        <div class="flex-1 min-w-0">
+                            <div id="rp-who-name" class="font-extrabold text-slate-900 text-sm break-words">-</div>
+                            <div id="rp-who-meta" class="text-[11px] text-slate-500">-</div>
+                        </div>
+                        <button onclick="backToReportPicker()" class="h-9 px-3 shrink-0 rounded-xl bg-slate-100 active:bg-slate-200 text-slate-700 text-xs font-bold">Ganti</button>
+                    </div>
+
+                    <!-- Tab (mobile) -->
+                    <div class="lg:hidden grid grid-cols-2 gap-1 p-1 bg-slate-200/70 rounded-xl">
+                        <button id="rtab-edit" onclick="switchReportTab('edit')" class="seg-btn active h-10 rounded-lg text-sm font-bold flex items-center justify-center gap-1.5"><svg class="ic !w-4 !h-4"><use href="#i-pen"/></svg>Isi Laporan</button>
+                        <button id="rtab-prev" onclick="switchReportTab('prev')" class="seg-btn h-10 rounded-lg text-sm font-bold flex items-center justify-center gap-1.5"><svg class="ic !w-4 !h-4"><use href="#i-eye"/></svg>Pratinjau</button>
+                    </div>
+
+                    <div class="lg:grid lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] lg:gap-4 lg:items-start">
+
+                        <!-- EDITOR -->
+                        <div id="report-editor" class="lg:!block space-y-3" oninput="onReportInput()" onchange="onReportInput()">
+                            <div class="card p-4 space-y-3">
+                                <h3 class="text-xs font-black uppercase tracking-wider text-violet-700">A. Identitas dokumen</h3>
+                                <div><label for="rp-judul" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Judul laporan</label><input id="rp-judul" class="field"></div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div><label for="rp-noDok" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">No. dokumen</label><input id="rp-noDok" class="field"></div>
+                                    <div><label for="rp-tanggal" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Tanggal</label><input id="rp-tanggal" type="date" class="field"></div>
+                                </div>
+                                <div><label for="rp-periode" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Periode / batch</label><input id="rp-periode" placeholder="mis. SDP Batch 5 - Oktober 2026" class="field"></div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div><label for="rp-penyusun" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Disusun oleh</label><input id="rp-penyusun" placeholder="Nama ETD" class="field"></div>
+                                    <div><label for="rp-jabatan" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Jabatan</label><input id="rp-jabatan" class="field"></div>
+                                </div>
+                            </div>
+
+                            <div class="card p-4 space-y-3">
+                                <div class="flex items-center justify-between gap-2">
+                                    <h3 class="text-xs font-black uppercase tracking-wider text-violet-700">B. Analisis ETD</h3>
+                                    <button type="button" onclick="autoFillInsights()" class="h-8 px-2.5 rounded-lg bg-violet-100 active:bg-violet-200 text-violet-800 text-[11px] font-bold flex items-center gap-1"><svg class="ic !w-3.5 !h-3.5"><use href="#i-sparkles"/></svg>Isi otomatis</button>
+                                </div>
+                                <div>
+                                    <label for="rp-status" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Rekomendasi</label>
+                                    <select id="rp-status" class="field">
+                                        <option>Direkomendasikan</option>
+                                        <option>Direkomendasikan dengan catatan</option>
+                                        <option>Perlu pembinaan lanjutan</option>
+                                        <option>Belum direkomendasikan</option>
+                                    </select>
+                                </div>
+                                <div><label for="rp-ringkasan" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Ringkasan hasil</label><textarea id="rp-ringkasan" rows="4" placeholder="Gambaran umum performa peserta..." class="field !font-medium"></textarea></div>
+                                <div><label for="rp-kekuatan" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Kekuatan utama</label><textarea id="rp-kekuatan" rows="3" class="field !font-medium"></textarea></div>
+                                <div><label for="rp-pengembangan" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Area pengembangan</label><textarea id="rp-pengembangan" rows="3" class="field !font-medium"></textarea></div>
+                                <div><label for="rp-tindak" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Rencana tindak lanjut</label><textarea id="rp-tindak" rows="3" class="field !font-medium"></textarea></div>
+                            </div>
+
+                            <div class="card p-4 space-y-2">
+                                <h3 class="text-xs font-black uppercase tracking-wider text-violet-700">C. Bagian yang ditampilkan</h3>
+                                <label class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-200 cursor-pointer has-[:checked]:bg-violet-50 has-[:checked]:border-violet-300"><input type="checkbox" id="rp-showKriteria" class="accent-violet-600 w-5 h-5"><span class="text-sm font-bold text-slate-800">Nilai per kriteria</span></label>
+                                <label class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-200 cursor-pointer has-[:checked]:bg-violet-50 has-[:checked]:border-violet-300"><input type="checkbox" id="rp-showPenilai" class="accent-violet-600 w-5 h-5"><span class="text-sm font-bold text-slate-800">Daftar penilai & skor</span></label>
+                                <label class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-200 cursor-pointer has-[:checked]:bg-violet-50 has-[:checked]:border-violet-300"><input type="checkbox" id="rp-showKomentar" class="accent-violet-600 w-5 h-5"><span class="text-sm font-bold text-slate-800">Komentar penilai</span></label>
+                                <label class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-200 cursor-pointer has-[:checked]:bg-violet-50 has-[:checked]:border-violet-300"><input type="checkbox" id="rp-showTtd" class="accent-violet-600 w-5 h-5"><span class="text-sm font-bold text-slate-800">Kolom tanda tangan</span></label>
+                            </div>
+                        </div>
+
+                        <!-- PRATINJAU -->
+                        <div id="report-preview-pane" class="hidden lg:!block space-y-2 lg:sticky lg:top-20">
+                            <div class="flex items-center justify-between gap-2">
+                                <span id="rp-saved" class="text-[11px] font-semibold text-slate-400">Draf tersimpan otomatis</span>
+                                <button onclick="exportReportPDF()" class="h-10 px-3.5 rounded-xl bg-violet-600 active:bg-violet-800 text-white font-bold text-sm flex items-center gap-2">
+                                    <svg class="ic !w-4 !h-4"><use href="#i-download"/></svg>Ekspor PDF
+                                    <span class="px-1.5 py-0.5 rounded bg-white/20 text-[9px] font-black uppercase">Segera</span>
+                                </button>
+                            </div>
+                            <div class="rounded-2xl bg-slate-300/60 p-2 sm:p-3">
+                                <div id="report-paper-wrap" class="relative overflow-hidden rounded-md shadow-xl bg-white">
+                                    <div id="report-paper" style="width:794px;min-height:1123px;box-sizing:border-box;padding:48px 56px;transform-origin:top left;font-size:12px;line-height:1.5;color:#0f172a"></div>
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-slate-400 text-center">Pratinjau kertas A4. Pemisahan halaman akan diatur saat fitur PDF dikembangkan.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </section>
     </main>
 
@@ -512,10 +703,55 @@
         </div>
     </div>
 
+    <!-- MODAL: TAMBAH / UBAH BAGIAN SDP -->
+    <div id="bagian-modal" class="no-print fixed inset-0 z-50 hidden bg-black/60 flex items-end sm:items-center justify-center sm:p-4" onclick="if(event.target===this)closeBagianModal()">
+        <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92dvh]">
+            <div class="px-4 py-3 bg-yc-700 text-white rounded-t-3xl flex items-center justify-between gap-3">
+                <h3 id="bagian-modal-title" class="font-extrabold text-base">Tambah Bagian SDP</h3>
+                <button onclick="closeBagianModal()" class="w-10 h-10 shrink-0 rounded-full bg-white/10 active:bg-white/20 flex items-center justify-center" aria-label="Tutup"><svg class="ic"><use href="#i-x"/></svg></button>
+            </div>
+            <div class="p-4 overflow-y-auto space-y-4">
+                <div class="flex items-center gap-3">
+                    <span id="bagian-live"></span>
+                    <div class="flex-1">
+                        <label for="bagian-name" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Nama bagian</label>
+                        <input id="bagian-name" maxlength="40" placeholder="mis. FINANCE" class="field uppercase" autocomplete="off">
+                    </div>
+                </div>
+                <p id="bagian-rename-hint" class="hidden text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 font-semibold">Mengganti nama tidak mengubah data penilaian lama yang sudah terkirim.</p>
+
+                <div>
+                    <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">Ikon</span>
+                    <div id="bagian-icon-grid" class="grid grid-cols-5 sm:grid-cols-7 gap-2"></div>
+                </div>
+                <div>
+                    <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">Warna</span>
+                    <div id="bagian-color-row" class="flex flex-wrap gap-2"></div>
+                </div>
+                <div>
+                    <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">Atau pakai logo sendiri</span>
+                    <div class="flex items-center gap-2">
+                        <label class="h-10 px-3 rounded-xl bg-slate-100 active:bg-slate-200 text-slate-700 text-sm font-bold flex items-center gap-1.5 cursor-pointer">
+                            <svg class="ic !w-4 !h-4"><use href="#i-upload"/></svg>Unggah gambar
+                            <input type="file" id="bagian-file" accept="image/*" class="hidden" onchange="handleBagianImage(event)">
+                        </label>
+                        <button id="bagian-img-remove" type="button" onclick="removeBagianImage()" class="hidden h-10 px-3 rounded-xl bg-red-50 text-red-600 text-sm font-bold">Hapus gambar</button>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1.5">Gambar dipotong persegi & dikecilkan otomatis.</p>
+                </div>
+                <div id="bagian-err" class="hidden p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm font-bold"></div>
+            </div>
+            <div class="px-4 py-3 border-t border-slate-100 safe-bottom grid grid-cols-2 gap-2">
+                <button onclick="closeBagianModal()" class="h-12 bg-slate-100 active:bg-slate-200 text-slate-800 font-bold rounded-xl text-sm">Batal</button>
+                <button onclick="saveBagianModal()" class="h-12 bg-yc-600 active:bg-yc-800 text-white font-bold rounded-xl text-sm">Simpan</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Script Module Firebase (tambahkan sebelum <script> utama) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDLiB1PW_-yFKBm5k29bs20jlLkx2Nz820",
@@ -531,6 +767,9 @@
         window.db = getFirestore(app);
         window.fsCollection = collection;
         window.fsAddDoc = addDoc;
+        window.fsDoc = doc;
+        window.fsGetDoc = getDoc;
+        window.fsSetDoc = setDoc;
     </script>
 
     <script>
@@ -887,7 +1126,9 @@
             
             $('penguji-nama').value = d.namaPenguji || '';
             $('peserta-nama').value = d.namaPeserta || '';
+            ensureBagianOption(d.sdpBagian);
             $('sdp-bagian').value = d.sdpBagian || '';
+            updateBagianPreview();
             $('sdp-cabang').value = d.sdpCabang || '';
             
             if (d.peranPenguji) {
@@ -976,6 +1217,8 @@
 
         // ================= DATA =================
         function loadInitialData() {
+            loadBagian();
+            populateBagianSelect();
             assessmentList = readJSON('yc_sdp_assessments', []);
             trashList = readJSON('yc_sdp_trash', []);
             const now = Date.now();
@@ -1026,6 +1269,7 @@
         }
 
         function initPortal() {
+            pullBagianCloud();
             $('section-login').classList.add('hidden');
             $('dashboard-content').classList.remove('hidden');
             $('app-header').classList.remove('hidden');
@@ -1047,6 +1291,8 @@
             renderTrashItems(); 
             updateLaporanStats(); 
             renderDraftCards();
+            refreshBagianUI();
+            refreshReportData();
         }
 
         // ================= NAVIGASI VIEW =================
@@ -1058,11 +1304,13 @@
         }
 
         function openView(viewId) {
-            if ((viewId === 'view-rekap' || viewId === 'view-trash') && currentUserRole !== 'ETD') return;
+            if (['view-rekap', 'view-trash', 'view-kelola', 'view-laporan'].includes(viewId) && currentUserRole !== 'ETD') return;
             $('dashboard-home-view').classList.add('hidden');
             document.querySelectorAll('.sub-pane').forEach(el => el.classList.add('hidden'));
             $(viewId).classList.remove('hidden');
             $('form-actions').classList.toggle('hidden', viewId !== 'view-form');
+            if (viewId === 'view-kelola') renderBagianList();
+            if (viewId === 'view-laporan') openLaporanHome();
             if (viewId === 'view-form') { if (currentStep === SUMMARY_STEP) renderSummary(); showStep(currentStep); }
             else window.scrollTo(0, 0);
         }
@@ -1155,6 +1403,7 @@
                 clearError(item.id);
             });
             clearError(0);
+            updateBagianPreview();
             
             $('draft-indicator').classList.add('hidden');
             fromSummary = false;
@@ -1185,7 +1434,7 @@
                 <button onclick="openModal('${item.id}')" class="card p-4 text-left border-l-4 border-l-amber-500 active:bg-amber-50 space-y-2">
                     <div class="flex justify-between items-start gap-3">
                         <div class="min-w-0">
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-teal-100 text-teal-800 uppercase">${esc(item.sdpBagian)}</span>
+                            <span class="inline-flex items-center gap-1.5 pr-2 rounded-full text-[10px] font-black bg-slate-100 text-slate-700 uppercase">${bagianLogo(findBagian(item.sdpBagian), 20)}${esc(item.sdpBagian)}</span>
                             <h3 class="font-extrabold text-base text-slate-900 mt-1 break-words">${esc(item.namaPeserta)}</h3>
                         </div>
                         <div class="text-right shrink-0 leading-none">
@@ -1350,7 +1599,7 @@
             $('modal-timestamp').textContent = `Dikirim: ${item.timestamp}`;
             $('modal-penguji').textContent = item.namaPenguji;
             $('modal-peran').textContent = item.peranPenguji;
-            $('modal-bagian').textContent = item.sdpBagian;
+            $('modal-bagian').innerHTML = `<span class="inline-flex items-center gap-1.5">${bagianLogo(findBagian(item.sdpBagian), 22)}${esc(item.sdpBagian)}</span>`;
             $('modal-cabang').textContent = item.sdpCabang;
             $('modal-total-score').textContent = `${item.scoreTotal} / 10.0`;
             $('modal-predikat').textContent = getPredikat(item.scoreTotal).label;
@@ -1377,6 +1626,556 @@
             document.body.style.overflow = '';
         }
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+        // =====================================================================
+        // KELOLA DATA: BAGIAN SDP TRAINEE
+        // =====================================================================
+        const BAGIAN_KEY = 'yc_sdp_bagian';
+        // Daftar ikon yang bisa dipilih (symbol "b-..." ada di sprite SVG di atas).
+        // Mau tambah ikon baru? Tambahkan <symbol id="b-nama"> di sprite lalu masukkan namanya di sini.
+        const BAGIAN_ICONS = ['briefcase', 'factory', 'wrench', 'headset', 'users', 'truck', 'shield-check', 'flask', 'bag', 'life-buoy',
+            'chart', 'box', 'cog', 'bulb', 'globe', 'cart', 'utensils', 'book', 'target', 'building'];
+        const BAGIAN_COLORS = { // [latar, ikon]
+            rose: ['#ffe4e6', '#be123c'], amber: ['#fef3c7', '#b45309'], orange: ['#ffedd5', '#c2410c'], emerald: ['#d1fae5', '#047857'],
+            teal: ['#ccfbf1', '#0f766e'], sky: ['#e0f2fe', '#0369a1'], violet: ['#ede9fe', '#6d28d9'], slate: ['#e2e8f0', '#334155']
+        };
+        const DEFAULT_BAGIAN = [
+            { id: 'bg-admin', name: 'ADMIN', icon: 'briefcase', color: 'slate' },
+            { id: 'bg-devck', name: 'DEVELOPMENT CK', icon: 'wrench', color: 'orange' },
+            { id: 'bg-ga', name: 'GA/SUPPORT', icon: 'headset', color: 'sky' },
+            { id: 'bg-hrd', name: 'HRD & LICENSE', icon: 'users', color: 'violet' },
+            { id: 'bg-logistik', name: 'LOGISTIK', icon: 'truck', color: 'amber' },
+            { id: 'bg-produksi', name: 'PRODUKSI', icon: 'factory', color: 'rose' },
+            { id: 'bg-qc', name: 'QC', icon: 'shield-check', color: 'emerald' },
+            { id: 'bg-proddev', name: 'PRODUCT DEVELOPMENT', icon: 'flask', color: 'teal' },
+            { id: 'bg-commercial', name: 'COMMERCIAL', icon: 'bag', color: 'orange' },
+            { id: 'bg-bizsupport', name: 'BUSINESS SUPPORT', icon: 'life-buoy', color: 'sky' }
+        ];
+        let bagianList = [];
+        let bagianEditId = null, bagianDraft = null;
+
+        function loadBagian() {
+            let l = readJSON(BAGIAN_KEY, null);
+            if (!Array.isArray(l) || !l.length) { l = DEFAULT_BAGIAN.map(b => ({ ...b })); writeJSON(BAGIAN_KEY, l); }
+            bagianList = l;
+        }
+        const saveBagian = () => writeJSON(BAGIAN_KEY, bagianList);
+
+        function findBagian(name) {
+            return bagianList.find(b => b.name === name) || { name, icon: 'building', color: 'slate' };
+        }
+
+        // Render logo bagian (ikon + warna, atau gambar unggahan)
+        function bagianLogo(b, px = 40) {
+            const [bg, fg] = BAGIAN_COLORS[b.color] || BAGIAN_COLORS.slate;
+            const hasImg = b.img && /^data:image\//.test(b.img);
+            const sz = Math.round(px * 0.55);
+            const inner = hasImg
+                ? `<img src="${esc(b.img)}" alt="" style="width:100%;height:100%;object-fit:cover">`
+                : `<svg style="width:${sz}px;height:${sz}px" aria-hidden="true"><use href="#b-${esc(b.icon || 'building')}"/></svg>`;
+            return `<span class="inline-flex items-center justify-center shrink-0 overflow-hidden" style="width:${px}px;height:${px}px;border-radius:${Math.round(px * 0.28)}px;background:${bg};color:${fg}">${inner}</span>`;
+        }
+
+        // ---- Sinkron cloud (Firestore: pengaturan/bagian_sdp) agar semua penguji melihat daftar yang sama ----
+        function setBagianSync(text, ok) {
+            const el = $('bagian-sync-status'); if (!el) return;
+            el.textContent = text;
+            el.className = 'text-[11px] font-semibold ' + (ok ? 'text-emerald-600' : 'text-slate-400');
+        }
+
+        async function pushBagianCloud() {
+            if (!(window.db && window.fsSetDoc && window.fsDoc)) { setBagianSync('Hanya tersimpan di perangkat ini (cloud belum terhubung)', false); return false; }
+            try {
+                const clean = JSON.parse(JSON.stringify(bagianList)); // buang nilai undefined (Firestore menolaknya)
+                await window.fsSetDoc(window.fsDoc(window.db, 'pengaturan', 'bagian_sdp'), { list: clean, updatedAt: Date.now() });
+                setBagianSync('Tersinkron ke cloud · ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }), true);
+                return true;
+            } catch (e) {
+                console.error('Sinkron bagian gagal:', e);
+                setBagianSync('Gagal sinkron ke cloud (cek rules Firestore). Data tetap tersimpan di perangkat ini.', false);
+                toast('Tersimpan lokal, tapi gagal sinkron ke cloud', 'warn');
+                return false;
+            }
+        }
+
+        async function pullBagianCloud() {
+            try {
+                if (!(window.db && window.fsGetDoc && window.fsDoc)) return;
+                const snap = await window.fsGetDoc(window.fsDoc(window.db, 'pengaturan', 'bagian_sdp'));
+                if (snap.exists()) {
+                    const d = snap.data();
+                    if (Array.isArray(d.list) && d.list.length) {
+                        bagianList = d.list; saveBagian(); refreshBagianUI();
+                        setBagianSync('Tersinkron dari cloud', true);
+                    }
+                }
+            } catch (e) { console.warn('Ambil bagian dari cloud gagal:', e); }
+        }
+
+        function commitBagian(msg) {
+            saveBagian(); refreshBagianUI(); pushBagianCloud();
+            if (msg) toast(msg, 'success');
+        }
+
+        // ---- Dropdown di form penilaian ----
+        function ensureBagianOption(name) {
+            if (!name) return;
+            const sel = $('sdp-bagian');
+            if (![...sel.options].some(o => o.value === name)) {
+                const o = document.createElement('option');
+                o.value = name; o.textContent = name + ' (tidak aktif)';
+                sel.appendChild(o);
+            }
+        }
+
+        function populateBagianSelect() {
+            const sel = $('sdp-bagian'); if (!sel) return;
+            const cur = sel.value;
+            sel.innerHTML = '<option value="">Pilih bagian SDP</option>' + bagianList.map(b => `<option value="${esc(b.name)}">${esc(b.name)}</option>`).join('');
+            if (cur) ensureBagianOption(cur);
+            sel.value = cur;
+            updateBagianPreview();
+        }
+
+        function updateBagianPreview() {
+            const box = $('bagian-preview'); if (!box) return;
+            const v = $('sdp-bagian').value;
+            if (!v) { box.classList.add('hidden'); box.classList.remove('flex'); return; }
+            box.innerHTML = `${bagianLogo(findBagian(v), 32)}<span class="text-sm font-extrabold text-slate-800">${esc(v)}</span>`;
+            box.classList.remove('hidden'); box.classList.add('flex');
+        }
+
+        function refreshBagianUI() { populateBagianSelect(); renderBagianList(); }
+
+        // ---- Daftar di menu Kelola Data ----
+        function renderBagianList() {
+            const c = $('bagian-list'); if (!c) return;
+            $('bagian-count').textContent = bagianList.length;
+            if (!bagianList.length) { c.innerHTML = '<div class="col-span-full p-6 text-center text-sm text-slate-400">Belum ada bagian. Tekan Tambah.</div>'; return; }
+            const btn = 'w-9 h-9 rounded-lg flex items-center justify-center ';
+            c.innerHTML = bagianList.map((b, i) => {
+                const used = assessmentList.filter(a => a.sdpBagian === b.name).length;
+                return `
+                <div class="flex items-center gap-2.5 p-2.5 rounded-2xl border border-slate-200 bg-slate-50/70">
+                    ${bagianLogo(b, 44)}
+                    <div class="flex-1 min-w-0">
+                        <div class="font-extrabold text-slate-900 text-sm break-words leading-tight">${esc(b.name)}</div>
+                        <div class="text-[11px] text-slate-500 mt-0.5">${used ? used + ' penilaian terkirim' : 'Belum dipakai'}</div>
+                    </div>
+                    <div class="flex items-center gap-1 shrink-0">
+                        <div class="flex flex-col gap-0.5">
+                            <button onclick="moveBagian('${esc(b.id)}',-1)" ${i === 0 ? 'disabled' : ''} class="w-7 h-4 rounded bg-white border border-slate-200 text-slate-500 flex items-center justify-center disabled:opacity-30" aria-label="Naikkan"><svg class="ic !w-3 !h-3"><use href="#i-chevron-up"/></svg></button>
+                            <button onclick="moveBagian('${esc(b.id)}',1)" ${i === bagianList.length - 1 ? 'disabled' : ''} class="w-7 h-4 rounded bg-white border border-slate-200 text-slate-500 flex items-center justify-center disabled:opacity-30" aria-label="Turunkan"><svg class="ic !w-3 !h-3"><use href="#i-chevron-down"/></svg></button>
+                        </div>
+                        <button onclick="openBagianModal('${esc(b.id)}')" class="${btn}bg-white border border-slate-200 text-slate-700 active:bg-slate-100" aria-label="Ubah">${ic('edit', '!w-4 !h-4')}</button>
+                        <button onclick="deleteBagian('${esc(b.id)}')" class="${btn}bg-red-50 text-red-600 active:bg-red-100" aria-label="Hapus">${ic('trash', '!w-4 !h-4')}</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function moveBagian(id, dir) {
+            const i = bagianList.findIndex(b => b.id === id), j = i + dir;
+            if (i < 0 || j < 0 || j >= bagianList.length) return;
+            [bagianList[i], bagianList[j]] = [bagianList[j], bagianList[i]];
+            commitBagian();
+        }
+
+        function deleteBagian(id) {
+            const b = bagianList.find(x => x.id === id); if (!b) return;
+            if (bagianList.length <= 1) { toast('Minimal harus ada 1 bagian', 'warn'); return; }
+            const used = assessmentList.filter(a => a.sdpBagian === b.name).length;
+            const note = used ? `\n\n${used} penilaian lama dengan bagian ini tetap tersimpan.` : '';
+            if (!confirm(`Hapus bagian "${b.name}" dari daftar pilihan?${note}`)) return;
+            bagianList = bagianList.filter(x => x.id !== id);
+            commitBagian('Bagian dihapus');
+        }
+
+        function resetBagianDefault() {
+            if (!confirm('Kembalikan daftar Bagian SDP ke pengaturan awal? Perubahan yang sudah Anda buat akan hilang.')) return;
+            bagianList = DEFAULT_BAGIAN.map(b => ({ ...b }));
+            commitBagian('Daftar dikembalikan ke awal');
+        }
+
+        // ---- Modal tambah / ubah ----
+        function openBagianModal(id) {
+            const b = id ? bagianList.find(x => x.id === id) : null;
+            bagianEditId = b ? b.id : null;
+            bagianDraft = b
+                ? { name: b.name, icon: b.icon || 'building', color: b.color || 'slate', img: b.img || '' }
+                : { name: '', icon: 'building', color: 'teal', img: '' };
+            $('bagian-modal-title').textContent = b ? 'Ubah Bagian SDP' : 'Tambah Bagian SDP';
+            $('bagian-name').value = bagianDraft.name;
+            $('bagian-rename-hint').classList.toggle('hidden', !b);
+            $('bagian-err').classList.add('hidden');
+            renderBagianPicker();
+            $('bagian-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            if (!b) setTimeout(() => $('bagian-name').focus(), 60);
+        }
+
+        function closeBagianModal() {
+            $('bagian-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function renderBagianPicker() {
+            $('bagian-live').innerHTML = bagianLogo(bagianDraft, 56);
+            $('bagian-icon-grid').innerHTML = BAGIAN_ICONS.map(n => {
+                const on = !bagianDraft.img && bagianDraft.icon === n;
+                return `<button type="button" onclick="pickBagianIcon('${n}')" class="aspect-square rounded-xl border-2 flex items-center justify-center ${on ? 'border-amber-500 bg-amber-50 text-amber-700' : 'border-slate-200 bg-white text-slate-500'}" aria-label="${n}"><svg class="ic"><use href="#b-${n}"/></svg></button>`;
+            }).join('');
+            $('bagian-color-row').innerHTML = Object.entries(BAGIAN_COLORS).map(([k, [bg, fg]]) =>
+                `<button type="button" onclick="pickBagianColor('${k}')" class="w-9 h-9 rounded-full border-2 flex items-center justify-center ${bagianDraft.color === k ? 'border-slate-900' : 'border-white shadow'}" style="background:${bg}" aria-label="${k}"><span style="width:14px;height:14px;border-radius:50%;background:${fg}"></span></button>`).join('');
+            $('bagian-img-remove').classList.toggle('hidden', !bagianDraft.img);
+        }
+
+        function pickBagianIcon(n) { bagianDraft.icon = n; bagianDraft.img = ''; renderBagianPicker(); }
+        function pickBagianColor(k) { bagianDraft.color = k; renderBagianPicker(); }
+        function removeBagianImage() { bagianDraft.img = ''; renderBagianPicker(); }
+
+        function handleBagianImage(ev) {
+            const f = ev.target.files[0]; ev.target.value = '';
+            if (!f) return;
+            if (!f.type.startsWith('image/')) { toast('File harus berupa gambar', 'warn'); return; }
+            const r = new FileReader();
+            r.onload = () => {
+                const img = new Image();
+                img.onload = () => {
+                    const s = 96, cv = document.createElement('canvas'); cv.width = cv.height = s;
+                    const m = Math.min(img.width, img.height) || 1;
+                    cv.getContext('2d').drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, s, s);
+                    bagianDraft.img = cv.toDataURL('image/png');
+                    renderBagianPicker();
+                };
+                img.onerror = () => toast('Gambar tidak bisa dibaca', 'warn');
+                img.src = r.result;
+            };
+            r.readAsDataURL(f);
+        }
+
+        function saveBagianModal() {
+            const name = $('bagian-name').value.trim().replace(/\s+/g, ' ').toUpperCase();
+            const err = $('bagian-err');
+            const fail = m => { err.textContent = m; err.classList.remove('hidden'); };
+            if (!name) return fail('Nama bagian wajib diisi.');
+            if (bagianList.some(b => b.id !== bagianEditId && b.name === name)) return fail('Nama bagian sudah ada.');
+
+            if (bagianEditId) {
+                const b = bagianList.find(x => x.id === bagianEditId);
+                b.name = name; b.icon = bagianDraft.icon; b.color = bagianDraft.color;
+                if (bagianDraft.img) b.img = bagianDraft.img; else delete b.img;
+            } else {
+                const nb = { id: 'bg-' + Date.now().toString(36), name, icon: bagianDraft.icon, color: bagianDraft.color };
+                if (bagianDraft.img) nb.img = bagianDraft.img;
+                bagianList.push(nb);
+            }
+            closeBagianModal();
+            commitBagian(bagianEditId ? 'Bagian diperbarui' : 'Bagian ditambahkan');
+        }
+
+        // =====================================================================
+        // BUAT LAPORAN ASSESSMENT (ETD)
+        // =====================================================================
+        const REPORT_KEY = 'yc_sdp_reports';
+        const REPORT_PAPER_W = 794; // lebar A4 @96dpi
+        let reportKey = null, reportGroupsCache = [], reportForm = null, reportSaveTimer = null;
+
+        const reportsStore = () => readJSON(REPORT_KEY, {});
+        const scoreColor = v => v >= 8.5 ? '#047857' : v >= 7 ? '#059669' : v >= 6 ? '#ca8a04' : v >= 4 ? '#b45309' : '#e11d48';
+
+        // Gabungkan semua penilaian untuk peserta yang sama (nama + bagian)
+        function reportGroups() {
+            const map = new Map();
+            assessmentList.forEach(a => {
+                const nama = String(a.namaPeserta || '').trim();
+                const key = nama.toLowerCase() + '|' + (a.sdpBagian || '');
+                if (!map.has(key)) map.set(key, { key, nama, bagian: a.sdpBagian, cabang: a.sdpCabang, items: [] });
+                map.get(key).items.push(a);
+            });
+            return [...map.values()].map(g => {
+                g.avg = g.items.reduce((s, i) => s + Number(i.scoreTotal || 0), 0) / g.items.length;
+                g.last = Math.max(...g.items.map(i => i.createdDate || 0));
+                return g;
+            }).sort((a, b) => b.last - a.last);
+        }
+
+        function currentGroup() { return reportKey ? reportGroups().find(g => g.key === reportKey) : null; }
+
+        // Rata-rata per kriteria + komentar semua penilai
+        function criteriaStats(g) {
+            return kriteriaList.map(k => {
+                const vals = g.items.map(i => Number(i.scores?.[k.id]) || 0).filter(v => v > 0);
+                const avg = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+                const comments = g.items.map(i => ({ by: i.namaPenguji, text: String(i.komentars?.[k.id] || '').trim() })).filter(c => c.text);
+                return { k, avg, comments };
+            });
+        }
+
+        function suggestReco(avg) {
+            return avg >= 7 ? 'Direkomendasikan' : avg >= 6 ? 'Direkomendasikan dengan catatan' : 'Perlu pembinaan lanjutan';
+        }
+
+        function defaultReport(g) {
+            const d = new Date(), p = n => String(n).padStart(2, '0');
+            return {
+                judul: 'Laporan Hasil Assessment Presentasi SDP',
+                noDok: `ETD/SDP/${d.getFullYear()}/${p(d.getMonth() + 1)}/001`,
+                tanggal: `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`,
+                periode: '', penyusun: '', jabatan: 'Education & Training Department',
+                status: suggestReco(g.avg), ringkasan: '', kekuatan: '', pengembangan: '', tindak: '',
+                showKriteria: true, showPenilai: true, showKomentar: false, showTtd: true
+            };
+        }
+
+        const RP_TEXT = ['judul', 'noDok', 'tanggal', 'periode', 'penyusun', 'jabatan', 'status', 'ringkasan', 'kekuatan', 'pengembangan', 'tindak'];
+        const RP_CHECK = ['showKriteria', 'showPenilai', 'showKomentar', 'showTtd'];
+
+        function renderReportPicker() {
+            const c = $('report-picker-list'); if (!c) return;
+            reportGroupsCache = reportGroups();
+            const kw = ($('rp-search')?.value || '').toLowerCase().trim();
+            const saved = reportsStore();
+            $('report-picker-count').textContent = `${reportGroupsCache.length} peserta · ${assessmentList.length} penilaian`;
+
+            if (!reportGroupsCache.length) {
+                c.innerHTML = `<div class="col-span-full card p-8 text-center space-y-1">${ic('file-text', '!w-9 !h-9 text-slate-300')}
+                    <p class="text-sm font-bold text-slate-800">Belum ada data assessment</p>
+                    <p class="text-xs text-slate-500">Laporan dibuat dari form yang sudah dikirim penguji.</p></div>`;
+                return;
+            }
+            const rows = reportGroupsCache.map((g, i) => ({ g, i })).filter(({ g }) =>
+                !kw || g.nama.toLowerCase().includes(kw) || String(g.bagian || '').toLowerCase().includes(kw));
+            if (!rows.length) { c.innerHTML = '<div class="col-span-full p-6 text-center text-sm text-slate-400">Peserta tidak ditemukan.</div>'; return; }
+
+            c.innerHTML = rows.map(({ g, i }) => `
+                <button onclick="selectReportPeserta(${i})" class="card p-3.5 text-left flex items-center gap-3 active:bg-violet-50">
+                    ${bagianLogo(findBagian(g.bagian), 46)}
+                    <span class="flex-1 min-w-0">
+                        <span class="block font-extrabold text-slate-900 text-sm break-words leading-tight">${esc(g.nama)}</span>
+                        <span class="block text-[11px] text-slate-500 truncate mt-0.5">${esc(g.bagian)} · ${esc(g.cabang)}</span>
+                        <span class="mt-1.5 flex flex-wrap gap-1.5">
+                            <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold">${g.items.length} penilai</span>
+                            ${saved[g.key] ? '<span class="px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 text-[10px] font-bold">Draf laporan</span>' : ''}
+                        </span>
+                    </span>
+                    <span class="text-right shrink-0 leading-none">
+                        <span class="block text-xl font-black" style="color:${scoreColor(g.avg)}">${g.avg.toFixed(1)}</span>
+                        <span class="block text-[9px] font-bold text-slate-400 mt-1">AVG</span>
+                    </span>
+                </button>`).join('');
+        }
+
+        function showReportStage() {
+            $('report-picker').classList.toggle('hidden', !!reportKey);
+            $('report-workspace').classList.toggle('hidden', !reportKey);
+        }
+
+        function openLaporanHome() {
+            renderReportPicker();
+            showReportStage();
+            if (reportKey) { switchReportTab('edit'); renderReportPreview(); }
+        }
+
+        function selectReportPeserta(i) {
+            const g = reportGroupsCache[i]; if (!g) return;
+            reportKey = g.key;
+            reportForm = { ...defaultReport(g), ...(reportsStore()[g.key] || {}) };
+            $('rp-who-logo').innerHTML = bagianLogo(findBagian(g.bagian), 40);
+            $('rp-who-name').textContent = g.nama;
+            $('rp-who-meta').textContent = `${g.bagian} · ${g.cabang} · ${g.items.length} penilai · rata-rata ${g.avg.toFixed(1)}`;
+            fillReportForm();
+            showReportStage();
+            switchReportTab('edit');
+            renderReportPreview();
+            window.scrollTo(0, 0);
+        }
+
+        function backToReportPicker() {
+            clearTimeout(reportSaveTimer); persistReport();
+            reportKey = null; reportForm = null;
+            renderReportPicker(); showReportStage();
+            window.scrollTo(0, 0);
+        }
+
+        function fillReportForm() {
+            RP_TEXT.forEach(k => { $('rp-' + k).value = reportForm[k] ?? ''; });
+            RP_CHECK.forEach(k => { $('rp-' + k).checked = !!reportForm[k]; });
+        }
+
+        function readReportForm() {
+            RP_TEXT.forEach(k => { reportForm[k] = $('rp-' + k).value; });
+            RP_CHECK.forEach(k => { reportForm[k] = $('rp-' + k).checked; });
+        }
+
+        function persistReport() {
+            if (!reportKey || !reportForm) return;
+            const all = reportsStore(); all[reportKey] = reportForm; writeJSON(REPORT_KEY, all);
+            const el = $('rp-saved');
+            if (el) el.textContent = 'Draf tersimpan ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function onReportInput() {
+            if (!reportForm) return;
+            readReportForm();
+            renderReportPreview();
+            clearTimeout(reportSaveTimer);
+            reportSaveTimer = setTimeout(persistReport, 400);
+        }
+
+        function autoFillInsights() {
+            const g = currentGroup(); if (!g) return;
+            const hasText = ['kekuatan', 'pengembangan'].some(k => $('rp-' + k).value.trim());
+            if (hasText && !confirm('Isi Kekuatan & Area Pengembangan akan ditimpa. Lanjutkan?')) return;
+            const st = criteriaStats(g).filter(s => s.avg > 0).sort((a, b) => b.avg - a.avg);
+            const line = s => `• ${s.k.title} (${s.avg.toFixed(1)})`;
+            $('rp-kekuatan').value = st.slice(0, 3).map(line).join('\n');
+            $('rp-pengembangan').value = st.slice(-3).reverse().map(line).join('\n');
+            $('rp-status').value = suggestReco(g.avg);
+            onReportInput();
+            toast('Diisi dari nilai tertinggi & terendah', 'success');
+        }
+
+        function switchReportTab(tab) {
+            const edit = tab === 'edit';
+            $('report-editor').classList.toggle('hidden', !edit);
+            $('report-preview-pane').classList.toggle('hidden', edit);
+            $('rtab-edit').classList.toggle('active', edit);
+            $('rtab-prev').classList.toggle('active', !edit);
+            requestAnimationFrame(fitReportPreview);
+        }
+
+        function fitReportPreview() {
+            const wrap = $('report-paper-wrap'), paper = $('report-paper');
+            if (!wrap || !paper) return;
+            const w = wrap.clientWidth; if (!w) return;
+            const s = Math.min(1, w / REPORT_PAPER_W);
+            paper.style.transform = `scale(${s})`;
+            wrap.style.height = Math.ceil(paper.offsetHeight * s) + 'px';
+        }
+        window.addEventListener('resize', fitReportPreview);
+
+        // Model data laporan: dipakai pratinjau sekarang dan generator PDF nanti
+        function getReportModel() {
+            const g = currentGroup(); if (!g || !reportForm) return null;
+            return { peserta: g, form: reportForm, criteria: criteriaStats(g), predikat: getPredikat(g.avg), bagian: findBagian(g.bagian) };
+        }
+
+        // TODO (tahap berikutnya): bangun PDF dari getReportModel()
+        function exportReportPDF() {
+            toast('Ekspor PDF akan dikembangkan di tahap berikutnya', 'info');
+        }
+
+        function renderReportPreview() {
+            const m = getReportModel(); const paper = $('report-paper'); if (!m || !paper) return;
+            const { peserta: g, form: f, criteria, predikat } = m;
+            const P = t => esc(t).replace(/\n/g, '<br>');
+            const tgl = f.tanggal ? new Date(f.tanggal + 'T00:00').toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
+            const ph = '<span style="color:#cbd5e1;font-style:italic">Belum diisi</span>';
+            const sec = t => `<div style="display:flex;align-items:center;gap:8px;margin:20px 0 8px"><span style="width:4px;height:14px;background:#b91c1c;border-radius:2px"></span><span style="font-weight:800;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7f1d1d">${t}</span></div>`;
+            const th = 'padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#475569;background:#f1f5f9;border-bottom:1px solid #e2e8f0';
+            const td = 'padding:6px 8px;border-bottom:1px solid #f1f5f9;vertical-align:top';
+            const [lbg, lfg] = BAGIAN_COLORS[m.bagian.color] || BAGIAN_COLORS.slate;
+            const textBlock = (label, val) => `<div style="margin-bottom:10px"><div style="font-weight:700;font-size:11px;color:#334155;margin-bottom:2px">${label}</div><div style="color:#1e293b">${val.trim() ? P(val) : ph}</div></div>`;
+
+            let html = `
+            <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #b91c1c;padding-bottom:14px">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <svg style="width:46px;height:46px;border-radius:12px" viewBox="0 0 48 48"><use href="#logo"/></svg>
+                    <div><div style="font-weight:800;font-size:16px;letter-spacing:.02em;color:#7f1d1d">YUMMY CHOICE</div>
+                    <div style="font-size:9px;font-weight:700;letter-spacing:.16em;color:#64748b;text-transform:uppercase">Education &amp; Training Department</div></div>
+                </div>
+                <div style="text-align:right;font-size:10px;color:#64748b"><div style="font-weight:700;color:#0f172a">No. Dokumen</div><div>${esc(f.noDok) || '-'}</div></div>
+            </div>
+
+            <div style="text-align:center;margin:22px 0 4px">
+                <div style="font-size:19px;font-weight:800;color:#0f172a">${esc(f.judul) || 'Laporan Assessment'}</div>
+                ${f.periode ? `<div style="font-size:11px;color:#64748b;margin-top:2px">${esc(f.periode)}</div>` : ''}
+            </div>
+
+            <div style="display:flex;gap:16px;align-items:stretch;margin-top:16px">
+                <div style="flex:1;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                        <span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:11px;background:${lbg};color:${lfg};overflow:hidden">
+                            ${m.bagian.img && /^data:image\//.test(m.bagian.img) ? `<img src="${esc(m.bagian.img)}" style="width:100%;height:100%;object-fit:cover" alt="">` : `<svg style="width:21px;height:21px"><use href="#b-${esc(m.bagian.icon || 'building')}"/></svg>`}
+                        </span>
+                        <div><div style="font-weight:800;font-size:14px">${esc(g.nama)}</div><div style="font-size:10px;color:#64748b">Peserta SDP Trainee</div></div>
+                    </div>
+                    <table style="width:100%;font-size:11px;border-collapse:collapse">
+                        <tr><td style="color:#64748b;padding:2px 0;width:90px">Bagian</td><td style="font-weight:700">${esc(g.bagian)}</td></tr>
+                        <tr><td style="color:#64748b;padding:2px 0">Penempatan</td><td style="font-weight:700">${esc(g.cabang) || '-'}</td></tr>
+                        <tr><td style="color:#64748b;padding:2px 0">Jumlah penilai</td><td style="font-weight:700">${g.items.length} orang</td></tr>
+                        <tr><td style="color:#64748b;padding:2px 0">Tanggal laporan</td><td style="font-weight:700">${tgl}</td></tr>
+                    </table>
+                </div>
+                <div style="width:190px;border-radius:12px;background:#0f172a;color:#fff;padding:12px 14px;text-align:center;display:flex;flex-direction:column;justify-content:center">
+                    <div style="font-size:9px;font-weight:700;letter-spacing:.14em;color:#fcd34d;text-transform:uppercase">Skor rata-rata</div>
+                    <div style="font-size:38px;font-weight:800;line-height:1.1">${g.avg.toFixed(1)}<span style="font-size:13px;color:#94a3b8"> / 10</span></div>
+                    <div style="display:inline-block;margin:4px auto 0;padding:2px 10px;border-radius:999px;background:#fff;color:${scoreColor(g.avg)};font-size:10px;font-weight:800">${predikat.label}</div>
+                </div>
+            </div>
+
+            <div style="margin-top:12px;padding:8px 12px;border-radius:10px;background:#fffbeb;border:1px solid #fde68a;font-size:11px"><b>Rekomendasi ETD:</b> ${esc(f.status)}</div>`;
+
+            if (f.showKriteria) {
+                html += sec('Hasil per kriteria (rata-rata seluruh penilai)') + `
+                <table style="width:100%;border-collapse:collapse;font-size:11px">
+                    <thead><tr><th style="${th};width:26px">No</th><th style="${th}">Kriteria</th><th style="${th};width:170px">Skor</th><th style="${th};width:40px;text-align:center">Nilai</th><th style="${th};width:90px">Kategori</th></tr></thead>
+                    <tbody>${criteria.map((s, i) => `<tr>
+                        <td style="${td}">${i + 1}</td>
+                        <td style="${td};font-weight:600">${esc(s.k.title)}</td>
+                        <td style="${td}"><div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;margin-top:4px"><div style="height:100%;width:${s.avg * 10}%;background:${scoreColor(s.avg)}"></div></div></td>
+                        <td style="${td};text-align:center;font-weight:800;color:${scoreColor(s.avg)}">${s.avg ? s.avg.toFixed(1) : '-'}</td>
+                        <td style="${td};font-size:10px;color:#475569">${s.avg ? getCategoryMeta(Math.round(s.avg)).label : '-'}</td>
+                    </tr>`).join('')}</tbody>
+                </table>`;
+            }
+
+            if (f.showPenilai) {
+                html += sec('Daftar penilai') + `
+                <table style="width:100%;border-collapse:collapse;font-size:11px">
+                    <thead><tr><th style="${th}">Nama penilai</th><th style="${th}">Peran</th><th style="${th};width:50px;text-align:center">Skor</th></tr></thead>
+                    <tbody>${g.items.map(i => `<tr><td style="${td};font-weight:600">${esc(i.namaPenguji)}</td><td style="${td};font-size:10px;color:#475569">${esc(i.peranPenguji)}</td><td style="${td};text-align:center;font-weight:800;color:${scoreColor(Number(i.scoreTotal))}">${esc(i.scoreTotal)}</td></tr>`).join('')}</tbody>
+                </table>`;
+            }
+
+            html += sec('Analisis ETD') +
+                textBlock('Ringkasan hasil', f.ringkasan) + textBlock('Kekuatan utama', f.kekuatan) +
+                textBlock('Area pengembangan', f.pengembangan) + textBlock('Rencana tindak lanjut', f.tindak);
+
+            if (f.showKomentar) {
+                const withC = criteria.filter(s => s.comments.length);
+                html += sec('Komentar penilai') + (withC.length ? withC.map(s => `
+                    <div style="margin-bottom:8px"><div style="font-weight:700;font-size:11px">${s.k.id}. ${esc(s.k.title)}</div>
+                    ${s.comments.map(c => `<div style="font-size:11px;color:#334155;margin:2px 0 0 10px">- ${esc(c.text)} <span style="color:#94a3b8">(${esc(c.by)})</span></div>`).join('')}</div>`).join('') : `<div style="font-size:11px">${ph}</div>`);
+            }
+
+            if (f.showTtd) {
+                html += `
+                <div style="display:flex;justify-content:space-between;gap:24px;margin-top:34px;font-size:11px;page-break-inside:avoid">
+                    <div style="width:220px;text-align:center"><div>Mengetahui,</div><div style="height:64px"></div><div style="border-top:1px solid #0f172a;padding-top:3px;color:#94a3b8">(............................)</div></div>
+                    <div style="width:220px;text-align:center"><div>${tgl}<br>Disusun oleh,</div><div style="height:48px"></div><div style="border-top:1px solid #0f172a;padding-top:3px;font-weight:700">${esc(f.penyusun) || '(............................)'}</div><div style="font-size:10px;color:#64748b">${esc(f.jabatan)}</div></div>
+                </div>`;
+            }
+
+            html += `<div style="margin-top:28px;padding-top:8px;border-top:1px solid #e2e8f0;font-size:9px;color:#94a3b8;display:flex;justify-content:space-between"><span>Disusun dari data Portal Assessment SDP - Yummy Choice</span><span>Dokumen internal</span></div>`;
+
+            paper.innerHTML = html;
+            fitReportPreview();
+        }
+
+        // Sinkronkan tampilan laporan saat data assessment berubah (hapus / pulihkan / kirim baru)
+        function refreshReportData() {
+            if (!$('report-picker-list')) return;
+            if (reportKey && !currentGroup()) { reportKey = null; reportForm = null; }
+            renderReportPicker(); showReportStage();
+            if (reportKey) renderReportPreview();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            $('sdp-bagian').addEventListener('change', updateBagianPreview);
+        });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBagianModal(); });
     </script>
 </body>
 </html>
