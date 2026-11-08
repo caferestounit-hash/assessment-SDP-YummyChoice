@@ -148,6 +148,10 @@
     <!-- HEADER -->
     <header id="app-header" class="no-print sticky top-0 z-40 bg-yc-700 text-white shadow hidden">
         <div class="max-w-5xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between">
+            <div class="flex items-center gap-2 min-w-0">
+            <button id="nav-back" onclick="smartBack()" class="hidden h-10 pl-2.5 pr-2.5 sm:pr-3 shrink-0 rounded-xl bg-yc-800 active:bg-yc-900 items-center gap-1.5 text-xs font-bold" aria-label="Kembali">
+                <svg class="ic !w-5 !h-5"><use href="#i-arrow-left"/></svg><span id="nav-back-label" class="hidden sm:inline max-w-[120px] truncate"></span>
+            </button>
             <button onclick="goToHome()" class="flex items-center gap-2.5 text-left">
                 <svg class="w-9 h-9 rounded-xl shadow" viewBox="0 0 48 48" aria-hidden="true"><use href="#logo"/></svg>
                 <span class="leading-tight">
@@ -155,6 +159,7 @@
                     <span class="block text-[10px] font-semibold text-yc-200 uppercase tracking-wider">Assessment SDP</span>
                 </span>
             </button>
+            </div>
             <div class="flex items-center gap-2">
                 <span id="user-role-badge" class="px-2.5 py-1 rounded-full text-[11px] font-bold inline-flex items-center gap-1"></span>
                 <button onclick="logout()" class="w-10 h-10 rounded-xl bg-yc-800 active:bg-yc-900 flex items-center justify-center" aria-label="Keluar">
@@ -268,7 +273,7 @@
             <!-- ========== VIEW: DRAFT ========== -->
             <div id="view-draft" class="sub-pane hidden space-y-3">
                 <div class="flex items-center gap-3">
-                    <button onclick="goToHome()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
+                    <button onclick="smartBack()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
                     <div>
                         <h2 class="text-lg font-extrabold text-slate-900 leading-tight">Draft Tersimpan</h2>
                         <p class="text-xs text-slate-500">Lanjutkan pengisian form yang tertunda</p>
@@ -435,7 +440,7 @@
             <!-- ========== VIEW: RIWAYAT ========== -->
             <div id="view-riwayat" class="sub-pane hidden space-y-3">
                 <div class="flex items-center gap-3">
-                    <button onclick="goToHome()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
+                    <button onclick="smartBack()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
                     <div>
                         <h2 class="text-lg font-extrabold text-slate-900 leading-tight">Riwayat Terkirim</h2>
                         <p class="text-xs text-slate-500">Ketuk kartu untuk melihat detail</p>
@@ -447,7 +452,7 @@
             <!-- ========== VIEW: REKAP (ETD) ========== -->
             <div id="view-rekap" class="sub-pane hidden space-y-3">
                 <div class="flex items-center gap-3">
-                    <button onclick="goToHome()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
+                    <button onclick="smartBack()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
                     <h2 class="text-lg font-extrabold text-slate-900">Rekap & Laporan</h2>
                 </div>
 
@@ -498,7 +503,7 @@
             <!-- ========== VIEW: TRASH (ETD) ========== -->
             <div id="view-trash" class="sub-pane hidden space-y-3">
                 <div class="flex items-center gap-3">
-                    <button onclick="goToHome()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
+                    <button onclick="smartBack()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
                     <div>
                         <h2 class="text-lg font-extrabold text-red-600 leading-tight">Tempat Sampah</h2>
                         <p class="text-xs text-slate-500">Dihapus otomatis setelah 30 hari</p>
@@ -510,7 +515,7 @@
             <!-- ========== VIEW: KELOLA DATA (ETD) ========== -->
             <div id="view-kelola" class="sub-pane hidden space-y-3">
                 <div class="flex items-center gap-3">
-                    <button onclick="goToHome()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
+                    <button onclick="smartBack()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
                     <div>
                         <h2 class="text-lg font-extrabold text-slate-900 leading-tight">Kelola Data</h2>
                         <p class="text-xs text-slate-500">Data master yang dipakai pada form penilaian</p>
@@ -581,7 +586,7 @@
             <!-- ========== VIEW: BUAT LAPORAN ASSESSMENT (ETD) ========== -->
             <div id="view-laporan" class="sub-pane hidden space-y-3">
                 <div class="flex items-center gap-3">
-                    <button onclick="goToHome()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
+                    <button onclick="smartBack()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
                     <div class="flex-1 min-w-0">
                         <h2 class="text-lg font-extrabold text-slate-900 leading-tight">Buat Laporan Assessment</h2>
                         <p class="text-xs text-slate-500">Laporan manual ETD per peserta SDP</p>
@@ -758,7 +763,10 @@
                 </div>
                 <div>
                     <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">Bagian <span class="text-rose-500">*</span></span>
-                    <div id="ps-bagian-grid" class="grid grid-cols-2 gap-2"></div>
+                    <div class="flex items-center gap-2.5">
+                        <span id="ps-bagian-logo"></span>
+                        <select id="ps-bagian" class="field flex-1" onchange="pickPesertaBagianSel()"></select>
+                    </div>
                 </div>
                 <div>
                     <label for="ps-lokasi" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Lokasi penempatan <span class="text-rose-500">*</span></label>
@@ -1341,6 +1349,7 @@
         }
 
         function logout() {
+            navReset();
             removeKey('yc_sdp_role', 'session');
             currentUserRole = null;
             $('section-login').classList.remove('hidden');
@@ -1351,6 +1360,7 @@
         }
 
         function initPortal() {
+            navReset();
             pullBagianCloud();
             pullPesertaCloud();
             $('section-login').classList.add('hidden');
@@ -1464,6 +1474,7 @@
                 resetForm();
                 renderAll();
                 openView('view-riwayat');
+                navPurgeForm();
                 toast('Data berhasil disimpan ke Spreadsheet & Firebase!', 'success');
 
             } catch (error) {
@@ -2432,12 +2443,16 @@
         }
 
         function renderPesertaBagianGrid() {
-            $('ps-bagian-grid').innerHTML = bagianList.map((b, i) => {
-                const on = pesertaDraft.bagian === b.name;
-                return `<button type="button" onclick="pickPesertaBagian(${i})" class="flex items-center gap-2 p-2 rounded-xl border-2 text-left ${on ? 'border-amber-500 bg-amber-50' : 'border-slate-200 bg-white'}">${bagianLogo(b, 30)}<span class="text-[11px] font-bold text-slate-800 leading-tight break-words">${esc(b.name)}</span></button>`;
-            }).join('');
+            const sel = $('ps-bagian');
+            sel.innerHTML = '<option value="">Pilih bagian</option>' + bagianList.map(b => `<option value="${esc(b.name)}">${esc(b.name)}</option>`).join('');
+            sel.value = bagianList.some(b => b.name === pesertaDraft.bagian) ? pesertaDraft.bagian : '';
+            updatePesertaBagianLogo();
         }
-        function pickPesertaBagian(i) { pesertaDraft.bagian = bagianList[i].name; renderPesertaBagianGrid(); }
+        function updatePesertaBagianLogo() {
+            const v = $('ps-bagian').value;
+            $('ps-bagian-logo').innerHTML = v ? bagianLogo(findBagian(v), 44) : `<span class="inline-flex items-center justify-center rounded-xl bg-slate-100 text-slate-300" style="width:44px;height:44px">${ic('building')}</span>`;
+        }
+        function pickPesertaBagianSel() { pesertaDraft.bagian = $('ps-bagian').value; updatePesertaBagianLogo(); }
 
         function savePesertaModal() {
             const nama = $('ps-nama').value.trim().replace(/\s+/g, ' ');
@@ -2530,6 +2545,78 @@
         function refreshPesertaUI() { populatePesertaSelect(); renderPesertaCards(); }
 
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closePesertaModal(); });
+
+        // =====================================================================
+        // SMART BACK: merekam halaman yang dibuka & kembali ke sana
+        // =====================================================================
+        const NAV_TITLES = {
+            home: 'Beranda', 'view-draft': 'Draft Tersimpan', 'view-form': 'Form Penilaian', 'view-riwayat': 'Riwayat',
+            'view-rekap': 'Rekap & Laporan', 'view-trash': 'Tempat Sampah', 'view-kelola': 'Kelola Data', 'view-laporan': 'Buat Laporan'
+        };
+        const NAV_ETD_ONLY = ['view-rekap', 'view-trash', 'view-kelola', 'view-laporan'];
+        const NAV_MAX = 30;
+        let navStack = [], currentNav = 'home', navSkip = false;
+        const _goToHomeBase = goToHome, _openViewBase = openView;
+
+        // Foto kondisi halaman saat ditinggalkan (posisi scroll, tab, peserta laporan)
+        function navSnapshot() {
+            const e = { v: currentNav, y: window.scrollY || 0 };
+            if (currentNav === 'view-kelola') e.tab = kelolaTab;
+            if (currentNav === 'view-laporan') e.rk = reportKey;
+            return e;
+        }
+
+        function navRecord(target) {
+            if (!navSkip && target !== currentNav) {
+                navStack.push(navSnapshot());
+                if (navStack.length > NAV_MAX) navStack.shift();
+            }
+            currentNav = target;
+            navUpdateBtn();
+        }
+
+        goToHome = function () { navRecord('home'); _goToHomeBase(); };
+        openView = function (viewId) {
+            if (NAV_ETD_ONLY.includes(viewId) && currentUserRole !== 'ETD') return;
+            navRecord(viewId); _openViewBase(viewId);
+        };
+
+        function navUpdateBtn() {
+            const b = $('nav-back'); if (!b) return;
+            const top = navStack[navStack.length - 1];
+            b.classList.toggle('hidden', !top);
+            b.classList.toggle('flex', !!top);
+            if (top) {
+                const t = NAV_TITLES[top.v] || 'Sebelumnya';
+                $('nav-back-label').textContent = t;
+                b.setAttribute('aria-label', 'Kembali ke ' + t);
+            }
+        }
+
+        function smartBack() {
+            // Lewati entri yang sudah tidak valid (mis. halaman ETD saat peran bukan ETD)
+            let e = null;
+            while (navStack.length) {
+                const c = navStack.pop();
+                if (c.v !== currentNav && (!NAV_ETD_ONLY.includes(c.v) || currentUserRole === 'ETD')) { e = c; break; }
+            }
+            if (!e) { navUpdateBtn(); if (currentNav !== 'home') { navSkip = true; goToHome(); navSkip = false; navUpdateBtn(); } return; }
+
+            navSkip = true;
+            try { e.v === 'home' ? goToHome() : openView(e.v); } finally { navSkip = false; }
+            if (e.v === 'view-kelola' && e.tab) switchKelolaTab(e.tab);
+            if (e.v === 'view-laporan' && e.rk) {
+                const gs = reportGroups(), i = gs.findIndex(g => g.key === e.rk);
+                if (i >= 0) { reportGroupsCache = gs; selectReportPeserta(i); }
+            }
+            requestAnimationFrame(() => window.scrollTo(0, e.y || 0));
+            navUpdateBtn();
+        }
+
+        function navReset() { navStack = []; currentNav = 'home'; navUpdateBtn(); }
+
+        // Setelah form terkirim, form kosong tidak perlu bisa dikunjungi lagi lewat Kembali
+        function navPurgeForm() { navStack = navStack.filter(e => e.v !== 'view-form'); navUpdateBtn(); }
     </script>
 </body>
 </html>
