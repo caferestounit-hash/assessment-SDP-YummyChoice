@@ -149,13 +149,10 @@
     <header id="app-header" class="no-print sticky top-0 z-40 bg-yc-700 text-white shadow hidden">
         <div class="max-w-5xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between">
             <div class="flex items-center gap-2 min-w-0">
-            <button id="nav-back" onclick="smartBack()" class="hidden h-10 pl-2.5 pr-2.5 sm:pr-3 shrink-0 rounded-xl bg-yc-800 active:bg-yc-900 items-center gap-1.5 text-xs font-bold" aria-label="Kembali">
-                <svg class="ic !w-5 !h-5"><use href="#i-arrow-left"/></svg><span id="nav-back-label" class="hidden sm:inline max-w-[120px] truncate"></span>
-            </button>
-            <button onclick="goToHome()" class="flex items-center gap-2.5 text-left">
+                        <button onclick="goToHome()" class="flex items-center gap-2.5 text-left">
                 <svg class="w-9 h-9 rounded-xl shadow" viewBox="0 0 48 48" aria-hidden="true"><use href="#logo"/></svg>
                 <span class="leading-tight">
-                    <span class="block text-sm font-extrabold tracking-tight">YUMMY CHOICE</span>
+                    <span id="header-title" class="block text-sm font-extrabold tracking-tight">YUMMY CHOICE</span>
                     <span class="block text-[10px] font-semibold text-yc-200 uppercase tracking-wider">Assessment SDP</span>
                 </span>
             </button>
@@ -886,7 +883,13 @@
             { id: 11, title: 'Menerima Feedback', badge: 'OPEN MINDSET', desc: '<strong>Trainee mampu</strong> menerima masukan/kritik dari audience dan <strong>menanggapinya dengan sikap positif serta terbuka</strong>.' }
         ];
 
-        const PASSKEYS = { yummychoice: 'USER', kitakeren: 'ETD' };
+        // Passkey per Unit Bisnis (penulisan huruf besar/kecil tidak berpengaruh). ETD = lintas unit.
+        const PASSKEYS = {
+            yummychoice: { role: 'USER', unit: 'Yummy Choice' },
+            misdo: { role: 'USER', unit: 'Mister Donut' },
+            sato: { role: 'USER', unit: 'Washoku Sato' },
+            kitakeren: { role: 'ETD', unit: null }
+        };
         const DRAFT_KEY = 'yc_sdp_form_draft';
         const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
         const totalSteps = 13;          
@@ -932,6 +935,7 @@
 
         // ================= STATE =================
         let currentUserRole = null;
+        let currentUnit = null; // Unit Bisnis penguji yang login (null = ETD, lintas unit)
         let assessmentList = [];
         let trashList = [];
         let draftList = [];
@@ -1020,6 +1024,7 @@
                 if (!$('penguji-nama').value.trim()) { showError(0, 'Nama penilai wajib diisi.', $('penguji-nama')); return false; }
                 if (!document.querySelector('input[name="peran_penguji"]:checked')) { showError(0, 'Pilih peran penguji.', $('peran-group')); return false; }
                 if (!$('peserta-nama').value.trim()) { showError(0, 'Pilih nama peserta yang dinilai.', $('peserta-nama')); return false; }
+                { const _u = findPeserta($('peserta-nama').value); if (_u && currentUnit && unitOf(_u) !== currentUnit) { showError(0, `Peserta ini bukan bagian dari unit ${currentUnit}.`, $('peserta-nama')); return false; } }
                 { const _p = findPeserta($('peserta-nama').value); if (_p && isPesertaExpired(_p)) { showError(0, `${_p.nama} sudah melewati masa SDP ${SDP_MAX_MONTHS} bulan (karyawan tetap), tidak perlu dinilai lagi.`, $('peserta-nama')); return false; } }
                 if (!$('sdp-bagian').value || !$('sdp-cabang').value.trim()) { showError(0, 'Data peserta belum lengkap (bagian / lokasi). Minta ETD melengkapinya di Kelola Data.', $('peserta-nama')); return false; }
                 return true;
@@ -1145,7 +1150,7 @@
         function buildSummaryText() {
             const { sum, avg } = calculateTotalScore();
             const peran = document.querySelector('input[name="peran_penguji"]:checked')?.value || '-';
-            let t = `=== ASSESSMENT SDP YUMMY CHOICE ===\n`;
+            let t = `=== ASSESSMENT SDP ${String($('sdp-unit').value || currentUnit || 'Yummy Choice').toUpperCase()} ===\n`;
             t += `Nama Penilai: ${$('penguji-nama').value.trim()}\n`;
             t += `Peran Penguji: ${peran}\n`;
             t += `Nama Peserta: ${$('peserta-nama').value.trim()}\n`;
@@ -1188,7 +1193,7 @@
             return {
                 id: currentDraftId || ('DRF-' + Date.now()),
                 namaPenguji: $('penguji-nama').value, namaPeserta: $('peserta-nama').value,
-                peranPenguji: peran ? peran.value : '', sdpBagian: $('sdp-bagian').value, sdpCabang: $('sdp-cabang').value, sdpBatch: $('sdp-batch').value, sdpUnit: $('sdp-unit').value,
+                peranPenguji: peran ? peran.value : '', sdpBagian: $('sdp-bagian').value, sdpCabang: $('sdp-cabang').value, sdpBatch: $('sdp-batch').value, sdpUnit: $('sdp-unit').value || currentUnit || '',
                 scores, komentars, step: Math.min(currentStep, SUMMARY_STEP - 1), savedAt: new Date().toLocaleString('id-ID')
             };
         }
@@ -1220,6 +1225,7 @@
         function resumeDraft(id) {
             const d = draftList.find(x => x.id === id);
             if (!d) return;
+            if (!inMyUnit(d)) { toast('Draft ini milik unit lain', 'warn'); return; }
             
             resetForm(true); // reset visually first, but maintain structure
             currentDraftId = id;
@@ -1293,9 +1299,10 @@
         
         function renderDraftCards() {
             const c = $('draft-cards-container');
-            $('badge-count-draft').textContent = draftList.length;
+            const myDrafts = visibleDrafts();
+            $('badge-count-draft').textContent = myDrafts.length;
 
-            if (!draftList.length) {
+            if (!myDrafts.length) {
                 c.innerHTML = `
                     <div class="col-span-full card p-8 text-center space-y-1">
                         ${ic('folder', '!w-9 !h-9 text-slate-300')}
@@ -1305,7 +1312,7 @@
                 return;
             }
 
-            c.innerHTML = draftList.map(item => `
+            c.innerHTML = myDrafts.map(item => `
                 <div class="card p-4 border-l-4 border-l-sky-500 space-y-3">
                     <div class="flex justify-between items-start gap-2">
                         <div class="min-w-0">
@@ -1355,10 +1362,12 @@
         // ================= AUTH =================
         function handleLogin(e) {
             e.preventDefault();
-            const role = PASSKEYS[$('passkey-input').value.trim().toLowerCase()];
-            if (role) {
-                currentUserRole = role;
-                writeJSON('yc_sdp_role', role, 'session');
+            const acc = PASSKEYS[$('passkey-input').value.trim().toLowerCase()];
+            if (acc) {
+                currentUserRole = acc.role;
+                currentUnit = acc.unit;
+                writeJSON('yc_sdp_role', acc.role, 'session');
+                writeJSON('yc_sdp_unit', acc.unit, 'session');
                 $('login-error').classList.add('hidden');
                 initPortal();
             } else {
@@ -1368,13 +1377,19 @@
 
         function checkSession() {
             const role = readJSON('yc_sdp_role', null, 'session');
-            if (role === 'USER' || role === 'ETD') { currentUserRole = role; initPortal(); }
+            const unit = readJSON('yc_sdp_unit', null, 'session');
+            if (role === 'ETD') { currentUserRole = role; currentUnit = null; initPortal(); }
+            else if (role === 'USER' && UNITS.includes(unit)) { currentUserRole = role; currentUnit = unit; initPortal(); }
         }
 
         function logout() {
             navReset();
             removeKey('yc_sdp_role', 'session');
+            removeKey('yc_sdp_unit', 'session');
             currentUserRole = null;
+            currentUnit = null;
+            document.title = 'Portal Assessment SDP';
+            $('header-title').textContent = 'YUMMY CHOICE';
             $('section-login').classList.remove('hidden');
             $('dashboard-content').classList.add('hidden');
             $('app-header').classList.add('hidden');
@@ -1395,7 +1410,9 @@
             document.querySelectorAll('.etd-only').forEach(el => el.classList.toggle('hidden', !isETD));
             badge.innerHTML = isETD ? `${ic('shield', '!w-3.5 !h-3.5')}ETD` : `${ic('user', '!w-3.5 !h-3.5')}Penguji`;
             badge.className = 'px-2.5 py-1 rounded-full text-[11px] font-bold inline-flex items-center gap-1 ' + (isETD ? 'bg-slate-900 text-white' : 'bg-amber-100 text-amber-900');
-            $('welcome-heading').textContent = isETD ? 'Selamat Datang, Superadmin ETD' : 'Selamat Datang, Penguji';
+            $('welcome-heading').textContent = isETD ? 'Selamat Datang, Superadmin ETD' : `Selamat Datang, Penguji ${currentUnit}`;
+            $('header-title').textContent = currentUnit ? currentUnit.toUpperCase() : 'ETD · SEMUA UNIT';
+            document.title = `Portal Assessment SDP - ${currentUnit || 'ETD'}`;
 
             goToHome();
             renderAll();
@@ -1456,7 +1473,7 @@
                 namaPeserta: $('peserta-nama').value.trim(),
                 sdpBagian: $('sdp-bagian').value,
                 sdpCabang: $('sdp-cabang').value.trim(),
-                sdpUnit: $('sdp-unit').value || DEFAULT_UNIT,
+                sdpUnit: $('sdp-unit').value || currentUnit || DEFAULT_UNIT,
                 batch: $('sdp-batch').value.trim(),
                 scoreTotal: calculateTotalScore().avg,
                 scores, komentars,
@@ -1535,12 +1552,18 @@
             showStep(0);
         }
 
+        // Penguji unit hanya melihat data unitnya sendiri; ETD melihat semua
+        const inMyUnit = x => !currentUnit || ((x && (x.sdpUnit || x.unit)) || DEFAULT_UNIT) === currentUnit;
+        const visibleAssessments = () => assessmentList.filter(inMyUnit);
+        const visibleDrafts = () => draftList.filter(inMyUnit);
+
         // ================= RIWAYAT =================
         function renderRiwayatCards() {
             const c = $('riwayat-cards-container');
-            $('badge-count-riwayat').textContent = assessmentList.length;
+            const myAssess = visibleAssessments();
+            $('badge-count-riwayat').textContent = myAssess.length;
 
-            if (!assessmentList.length) {
+            if (!myAssess.length) {
                 c.innerHTML = `
                     <div class="col-span-full card p-8 text-center space-y-1">
                         ${ic('folder', '!w-9 !h-9 text-slate-300')}
@@ -1550,7 +1573,7 @@
                 return;
             }
 
-            c.innerHTML = assessmentList.map(item => `
+            c.innerHTML = myAssess.map(item => `
                 <button onclick="openModal('${item.id}')" class="card p-4 text-left border-l-4 border-l-amber-500 active:bg-amber-50 space-y-2">
                     <div class="flex justify-between items-start gap-3">
                         <div class="min-w-0">
@@ -2230,7 +2253,7 @@
             <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #b91c1c;padding-bottom:14px">
                 <div style="display:flex;align-items:center;gap:12px">
                     <svg style="width:46px;height:46px;border-radius:12px" viewBox="0 0 48 48"><use href="#logo"/></svg>
-                    <div><div style="font-weight:800;font-size:16px;letter-spacing:.02em;color:#7f1d1d">YUMMY CHOICE</div>
+                    <div><div style="font-weight:800;font-size:16px;letter-spacing:.02em;color:#7f1d1d">${esc(String(g.unit || DEFAULT_UNIT).toUpperCase())}</div>
                     <div style="font-size:9px;font-weight:700;letter-spacing:.16em;color:#64748b;text-transform:uppercase">Education &amp; Training Department</div></div>
                 </div>
                 <div style="text-align:right;font-size:10px;color:#64748b"><div style="font-weight:700;color:#0f172a">No. Dokumen</div><div>${esc(f.noDok) || '-'}</div></div>
@@ -2567,7 +2590,7 @@
             const curP = cur ? findPeserta(cur) : null;
             const keep = !!cur && !(curP && isPesertaExpired(curP)); // yang sudah lewat 16 bulan tidak dipertahankan
             const groups = {};
-            pesertaList.filter(p => !isPesertaExpired(p)).sort((a, b) => a.nama.localeCompare(b.nama, 'id')).forEach(p => {
+            pesertaList.filter(p => !isPesertaExpired(p) && (!currentUnit || unitOf(p) === currentUnit)).sort((a, b) => a.nama.localeCompare(b.nama, 'id')).forEach(p => {
                 const k = unitOf(p) + '||' + (p.batch || '');
                 (groups[k] = groups[k] || []).push(p);
             });
@@ -2577,11 +2600,13 @@
                 return (UNITS.indexOf(ua) - UNITS.indexOf(ub)) || (bv(ba) - bv(bb)) || ba.localeCompare(bb, 'id');
             });
             sel.innerHTML = '<option value="">Pilih nama peserta</option>' +
-                keys.map(k => { const [u, b] = k.split('||'); return `<optgroup label="${esc(u + ' · ' + (b || 'Tanpa batch'))}">${groups[k].map(p => `<option value="${esc(p.nama)}">${esc(p.nama)}</option>`).join('')}</optgroup>`; }).join('');
+                keys.map(k => { const [u, b] = k.split('||'); return `<optgroup label="${esc(currentUnit ? (b || 'Tanpa batch') : u + ' · ' + (b || 'Tanpa batch'))}">${groups[k].map(p => `<option value="${esc(p.nama)}">${esc(p.nama)}</option>`).join('')}</optgroup>`; }).join('');
             if (keep) ensurePesertaOption(cur);
             sel.value = keep ? cur : '';
             if (cur && !keep) ['sdp-bagian', 'sdp-cabang', 'sdp-batch', 'sdp-unit'].forEach(i => { $(i).value = ''; });
-            $('peserta-empty')?.classList.toggle('hidden', pesertaList.some(p => !isPesertaExpired(p)));
+            const hasActive = pesertaList.some(p => !isPesertaExpired(p) && (!currentUnit || unitOf(p) === currentUnit));
+            const pe = $('peserta-empty');
+            if (pe) { pe.textContent = `Belum ada peserta aktif${currentUnit ? ' untuk ' + currentUnit : ''}. Minta ETD menambahkannya di menu Kelola Data.`; pe.classList.toggle('hidden', hasActive); }
             updateBagianPreview();
         }
 
