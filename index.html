@@ -136,6 +136,8 @@
         <symbol id="i-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></symbol>
         <symbol id="i-file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
         <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
+        <symbol id="i-map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+        <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
     </svg>
 
     <!-- TOAST -->
@@ -246,7 +248,7 @@
                         <span class="w-12 h-12 shrink-0 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-settings"/></svg></span>
                         <span class="flex-1 min-w-0">
                             <span class="block font-extrabold text-slate-900">Kelola Data <span class="ml-1 px-1.5 py-0.5 bg-slate-900 text-white rounded text-[9px] font-black align-middle">ETD</span></span>
-                            <span class="block text-xs text-slate-500">Atur daftar Bagian SDP & logonya</span>
+                            <span class="block text-xs text-slate-500">Kelola Peserta SDP Trainee & Bagian SDP</span>
                         </span>
                         <svg class="ic text-slate-300"><use href="#i-chevron-right"/></svg>
                     </button>
@@ -343,20 +345,18 @@
 
                         <div>
                             <label for="peserta-nama" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">3. Nama Peserta SDP yang Dinilai <span class="text-rose-500">*</span></label>
-                            <input type="text" id="peserta-nama" placeholder="Nama peserta trainee" class="field">
-                        </div>
-
-                        <div>
-                            <label for="sdp-bagian" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">4. Bagian SDP Trainee <span class="text-rose-500">*</span></label>
-                            <select id="sdp-bagian" class="field">
-                                <option value="">Pilih bagian SDP</option>
+                            <select id="peserta-nama" class="field" onchange="onPesertaPicked()">
+                                <option value="">Pilih nama peserta</option>
                             </select>
-                            <div id="bagian-preview" class="hidden mt-2 items-center gap-2.5 px-3 py-2 rounded-xl bg-slate-50 border border-slate-100"></div>
+                            <p id="peserta-empty" class="hidden mt-2 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">Daftar peserta belum diisi. Minta ETD menambahkannya di menu Kelola Data.</p>
+                            <div id="peserta-detail" class="hidden mt-3"></div>
                         </div>
 
-                        <div>
-                            <label for="sdp-cabang" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">5. Cabang Penempatan SDP <span class="text-rose-500">*</span></label>
-                            <input type="text" id="sdp-cabang" placeholder="mis. CK Jakarta / Head Office" class="field">
+                        <!-- Terisi otomatis dari data peserta (disembunyikan) -->
+                        <div class="hidden" aria-hidden="true">
+                            <select id="sdp-bagian"><option value="">Pilih bagian SDP</option></select>
+                            <input type="text" id="sdp-cabang" tabindex="-1">
+                            <input type="text" id="sdp-batch" tabindex="-1">
                         </div>
 
                         <div id="err-0" class="hidden p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm font-bold"></div>
@@ -517,23 +517,63 @@
                     </div>
                 </div>
 
-                <div class="card p-4 space-y-4">
+                <div class="grid grid-cols-2 gap-1 p-1 bg-slate-200/70 rounded-xl">
+                    <button id="ktab-peserta" onclick="switchKelolaTab('peserta')" class="seg-btn active h-11 rounded-lg text-sm font-bold flex items-center justify-center gap-1.5">
+                        <svg class="ic !w-4 !h-4"><use href="#b-users"/></svg>Peserta SDP <span id="ktab-peserta-n" class="px-1.5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-black">0</span>
+                    </button>
+                    <button id="ktab-bagian" onclick="switchKelolaTab('bagian')" class="seg-btn h-11 rounded-lg text-sm font-bold flex items-center justify-center gap-1.5">
+                        <svg class="ic !w-4 !h-4"><use href="#b-building"/></svg>Bagian SDP <span id="ktab-bagian-n" class="px-1.5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-black">0</span>
+                    </button>
+                </div>
+
+                <!-- PANE: PESERTA SDP TRAINEE -->
+                <div id="kelola-pane-peserta" class="space-y-3">
                     <div class="flex items-start justify-between gap-3">
                         <div>
-                            <div class="flex items-center gap-2">
-                                <h3 class="font-extrabold text-slate-900">Bagian SDP Trainee</h3>
-                                <span id="bagian-count" class="px-2 py-0.5 bg-teal-100 text-teal-800 rounded-full text-xs font-black">0</span>
-                            </div>
-                            <p class="text-xs text-slate-500 mt-0.5">Menjadi pilihan pada pertanyaan "Bagian SDP Trainee" di form.</p>
+                            <h3 class="font-extrabold text-slate-900">Peserta SDP Trainee</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Nama, bagian, lokasi, dan batch terisi otomatis di form saat peserta dipilih.</p>
                         </div>
-                        <button onclick="openBagianModal()" class="h-10 px-3.5 shrink-0 bg-yc-600 active:bg-yc-800 text-white font-bold rounded-xl text-sm flex items-center gap-1.5">
+                        <button onclick="openPesertaModal()" class="h-10 px-3.5 shrink-0 bg-yc-600 active:bg-yc-800 text-white font-bold rounded-xl text-sm flex items-center gap-1.5">
                             <svg class="ic !w-4 !h-4"><use href="#i-plus"/></svg>Tambah
                         </button>
                     </div>
-                    <div id="bagian-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-                    <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100">
-                        <span id="bagian-sync-status" class="text-[11px] font-semibold text-slate-400"></span>
-                        <button onclick="resetBagianDefault()" class="text-xs font-bold text-slate-500 underline">Kembalikan ke daftar awal</button>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="card p-3 border-l-4 border-l-amber-500"><div class="text-[10px] font-bold text-slate-500 uppercase leading-tight">Peserta</div><div id="pt-stat-total" class="text-2xl font-black text-slate-900 mt-0.5">0</div></div>
+                        <div class="card p-3 border-l-4 border-l-teal-500"><div class="text-[10px] font-bold text-slate-500 uppercase leading-tight">Bagian</div><div id="pt-stat-bagian" class="text-2xl font-black text-slate-900 mt-0.5">0</div></div>
+                        <div class="card p-3 border-l-4 border-l-violet-500"><div class="text-[10px] font-bold text-slate-500 uppercase leading-tight">Batch</div><div id="pt-stat-batch" class="text-2xl font-black text-slate-900 mt-0.5">0</div></div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-[1fr_190px_150px] gap-2">
+                        <input type="search" id="pt-search" oninput="renderPesertaCards()" placeholder="Cari nama / lokasi" class="field !py-2.5 col-span-2 sm:col-span-1">
+                        <select id="pt-f-bagian" onchange="renderPesertaCards()" class="field !py-2.5"></select>
+                        <select id="pt-f-batch" onchange="renderPesertaCards()" class="field !py-2.5"></select>
+                    </div>
+
+                    <div id="peserta-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+                    <div id="peserta-sync-status" class="text-[11px] font-semibold text-slate-400 text-center"></div>
+                </div>
+
+                <!-- PANE: BAGIAN SDP -->
+                <div id="kelola-pane-bagian" class="hidden">
+                    <div class="card p-4 space-y-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="font-extrabold text-slate-900">Bagian SDP Trainee</h3>
+                                    <span id="bagian-count" class="px-2 py-0.5 bg-teal-100 text-teal-800 rounded-full text-xs font-black">0</span>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-0.5">Dipakai saat menentukan bagian setiap peserta.</p>
+                            </div>
+                            <button onclick="openBagianModal()" class="h-10 px-3.5 shrink-0 bg-yc-600 active:bg-yc-800 text-white font-bold rounded-xl text-sm flex items-center gap-1.5">
+                                <svg class="ic !w-4 !h-4"><use href="#i-plus"/></svg>Tambah
+                            </button>
+                        </div>
+                        <div id="bagian-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+                        <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100">
+                            <span id="bagian-sync-status" class="text-[11px] font-semibold text-slate-400"></span>
+                            <button onclick="resetBagianDefault()" class="text-xs font-bold text-slate-500 underline">Kembalikan ke daftar awal</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -703,6 +743,42 @@
         </div>
     </div>
 
+    <!-- MODAL: TAMBAH / UBAH PESERTA SDP -->
+    <div id="peserta-modal" class="no-print fixed inset-0 z-50 hidden bg-black/60 flex items-end sm:items-center justify-center sm:p-4" onclick="if(event.target===this)closePesertaModal()">
+        <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92dvh]">
+            <div class="px-4 py-3 bg-yc-700 text-white rounded-t-3xl flex items-center justify-between gap-3">
+                <h3 id="peserta-modal-title" class="font-extrabold text-base">Tambah Peserta SDP</h3>
+                <button onclick="closePesertaModal()" class="w-10 h-10 shrink-0 rounded-full bg-white/10 active:bg-white/20 flex items-center justify-center" aria-label="Tutup"><svg class="ic"><use href="#i-x"/></svg></button>
+            </div>
+            <div class="p-4 overflow-y-auto space-y-4">
+                <div>
+                    <label for="ps-nama" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Nama SDP Trainee <span class="text-rose-500">*</span></label>
+                    <input id="ps-nama" maxlength="60" placeholder="Nama lengkap peserta" class="field" autocomplete="off">
+                    <p id="ps-rename-hint" class="hidden mt-1.5 text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 font-semibold">Mengganti nama tidak mengubah penilaian lama yang sudah terkirim.</p>
+                </div>
+                <div>
+                    <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">Bagian <span class="text-rose-500">*</span></span>
+                    <div id="ps-bagian-grid" class="grid grid-cols-2 gap-2"></div>
+                </div>
+                <div>
+                    <label for="ps-lokasi" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Lokasi penempatan <span class="text-rose-500">*</span></label>
+                    <input id="ps-lokasi" list="dl-lokasi" maxlength="60" placeholder="mis. CK Jakarta / Head Office" class="field" autocomplete="off">
+                    <datalist id="dl-lokasi"></datalist>
+                </div>
+                <div>
+                    <label for="ps-batch" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Batch / Angkatan</label>
+                    <input id="ps-batch" list="dl-batch" maxlength="40" placeholder="mis. Batch 5 / Angkatan 2026" class="field" autocomplete="off">
+                    <datalist id="dl-batch"></datalist>
+                </div>
+                <div id="ps-err" class="hidden p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm font-bold"></div>
+            </div>
+            <div class="px-4 py-3 border-t border-slate-100 safe-bottom grid grid-cols-2 gap-2">
+                <button onclick="closePesertaModal()" class="h-12 bg-slate-100 active:bg-slate-200 text-slate-800 font-bold rounded-xl text-sm">Batal</button>
+                <button onclick="savePesertaModal()" class="h-12 bg-yc-600 active:bg-yc-800 text-white font-bold rounded-xl text-sm">Simpan</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: TAMBAH / UBAH BAGIAN SDP -->
     <div id="bagian-modal" class="no-print fixed inset-0 z-50 hidden bg-black/60 flex items-end sm:items-center justify-center sm:p-4" onclick="if(event.target===this)closeBagianModal()">
         <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92dvh]">
@@ -718,7 +794,7 @@
                         <input id="bagian-name" maxlength="40" placeholder="mis. FINANCE" class="field uppercase" autocomplete="off">
                     </div>
                 </div>
-                <p id="bagian-rename-hint" class="hidden text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 font-semibold">Mengganti nama tidak mengubah data penilaian lama yang sudah terkirim.</p>
+                <p id="bagian-rename-hint" class="hidden text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 font-semibold">Peserta yang memakai bagian ini ikut diperbarui. Penilaian lama yang sudah terkirim tidak berubah.</p>
 
                 <div>
                     <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">Ikon</span>
@@ -921,9 +997,8 @@
             if (step === 0) {
                 if (!$('penguji-nama').value.trim()) { showError(0, 'Nama penilai wajib diisi.', $('penguji-nama')); return false; }
                 if (!document.querySelector('input[name="peran_penguji"]:checked')) { showError(0, 'Pilih peran penguji.', $('peran-group')); return false; }
-                if (!$('peserta-nama').value.trim()) { showError(0, 'Nama peserta wajib diisi.', $('peserta-nama')); return false; }
-                if (!$('sdp-bagian').value) { showError(0, 'Pilih bagian SDP trainee.', $('sdp-bagian')); return false; }
-                if (!$('sdp-cabang').value.trim()) { showError(0, 'Cabang penempatan wajib diisi.', $('sdp-cabang')); return false; }
+                if (!$('peserta-nama').value.trim()) { showError(0, 'Pilih nama peserta yang dinilai.', $('peserta-nama')); return false; }
+                if (!$('sdp-bagian').value || !$('sdp-cabang').value.trim()) { showError(0, 'Data peserta belum lengkap (bagian / lokasi). Minta ETD melengkapinya di Kelola Data.', $('peserta-nama')); return false; }
                 return true;
             }
             if (step >= 1 && step <= 11) {
@@ -1028,7 +1103,7 @@
             $('sum-penilai').textContent = $('penguji-nama').value.trim() || '-';
             $('sum-peran').textContent = peran;
             $('sum-peserta').textContent = $('peserta-nama').value.trim() || '-';
-            $('sum-bagian-cabang').textContent = `${$('sdp-bagian').value} / ${$('sdp-cabang').value.trim()}`;
+            $('sum-bagian-cabang').textContent = `${$('sdp-bagian').value} / ${$('sdp-cabang').value.trim()}` + ($('sdp-batch').value ? ` · ${$('sdp-batch').value}` : '');
 
             $('summary-breakdown-list').innerHTML = kriteriaList.map(k => `
                 <div class="p-3 rounded-xl bg-white border border-slate-200 text-xs space-y-1.5">
@@ -1053,6 +1128,7 @@
             t += `Nama Peserta: ${$('peserta-nama').value.trim()}\n`;
             t += `Bagian Trainee: ${$('sdp-bagian').value}\n`;
             t += `Cabang Penempatan: ${$('sdp-cabang').value.trim()}\n`;
+            if ($('sdp-batch').value) t += `Batch/Angkatan: ${$('sdp-batch').value}\n`;
             t += `-----------------------------------\n`;
             t += `TOTAL SKOR: ${sum} / 110\nRATA-RATA NILAI: ${avg.toFixed(1)}\nPREDIKAT: ${getPredikat(avg).label}\n`;
             t += `-----------------------------------\n\n`;
@@ -1088,7 +1164,7 @@
             return {
                 id: currentDraftId || ('DRF-' + Date.now()),
                 namaPenguji: $('penguji-nama').value, namaPeserta: $('peserta-nama').value,
-                peranPenguji: peran ? peran.value : '', sdpBagian: $('sdp-bagian').value, sdpCabang: $('sdp-cabang').value,
+                peranPenguji: peran ? peran.value : '', sdpBagian: $('sdp-bagian').value, sdpCabang: $('sdp-cabang').value, sdpBatch: $('sdp-batch').value,
                 scores, komentars, step: Math.min(currentStep, SUMMARY_STEP - 1), savedAt: new Date().toLocaleString('id-ID')
             };
         }
@@ -1125,11 +1201,15 @@
             currentDraftId = id;
             
             $('penguji-nama').value = d.namaPenguji || '';
+            ensurePesertaOption(d.namaPeserta);
             $('peserta-nama').value = d.namaPeserta || '';
             ensureBagianOption(d.sdpBagian);
             $('sdp-bagian').value = d.sdpBagian || '';
             updateBagianPreview();
             $('sdp-cabang').value = d.sdpCabang || '';
+            $('sdp-batch').value = d.sdpBatch || '';
+            applyPesertaFromMaster(d.namaPeserta); // pakai data terbaru dari master bila ada
+            updateBagianPreview();
             
             if (d.peranPenguji) {
                 const radio = [...document.querySelectorAll('input[name="peran_penguji"]')].find(r => r.value === d.peranPenguji);
@@ -1218,7 +1298,9 @@
         // ================= DATA =================
         function loadInitialData() {
             loadBagian();
+            loadPeserta();
             populateBagianSelect();
+            populatePesertaSelect();
             assessmentList = readJSON('yc_sdp_assessments', []);
             trashList = readJSON('yc_sdp_trash', []);
             const now = Date.now();
@@ -1270,6 +1352,7 @@
 
         function initPortal() {
             pullBagianCloud();
+            pullPesertaCloud();
             $('section-login').classList.add('hidden');
             $('dashboard-content').classList.remove('hidden');
             $('app-header').classList.remove('hidden');
@@ -1292,6 +1375,7 @@
             updateLaporanStats(); 
             renderDraftCards();
             refreshBagianUI();
+            refreshPesertaUI();
             refreshReportData();
         }
 
@@ -1309,7 +1393,7 @@
             document.querySelectorAll('.sub-pane').forEach(el => el.classList.add('hidden'));
             $(viewId).classList.remove('hidden');
             $('form-actions').classList.toggle('hidden', viewId !== 'view-form');
-            if (viewId === 'view-kelola') renderBagianList();
+            if (viewId === 'view-kelola') openKelola();
             if (viewId === 'view-laporan') openLaporanHome();
             if (viewId === 'view-form') { if (currentStep === SUMMARY_STEP) renderSummary(); showStep(currentStep); }
             else window.scrollTo(0, 0);
@@ -1339,6 +1423,7 @@
                 namaPeserta: $('peserta-nama').value.trim(),
                 sdpBagian: $('sdp-bagian').value,
                 sdpCabang: $('sdp-cabang').value.trim(),
+                batch: $('sdp-batch').value.trim(),
                 scoreTotal: calculateTotalScore().avg,
                 scores, komentars,
                 timestamp: new Date().toLocaleString('id-ID'),
@@ -1502,11 +1587,11 @@
 
         function exportRekapData() {
             if (!assessmentList.length) { toast('Tidak ada data untuk diexport', 'warn'); return; }
-            const head = ['ID', 'Waktu Kirim', 'Peserta SDP', 'Bagian', 'Cabang', 'Penguji', 'Peran Penguji', 'Skor Rata-Rata']
+            const head = ['ID', 'Waktu Kirim', 'Peserta SDP', 'Bagian', 'Cabang', 'Batch', 'Penguji', 'Peran Penguji', 'Skor Rata-Rata']
                 .concat(kriteriaList.map(k => `K${k.id} ${k.title}`));
             const lines = [head.map(csvCell).join(',')];
             assessmentList.forEach(i => {
-                lines.push([i.id, i.timestamp, i.namaPeserta, i.sdpBagian, i.sdpCabang, i.namaPenguji, i.peranPenguji, i.scoreTotal]
+                lines.push([i.id, i.timestamp, i.namaPeserta, i.sdpBagian, i.sdpCabang, i.batch || '', i.namaPenguji, i.peranPenguji, i.scoreTotal]
                     .concat(kriteriaList.map(k => i.scores[k.id] ?? '')).map(csvCell).join(','));
             });
             const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
@@ -1600,7 +1685,7 @@
             $('modal-penguji').textContent = item.namaPenguji;
             $('modal-peran').textContent = item.peranPenguji;
             $('modal-bagian').innerHTML = `<span class="inline-flex items-center gap-1.5">${bagianLogo(findBagian(item.sdpBagian), 22)}${esc(item.sdpBagian)}</span>`;
-            $('modal-cabang').textContent = item.sdpCabang;
+            $('modal-cabang').textContent = item.sdpCabang + (item.batch ? ' · ' + item.batch : '');
             $('modal-total-score').textContent = `${item.scoreTotal} / 10.0`;
             $('modal-predikat').textContent = getPredikat(item.scoreTotal).label;
 
@@ -1737,14 +1822,6 @@
             updateBagianPreview();
         }
 
-        function updateBagianPreview() {
-            const box = $('bagian-preview'); if (!box) return;
-            const v = $('sdp-bagian').value;
-            if (!v) { box.classList.add('hidden'); box.classList.remove('flex'); return; }
-            box.innerHTML = `${bagianLogo(findBagian(v), 32)}<span class="text-sm font-extrabold text-slate-800">${esc(v)}</span>`;
-            box.classList.remove('hidden'); box.classList.add('flex');
-        }
-
         function refreshBagianUI() { populateBagianSelect(); renderBagianList(); }
 
         // ---- Daftar di menu Kelola Data ----
@@ -1760,7 +1837,7 @@
                     ${bagianLogo(b, 44)}
                     <div class="flex-1 min-w-0">
                         <div class="font-extrabold text-slate-900 text-sm break-words leading-tight">${esc(b.name)}</div>
-                        <div class="text-[11px] text-slate-500 mt-0.5">${used ? used + ' penilaian terkirim' : 'Belum dipakai'}</div>
+                        <div class="text-[11px] text-slate-500 mt-0.5">${(() => { const np = pesertaList.filter(x => x.bagian === b.name).length; return [np ? np + ' peserta' : '', used ? used + ' penilaian' : ''].filter(Boolean).join(' · ') || 'Belum dipakai'; })()}</div>
                     </div>
                     <div class="flex items-center gap-1 shrink-0">
                         <div class="flex flex-col gap-0.5">
@@ -1785,7 +1862,8 @@
             const b = bagianList.find(x => x.id === id); if (!b) return;
             if (bagianList.length <= 1) { toast('Minimal harus ada 1 bagian', 'warn'); return; }
             const used = assessmentList.filter(a => a.sdpBagian === b.name).length;
-            const note = used ? `\n\n${used} penilaian lama dengan bagian ini tetap tersimpan.` : '';
+            const np = pesertaList.filter(x => x.bagian === b.name).length;
+            const note = (np ? `\n\n${np} peserta masih memakai bagian ini; pilih ulang bagiannya di tab Peserta.` : '') + (used ? `\n\n${used} penilaian lama dengan bagian ini tetap tersimpan.` : '');
             if (!confirm(`Hapus bagian "${b.name}" dari daftar pilihan?${note}`)) return;
             bagianList = bagianList.filter(x => x.id !== id);
             commitBagian('Bagian dihapus');
@@ -1863,6 +1941,7 @@
 
             if (bagianEditId) {
                 const b = bagianList.find(x => x.id === bagianEditId);
+                if (b.name !== name) renameBagianInPeserta(b.name, name);
                 b.name = name; b.icon = bagianDraft.icon; b.color = bagianDraft.color;
                 if (bagianDraft.img) b.img = bagianDraft.img; else delete b.img;
             } else {
@@ -1890,7 +1969,7 @@
             assessmentList.forEach(a => {
                 const nama = String(a.namaPeserta || '').trim();
                 const key = nama.toLowerCase() + '|' + (a.sdpBagian || '');
-                if (!map.has(key)) map.set(key, { key, nama, bagian: a.sdpBagian, cabang: a.sdpCabang, items: [] });
+                if (!map.has(key)) map.set(key, { key, nama, bagian: a.sdpBagian, cabang: a.sdpCabang, batch: a.batch || '', items: [] });
                 map.get(key).items.push(a);
             });
             return [...map.values()].map(g => {
@@ -1953,7 +2032,7 @@
                     ${bagianLogo(findBagian(g.bagian), 46)}
                     <span class="flex-1 min-w-0">
                         <span class="block font-extrabold text-slate-900 text-sm break-words leading-tight">${esc(g.nama)}</span>
-                        <span class="block text-[11px] text-slate-500 truncate mt-0.5">${esc(g.bagian)} · ${esc(g.cabang)}</span>
+                        <span class="block text-[11px] text-slate-500 truncate mt-0.5">${esc(g.bagian)} · ${esc(g.cabang)}${g.batch ? ' · ' + esc(g.batch) : ''}</span>
                         <span class="mt-1.5 flex flex-wrap gap-1.5">
                             <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold">${g.items.length} penilai</span>
                             ${saved[g.key] ? '<span class="px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 text-[10px] font-bold">Draf laporan</span>' : ''}
@@ -2104,6 +2183,7 @@
                     <table style="width:100%;font-size:11px;border-collapse:collapse">
                         <tr><td style="color:#64748b;padding:2px 0;width:90px">Bagian</td><td style="font-weight:700">${esc(g.bagian)}</td></tr>
                         <tr><td style="color:#64748b;padding:2px 0">Penempatan</td><td style="font-weight:700">${esc(g.cabang) || '-'}</td></tr>
+                        ${g.batch ? `<tr><td style="color:#64748b;padding:2px 0">Batch</td><td style="font-weight:700">${esc(g.batch)}</td></tr>` : ''}
                         <tr><td style="color:#64748b;padding:2px 0">Jumlah penilai</td><td style="font-weight:700">${g.items.length} orang</td></tr>
                         <tr><td style="color:#64748b;padding:2px 0">Tanggal laporan</td><td style="font-weight:700">${tgl}</td></tr>
                     </table>
@@ -2176,6 +2256,280 @@
             $('sdp-bagian').addEventListener('change', updateBagianPreview);
         });
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBagianModal(); });
+
+        // =====================================================================
+        // KELOLA DATA: PESERTA SDP TRAINEE
+        // =====================================================================
+        const PESERTA_KEY = 'yc_sdp_peserta', PESERTA_TS_KEY = 'yc_sdp_peserta_ts';
+        let pesertaList = [];
+        let pesertaEditId = null, pesertaDraft = null;
+        let kelolaTab = 'peserta';
+
+        function loadPeserta() {
+            const l = readJSON(PESERTA_KEY, []);
+            pesertaList = Array.isArray(l) ? l : [];
+        }
+        function savePeserta() { writeJSON(PESERTA_KEY, pesertaList); writeJSON(PESERTA_TS_KEY, Date.now()); }
+        const findPeserta = nama => pesertaList.find(p => p.nama.trim().toLowerCase() === String(nama || '').trim().toLowerCase());
+        const initialsOf = n => { const p = String(n).trim().split(/\s+/); return ((p[0]?.[0] || '') + (p.length > 1 ? p[p.length - 1][0] : '')).toUpperCase() || '?'; };
+        const uniq = arr => [...new Set(arr.filter(Boolean))];
+
+        // ---- Sinkron cloud (Firestore: pengaturan/peserta_sdp) ----
+        function setPesertaSync(text, ok) {
+            const el = $('peserta-sync-status'); if (!el) return;
+            el.textContent = text;
+            el.className = 'text-[11px] font-semibold text-center ' + (ok ? 'text-emerald-600' : 'text-slate-400');
+        }
+
+        async function pushPesertaCloud() {
+            if (!(window.db && window.fsSetDoc && window.fsDoc)) { setPesertaSync('Hanya tersimpan di perangkat ini (cloud belum terhubung)', false); return false; }
+            try {
+                const clean = JSON.parse(JSON.stringify(pesertaList));
+                await window.fsSetDoc(window.fsDoc(window.db, 'pengaturan', 'peserta_sdp'), { list: clean, updatedAt: readJSON(PESERTA_TS_KEY, Date.now()) });
+                setPesertaSync('Tersinkron ke cloud · ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }), true);
+                return true;
+            } catch (e) {
+                console.error('Sinkron peserta gagal:', e);
+                setPesertaSync('Gagal sinkron ke cloud (cek rules Firestore). Data tetap tersimpan di perangkat ini.', false);
+                toast('Tersimpan lokal, tapi gagal sinkron ke cloud', 'warn');
+                return false;
+            }
+        }
+
+        async function pullPesertaCloud() {
+            try {
+                if (!(window.db && window.fsGetDoc && window.fsDoc)) return;
+                const snap = await window.fsGetDoc(window.fsDoc(window.db, 'pengaturan', 'peserta_sdp'));
+                const localTs = readJSON(PESERTA_TS_KEY, 0);
+                if (snap.exists()) {
+                    const d = snap.data();
+                    if (Array.isArray(d.list) && (d.updatedAt || 0) >= localTs) {
+                        pesertaList = d.list; writeJSON(PESERTA_KEY, pesertaList); writeJSON(PESERTA_TS_KEY, d.updatedAt || 0);
+                        refreshPesertaUI(); setPesertaSync('Tersinkron dari cloud', true);
+                    } else if (currentUserRole === 'ETD' && localTs > (d.updatedAt || 0)) pushPesertaCloud();
+                } else if (currentUserRole === 'ETD' && pesertaList.length) pushPesertaCloud();
+            } catch (e) { console.warn('Ambil peserta dari cloud gagal:', e); }
+        }
+
+        function commitPeserta(msg) {
+            savePeserta(); refreshPesertaUI(); renderBagianList(); pushPesertaCloud();
+            if (msg) toast(msg, 'success');
+        }
+
+        function renameBagianInPeserta(oldName, newName) {
+            let changed = false;
+            pesertaList.forEach(p => { if (p.bagian === oldName) { p.bagian = newName; changed = true; } });
+            if (changed) { savePeserta(); pushPesertaCloud(); }
+        }
+
+        // ---- Tab Kelola Data ----
+        function switchKelolaTab(tab) {
+            kelolaTab = tab;
+            $('kelola-pane-peserta').classList.toggle('hidden', tab !== 'peserta');
+            $('kelola-pane-bagian').classList.toggle('hidden', tab !== 'bagian');
+            $('ktab-peserta').classList.toggle('active', tab === 'peserta');
+            $('ktab-bagian').classList.toggle('active', tab === 'bagian');
+        }
+
+        function openKelola() {
+            switchKelolaTab(kelolaTab);
+            renderBagianList(); refreshPesertaUI();
+        }
+
+        // ---- Kartu peserta ----
+        function fillSelect(sel, firstLabel, values) {
+            const cur = sel.value;
+            sel.innerHTML = `<option value="">${firstLabel}</option>` + values.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+            sel.value = values.includes(cur) ? cur : '';
+        }
+
+        function renderPesertaCards() {
+            const c = $('peserta-cards'); if (!c) return;
+            $('pt-stat-total').textContent = pesertaList.length;
+            $('pt-stat-bagian').textContent = uniq(pesertaList.map(p => p.bagian)).length;
+            $('pt-stat-batch').textContent = uniq(pesertaList.map(p => p.batch)).length;
+            $('ktab-peserta-n').textContent = pesertaList.length;
+
+            fillSelect($('pt-f-bagian'), 'Semua bagian', uniq(pesertaList.map(p => p.bagian)).sort());
+            fillSelect($('pt-f-batch'), 'Semua batch', uniq(pesertaList.map(p => p.batch)).sort());
+
+            const kw = ($('pt-search').value || '').toLowerCase().trim();
+            const fb = $('pt-f-bagian').value, ft = $('pt-f-batch').value;
+            const rows = pesertaList.filter(p =>
+                (!kw || p.nama.toLowerCase().includes(kw) || String(p.lokasi || '').toLowerCase().includes(kw)) &&
+                (!fb || p.bagian === fb) && (!ft || p.batch === ft))
+                .sort((a, b) => a.nama.localeCompare(b.nama, 'id'));
+
+            if (!pesertaList.length) {
+                c.innerHTML = `<div class="col-span-full card p-8 text-center space-y-2">${ic('user', '!w-9 !h-9 text-slate-300')}
+                    <p class="text-sm font-bold text-slate-800">Belum ada peserta SDP</p>
+                    <p class="text-xs text-slate-500">Tambahkan peserta agar bisa dipilih di form penilaian.</p>
+                    <button onclick="openPesertaModal()" class="h-10 px-4 bg-yc-600 text-white font-bold rounded-xl text-sm">Tambah peserta pertama</button></div>`;
+                return;
+            }
+            if (!rows.length) { c.innerHTML = '<div class="col-span-full p-8 text-center text-sm text-slate-400">Tidak ada peserta yang cocok.</div>'; return; }
+
+            c.innerHTML = rows.map(p => {
+                const b = findBagian(p.bagian);
+                const [cbg, cfg] = BAGIAN_COLORS[b.color] || BAGIAN_COLORS.slate;
+                const done = assessmentList.filter(a => String(a.namaPeserta || '').trim().toLowerCase() === p.nama.trim().toLowerCase()).length;
+                const glyph = b.img ? '' : `<svg style="position:absolute;right:10px;top:-8px;width:88px;height:88px;opacity:.16;color:${cfg}" aria-hidden="true"><use href="#b-${esc(b.icon || 'building')}"/></svg>`;
+                return `
+                <div class="card overflow-hidden flex flex-col">
+                    <div class="relative h-[68px]" style="background:${cbg}">
+                        ${glyph}
+                        ${p.batch ? `<span class="absolute right-3 top-3 px-2.5 py-1 rounded-full bg-white/85 text-[10px] font-black uppercase tracking-wide" style="color:${cfg}">${esc(p.batch)}</span>` : ''}
+                        <span class="absolute left-4 -bottom-6 w-14 h-14 rounded-full border-4 border-white flex items-center justify-center text-lg font-black text-white shadow" style="background:${cfg}">${esc(initialsOf(p.nama))}</span>
+                    </div>
+                    <div class="px-4 pt-8 pb-3 flex-1 space-y-2.5">
+                        <h4 class="font-extrabold text-slate-900 leading-tight break-words">${esc(p.nama)}</h4>
+                        <div class="space-y-1.5 text-xs text-slate-600">
+                            <div class="flex items-center gap-2">${bagianLogo(b, 22)}<span class="font-bold text-slate-800 break-words">${esc(p.bagian)}</span></div>
+                            <div class="flex items-center gap-2"><span class="w-[22px] flex justify-center text-slate-400">${ic('map-pin', '!w-4 !h-4')}</span><span class="break-words">${esc(p.lokasi) || '-'}</span></div>
+                        </div>
+                    </div>
+                    <div class="px-3 py-2 border-t border-slate-100 flex items-center justify-between gap-2 bg-slate-50/60">
+                        <span class="text-[11px] font-bold ${done ? 'text-emerald-700' : 'text-slate-400'}">${done ? 'Dinilai ' + done + ' penguji' : 'Belum dinilai'}</span>
+                        <div class="flex gap-1.5">
+                            <button onclick="openPesertaModal('${esc(p.id)}')" class="w-9 h-9 rounded-lg bg-white border border-slate-200 text-slate-700 active:bg-slate-100 flex items-center justify-center" aria-label="Ubah">${ic('edit', '!w-4 !h-4')}</button>
+                            <button onclick="deletePeserta('${esc(p.id)}')" class="w-9 h-9 rounded-lg bg-red-50 text-red-600 active:bg-red-100 flex items-center justify-center" aria-label="Hapus">${ic('trash', '!w-4 !h-4')}</button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function deletePeserta(id) {
+            const p = pesertaList.find(x => x.id === id); if (!p) return;
+            if (!confirm(`Hapus peserta "${p.nama}" dari daftar?\n\nPenilaian lama atas peserta ini tetap tersimpan.`)) return;
+            pesertaList = pesertaList.filter(x => x.id !== id);
+            commitPeserta('Peserta dihapus');
+        }
+
+        // ---- Modal tambah / ubah ----
+        function openPesertaModal(id) {
+            if (!bagianList.length) { toast('Tambahkan Bagian SDP dulu', 'warn'); return; }
+            const p = id ? pesertaList.find(x => x.id === id) : null;
+            pesertaEditId = p ? p.id : null;
+            pesertaDraft = p ? { bagian: p.bagian } : { bagian: '' };
+            $('peserta-modal-title').textContent = p ? 'Ubah Peserta SDP' : 'Tambah Peserta SDP';
+            $('ps-nama').value = p ? p.nama : '';
+            $('ps-lokasi').value = p ? (p.lokasi || '') : '';
+            $('ps-batch').value = p ? (p.batch || '') : '';
+            $('ps-rename-hint').classList.toggle('hidden', !p);
+            $('ps-err').classList.add('hidden');
+            $('dl-lokasi').innerHTML = uniq(pesertaList.map(x => x.lokasi)).map(v => `<option value="${esc(v)}">`).join('');
+            $('dl-batch').innerHTML = uniq(pesertaList.map(x => x.batch)).map(v => `<option value="${esc(v)}">`).join('');
+            renderPesertaBagianGrid();
+            $('peserta-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            if (!p) setTimeout(() => $('ps-nama').focus(), 60);
+        }
+
+        function closePesertaModal() {
+            $('peserta-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function renderPesertaBagianGrid() {
+            $('ps-bagian-grid').innerHTML = bagianList.map((b, i) => {
+                const on = pesertaDraft.bagian === b.name;
+                return `<button type="button" onclick="pickPesertaBagian(${i})" class="flex items-center gap-2 p-2 rounded-xl border-2 text-left ${on ? 'border-amber-500 bg-amber-50' : 'border-slate-200 bg-white'}">${bagianLogo(b, 30)}<span class="text-[11px] font-bold text-slate-800 leading-tight break-words">${esc(b.name)}</span></button>`;
+            }).join('');
+        }
+        function pickPesertaBagian(i) { pesertaDraft.bagian = bagianList[i].name; renderPesertaBagianGrid(); }
+
+        function savePesertaModal() {
+            const nama = $('ps-nama').value.trim().replace(/\s+/g, ' ');
+            const lokasi = $('ps-lokasi').value.trim().replace(/\s+/g, ' ');
+            const batch = $('ps-batch').value.trim().replace(/\s+/g, ' ');
+            const err = $('ps-err');
+            const fail = m => { err.textContent = m; err.classList.remove('hidden'); };
+            if (!nama) return fail('Nama peserta wajib diisi.');
+            if (pesertaList.some(p => p.id !== pesertaEditId && p.nama.trim().toLowerCase() === nama.toLowerCase())) return fail('Nama peserta sudah ada. Beri pembeda, mis. tambahkan inisial.');
+            if (!bagianList.some(b => b.name === pesertaDraft.bagian)) return fail('Pilih bagian peserta.');
+            if (!lokasi) return fail('Lokasi penempatan wajib diisi.');
+
+            if (pesertaEditId) {
+                Object.assign(pesertaList.find(x => x.id === pesertaEditId), { nama, bagian: pesertaDraft.bagian, lokasi, batch });
+            } else {
+                pesertaList.push({ id: 'ps-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), nama, bagian: pesertaDraft.bagian, lokasi, batch });
+            }
+            const wasEdit = !!pesertaEditId;
+            closePesertaModal();
+            commitPeserta(wasEdit ? 'Peserta diperbarui' : 'Peserta ditambahkan');
+        }
+
+        // ---- Dropdown + rincian otomatis di form penilaian ----
+        function ensurePesertaOption(nama) {
+            if (!nama) return;
+            const sel = $('peserta-nama');
+            if (![...sel.options].some(o => o.value === nama)) {
+                const o = document.createElement('option');
+                o.value = nama; o.textContent = nama + ' (tidak ada di daftar)';
+                sel.appendChild(o);
+            }
+        }
+
+        function populatePesertaSelect() {
+            const sel = $('peserta-nama'); if (!sel) return;
+            const cur = sel.value;
+            const groups = {};
+            [...pesertaList].sort((a, b) => a.nama.localeCompare(b.nama, 'id')).forEach(p => { (groups[p.batch || 'Tanpa batch'] = groups[p.batch || 'Tanpa batch'] || []).push(p); });
+            const keys = Object.keys(groups).sort((a, b) => a.localeCompare(b, 'id', { numeric: true }));
+            sel.innerHTML = '<option value="">Pilih nama peserta</option>' +
+                keys.map(k => `<optgroup label="${esc(k)}">${groups[k].map(p => `<option value="${esc(p.nama)}">${esc(p.nama)}</option>`).join('')}</optgroup>`).join('');
+            if (cur) ensurePesertaOption(cur);
+            sel.value = cur;
+            $('peserta-empty')?.classList.toggle('hidden', pesertaList.length > 0);
+            updateBagianPreview();
+        }
+
+        // Isi data peserta (bagian, lokasi, batch) dari master
+        function applyPesertaFromMaster(nama) {
+            const p = findPeserta(nama); if (!p) return false;
+            ensureBagianOption(p.bagian);
+            $('sdp-bagian').value = p.bagian || '';
+            $('sdp-cabang').value = p.lokasi || '';
+            $('sdp-batch').value = p.batch || '';
+            return true;
+        }
+
+        function onPesertaPicked() {
+            const nama = $('peserta-nama').value;
+            if (!nama) { $('sdp-bagian').value = ''; $('sdp-cabang').value = ''; $('sdp-batch').value = ''; }
+            else applyPesertaFromMaster(nama);
+            updateBagianPreview();
+        }
+
+        // Kartu rincian peserta yang muncul setelah nama dipilih
+        function updateBagianPreview() {
+            const box = $('peserta-detail'); if (!box) return;
+            const nama = $('peserta-nama').value;
+            if (!nama) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+            const bagian = $('sdp-bagian').value, lokasi = $('sdp-cabang').value, batch = $('sdp-batch').value;
+            const b = findBagian(bagian);
+            const [cbg, cfg] = BAGIAN_COLORS[b.color] || BAGIAN_COLORS.slate;
+            const row = (icon, label, val) => `<div class="flex items-start gap-2.5"><span class="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center shrink-0">${icon}</span><div class="min-w-0"><div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-none mb-0.5">${label}</div><div class="text-sm font-bold text-slate-800 break-words">${val}</div></div></div>`;
+            box.innerHTML = `
+                <div class="rounded-2xl border border-slate-200 overflow-hidden bg-white">
+                    <div class="flex items-center gap-3 px-3.5 py-3" style="background:${cbg}">
+                        <span class="w-11 h-11 rounded-full flex items-center justify-center text-base font-black text-white shrink-0" style="background:${cfg}">${esc(initialsOf(nama))}</span>
+                        <div class="min-w-0"><div class="font-extrabold text-slate-900 leading-tight break-words">${esc(nama)}</div><div class="text-[11px] font-semibold" style="color:${cfg}">Peserta SDP Trainee</div></div>
+                    </div>
+                    <div class="p-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        ${row(bagianLogo(b, 28).replace('width:28px;height:28px', 'width:28px;height:28px'), 'Bagian', esc(bagian) || '-')}
+                        ${row(ic('map-pin', '!w-4 !h-4'), 'Lokasi penempatan', esc(lokasi) || '-')}
+                        ${row(ic('calendar', '!w-4 !h-4'), 'Batch / Angkatan', esc(batch) || '-')}
+                    </div>
+                    <div class="px-3.5 py-2 bg-emerald-50 text-emerald-700 text-[11px] font-bold border-t border-emerald-100">Terisi otomatis dari data peserta, tidak perlu diketik.</div>
+                </div>`;
+            box.classList.remove('hidden');
+        }
+
+        function refreshPesertaUI() { populatePesertaSelect(); renderPesertaCards(); }
+
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closePesertaModal(); });
     </script>
 </body>
 </html>
