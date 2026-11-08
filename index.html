@@ -108,6 +108,19 @@
             <rect x="19" y="8" width="10" height="7" rx="2.5" fill="#fbbf24"/>
             <path d="m18.5 26 4 4 7.5-8" fill="none" stroke="#b91c1c" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
         </symbol>
+        <!-- Ikon unit sederhana (garis, ikut warna teks) -->
+        <symbol id="u-yc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><!-- onigiri -->
+            <path d="M12 4.5c1.2 0 2.1.7 2.8 2l5 9.5c.9 1.7-.3 3.5-2.2 3.5H6.4c-1.9 0-3.1-1.8-2.2-3.5l5-9.5c.7-1.3 1.6-2 2.8-2z"/>
+            <path d="M7.4 15h9.2"/><path d="M12 9.6v.01"/>
+        </symbol>
+        <symbol id="u-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><!-- donat tergigit -->
+            <mask id="u-md-mask"><rect width="24" height="24" fill="#fff" stroke="none"/><circle cx="18.8" cy="6" r="3.6" fill="#000" stroke="none"/></mask>
+            <g mask="url(#u-md-mask)"><circle cx="12" cy="12.5" r="8.5"/><circle cx="12" cy="12.5" r="2.8"/><path d="M6.4 9.6l1 .6M15.6 17l1 .6M8 17.2l.7-.9"/></g>
+        </symbol>
+        <symbol id="u-ws" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><!-- sushi -->
+            <rect x="3.5" y="12.5" width="17" height="6.5" rx="3.25"/>
+            <path d="M3.5 12.5c0-3.3 3.8-5 8.5-5s8.5 1.7 8.5 5"/><path d="M9 9.2l.8 3.3M13.4 8.7l.8 3.8"/>
+        </symbol>
         <!-- Logo Unit Bisnis -->
         <symbol id="logo-yc" viewBox="0 0 48 48"><!-- Yummy Choice: onigiri -->
             <rect width="48" height="48" rx="12" fill="#b91c1c"/>
@@ -315,8 +328,8 @@
                     <button onclick="openView('view-laporan')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-violet-50 sm:col-span-2 !border-violet-200 bg-gradient-to-r from-violet-50 to-white">
                         <span class="w-12 h-12 shrink-0 rounded-xl bg-violet-600 text-white flex items-center justify-center shadow"><svg class="ic !w-6 !h-6"><use href="#i-file-text"/></svg></span>
                         <span class="flex-1 min-w-0">
-                            <span class="block font-extrabold text-slate-900">Buat Laporan Assessment <span class="ml-1 px-1.5 py-0.5 bg-violet-600 text-white rounded text-[9px] font-black align-middle">BARU</span></span>
-                            <span class="block text-xs text-slate-500">Susun laporan manual per peserta dari data assessment, output PDF</span>
+                            <span class="block font-extrabold text-slate-900">Buat Laporan Assessment</span>
+                            <span class="block text-xs text-slate-500">Susun Resume Assessment SDP per periode (I, II, III), output PDF</span>
                         </span>
                         <svg class="ic text-slate-300"><use href="#i-chevron-right"/></svg>
                     </button>
@@ -332,6 +345,7 @@
                         <p class="text-xs text-slate-500">Lanjutkan pengisian form yang tertunda</p>
                     </div>
                 </div>
+                <div class="unit-filter etd-only hidden flex flex-wrap gap-1.5"></div>
                 <div id="draft-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
             </div>
 
@@ -483,6 +497,7 @@
                         <p class="text-xs text-slate-500">Ketuk kartu untuk melihat detail</p>
                     </div>
                 </div>
+                <div class="unit-filter etd-only hidden flex flex-wrap gap-1.5"></div>
                 <div id="riwayat-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
             </div>
 
@@ -508,6 +523,7 @@
                     </div>
                 </div>
 
+                <div class="unit-filter etd-only hidden flex flex-wrap gap-1.5"></div>
                 <div class="flex gap-2">
                     <input type="search" id="rekap-search" oninput="renderRekapTable()" placeholder="Cari nama / bagian / penguji" class="field flex-1 !py-2.5">
                     <button onclick="exportRekapData()" class="h-12 px-4 shrink-0 bg-slate-900 active:bg-black text-white font-bold rounded-xl text-sm flex items-center gap-2">
@@ -629,7 +645,7 @@
                     <button onclick="smartBack()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
                     <div class="flex-1 min-w-0">
                         <h2 class="text-lg font-extrabold text-slate-900 leading-tight">Buat Laporan Assessment</h2>
-                        <p class="text-xs text-slate-500">Laporan manual ETD per peserta SDP</p>
+                        <p class="text-xs text-slate-500">Resume Assessment SDP per periode (I · II · III)</p>
                     </div>
                 </div>
 
@@ -638,12 +654,12 @@
                     <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full bg-white/10"></div>
                     <div class="absolute right-10 -bottom-10 w-24 h-24 rounded-full bg-amber-400/20"></div>
                     <div class="relative">
-                        <div class="text-[10px] font-bold uppercase tracking-widest text-violet-200">Laporan Hasil Assessment</div>
-                        <p class="text-sm text-violet-100 mt-1 max-w-md">Gabungkan nilai dari semua penilai, tambahkan analisis ETD, lalu pratinjau dalam format kertas A4.</p>
+                        <div class="text-[10px] font-bold uppercase tracking-widest text-violet-200">Resume Assessment SDP</div>
+                        <p class="text-sm text-violet-100 mt-1 max-w-md">Pilih periode dan form penilaian yang dimasukkan, lengkapi resume dan sesi pertanyaan, lalu simpan sebagai PDF.</p>
                     </div>
                     <div class="relative grid grid-cols-3 gap-2 text-center">
-                        <div class="rounded-xl bg-white/10 px-2 py-2"><div class="text-base font-black">1</div><div class="text-[10px] font-bold leading-tight">Pilih peserta</div></div>
-                        <div class="rounded-xl bg-white/10 px-2 py-2"><div class="text-base font-black">2</div><div class="text-[10px] font-bold leading-tight">Lengkapi analisis ETD</div></div>
+                        <div class="rounded-xl bg-white/10 px-2 py-2"><div class="text-base font-black">1</div><div class="text-[10px] font-bold leading-tight">Pilih peserta & periode</div></div>
+                        <div class="rounded-xl bg-white/10 px-2 py-2"><div class="text-base font-black">2</div><div class="text-[10px] font-bold leading-tight">Pilih form & lengkapi resume</div></div>
                         <div class="rounded-xl bg-white/10 px-2 py-2"><div class="text-base font-black">3</div><div class="text-[10px] font-bold leading-tight">Pratinjau & PDF</div></div>
                     </div>
                 </div>
@@ -654,6 +670,7 @@
                         <h3 class="font-extrabold text-slate-900 text-sm">1. Pilih peserta SDP</h3>
                         <span id="report-picker-count" class="text-[11px] font-bold text-slate-400"></span>
                     </div>
+                    <div class="unit-filter etd-only hidden flex flex-wrap gap-1.5"></div>
                     <input type="search" id="rp-search" oninput="renderReportPicker()" placeholder="Cari nama peserta / bagian" class="field !py-2.5">
                     <div id="report-picker-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
                 </div>
@@ -668,6 +685,7 @@
                         </div>
                         <button onclick="backToReportPicker()" class="h-9 px-3 shrink-0 rounded-xl bg-slate-100 active:bg-slate-200 text-slate-700 text-xs font-bold">Ganti</button>
                     </div>
+                    <div id="rp-periode-tabs" class="grid grid-cols-3 gap-1 p-1 bg-slate-200/70 rounded-xl"></div>
 
                     <!-- Tab (mobile) -->
                     <div class="lg:hidden grid grid-cols-2 gap-1 p-1 bg-slate-200/70 rounded-xl">
@@ -678,15 +696,30 @@
                     <div class="lg:grid lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] lg:gap-4 lg:items-start">
 
                         <!-- EDITOR -->
-                        <div id="report-editor" class="lg:!block space-y-3" oninput="onReportInput()" onchange="onReportInput()">
+                        <div id="report-editor" class="lg:!block space-y-3" oninput="onReportInput(event)" onchange="onReportInput(event)">
                             <div class="card p-4 space-y-3">
-                                <h3 class="text-xs font-black uppercase tracking-wider text-violet-700">A. Identitas dokumen</h3>
+                                <div class="flex items-start justify-between gap-2">
+                                    <div>
+                                        <h3 class="text-xs font-black uppercase tracking-wider text-violet-700">A. Penilaian yang disertakan</h3>
+                                        <p class="text-[11px] text-slate-500 mt-0.5">Centang form yang masuk ke resume periode ini. Skor dan hasil dihitung dari form terpilih saja.</p>
+                                    </div>
+                                    <div class="flex gap-1 shrink-0">
+                                        <button type="button" onclick="selectAllResumeForms(true)" class="h-8 px-2 rounded-lg bg-violet-100 text-violet-800 text-[11px] font-bold">Semua</button>
+                                        <button type="button" onclick="selectAllResumeForms(false)" class="h-8 px-2 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-bold">Kosong</button>
+                                    </div>
+                                </div>
+                                <div id="rp-forms" class="space-y-2"></div>
+                                <div class="flex items-center justify-between text-[11px] font-bold text-slate-500"><span id="rp-forms-count">-</span><span id="rp-forms-avg">-</span></div>
+                            </div>
+
+                            <div class="card p-4 space-y-3">
+                                <h3 class="text-xs font-black uppercase tracking-wider text-violet-700">B. Identitas dokumen</h3>
                                 <div><label for="rp-judul" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Judul laporan</label><input id="rp-judul" class="field"></div>
                                 <div class="grid grid-cols-2 gap-2">
                                     <div><label for="rp-noDok" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">No. dokumen</label><input id="rp-noDok" class="field"></div>
                                     <div><label for="rp-tanggal" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Tanggal</label><input id="rp-tanggal" type="date" class="field"></div>
                                 </div>
-                                <div><label for="rp-periode" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Periode / batch</label><input id="rp-periode" placeholder="mis. SDP Batch 5 - Oktober 2026" class="field"></div>
+                                <div><label for="rp-periode" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Keterangan periode / batch</label><input id="rp-periode" placeholder="mis. Batch Desember 2026" class="field"></div>
                                 <div class="grid grid-cols-2 gap-2">
                                     <div><label for="rp-penyusun" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Disusun oleh</label><input id="rp-penyusun" placeholder="Nama ETD" class="field"></div>
                                     <div><label for="rp-jabatan" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Jabatan</label><input id="rp-jabatan" class="field"></div>
@@ -695,7 +728,7 @@
 
                             <div class="card p-4 space-y-3">
                                 <div class="flex items-center justify-between gap-2">
-                                    <h3 class="text-xs font-black uppercase tracking-wider text-violet-700">B. Analisis ETD</h3>
+                                    <h3 class="text-xs font-black uppercase tracking-wider text-violet-700">C. Analisis ETD</h3>
                                     <button type="button" onclick="autoFillInsights()" class="h-8 px-2.5 rounded-lg bg-violet-100 active:bg-violet-200 text-violet-800 text-[11px] font-bold flex items-center gap-1"><svg class="ic !w-3.5 !h-3.5"><use href="#i-sparkles"/></svg>Isi otomatis</button>
                                 </div>
                                 <div>
@@ -713,8 +746,41 @@
                                 <div><label for="rp-tindak" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Rencana tindak lanjut</label><textarea id="rp-tindak" rows="3" class="field !font-medium"></textarea></div>
                             </div>
 
+                            <div class="card p-4 space-y-3">
+                                <div>
+                                    <h3 class="text-xs font-black uppercase tracking-wider text-violet-700">D. Sesi Pertanyaan &amp; Evaluasi</h3>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Catat verbatim pertanyaan, jawaban, evaluasi, atau konfirmasi dari penguji. Tekan tombol + agar masuk ke laporan, lalu ulangi untuk teks lain atau pembahasan lain.</p>
+                                </div>
+                                <div id="qa-type-row" class="grid grid-cols-2 gap-1.5"></div>
+                                <div>
+                                    <label for="qa-topik" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Pembahasan <span class="normal-case font-semibold text-slate-400">(opsional, dipakai untuk mengelompokkan)</span></label>
+                                    <input id="qa-topik" list="dl-qa-topik" class="field" placeholder="mis. Strategi penjualan">
+                                    <datalist id="dl-qa-topik"></datalist>
+                                </div>
+                                <div>
+                                    <label for="qa-teks" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Teks <span id="qa-type-label" class="text-violet-700"></span></label>
+                                    <textarea id="qa-teks" rows="6" class="field !font-medium" placeholder="Tulis atau tempel teks panjang di sini..."></textarea>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button type="button" onclick="addQA()" class="flex-1 h-11 rounded-xl bg-violet-600 active:bg-violet-800 text-white font-bold text-sm flex items-center justify-center gap-1.5"><svg class="ic !w-4 !h-4"><use href="#i-plus"/></svg><span id="qa-add-label">Tambahkan ke laporan</span></button>
+                                    <button type="button" id="qa-cancel-btn" onclick="cancelQAEdit()" class="hidden h-11 px-4 rounded-xl bg-slate-100 active:bg-slate-200 text-slate-700 font-bold text-sm">Batal</button>
+                                </div>
+                                <div id="qa-list" class="space-y-2"></div>
+                            </div>
+
+                            <div class="card p-4 space-y-3">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div>
+                                        <h3 class="text-xs font-black uppercase tracking-wider text-violet-700">E. Bagian bebas</h3>
+                                        <p class="text-[11px] text-slate-500 mt-0.5">Tambahkan bagian dengan judul dan isi sesuka ETD.</p>
+                                    </div>
+                                    <button type="button" onclick="addBebas()" class="h-8 px-2.5 shrink-0 rounded-lg bg-violet-100 active:bg-violet-200 text-violet-800 text-[11px] font-bold flex items-center gap-1"><svg class="ic !w-3.5 !h-3.5"><use href="#i-plus"/></svg>Tambah</button>
+                                </div>
+                                <div id="bebas-list" class="space-y-3"></div>
+                            </div>
+
                             <div class="card p-4 space-y-2">
-                                <h3 class="text-xs font-black uppercase tracking-wider text-violet-700">C. Bagian yang ditampilkan</h3>
+                                <h3 class="text-xs font-black uppercase tracking-wider text-violet-700">F. Bagian yang ditampilkan</h3>
                                 <label class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-200 cursor-pointer has-[:checked]:bg-violet-50 has-[:checked]:border-violet-300"><input type="checkbox" id="rp-showKriteria" class="accent-violet-600 w-5 h-5"><span class="text-sm font-bold text-slate-800">Nilai per kriteria</span></label>
                                 <label class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-200 cursor-pointer has-[:checked]:bg-violet-50 has-[:checked]:border-violet-300"><input type="checkbox" id="rp-showPenilai" class="accent-violet-600 w-5 h-5"><span class="text-sm font-bold text-slate-800">Daftar penilai & skor</span></label>
                                 <label class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-200 cursor-pointer has-[:checked]:bg-violet-50 has-[:checked]:border-violet-300"><input type="checkbox" id="rp-showKomentar" class="accent-violet-600 w-5 h-5"><span class="text-sm font-bold text-slate-800">Komentar penilai</span></label>
@@ -727,8 +793,7 @@
                             <div class="flex items-center justify-between gap-2">
                                 <span id="rp-saved" class="text-[11px] font-semibold text-slate-400">Draf tersimpan otomatis</span>
                                 <button onclick="exportReportPDF()" class="h-10 px-3.5 rounded-xl bg-violet-600 active:bg-violet-800 text-white font-bold text-sm flex items-center gap-2">
-                                    <svg class="ic !w-4 !h-4"><use href="#i-download"/></svg>Ekspor PDF
-                                    <span class="px-1.5 py-0.5 rounded bg-white/20 text-[9px] font-black uppercase">Segera</span>
+                                    <svg class="ic !w-4 !h-4"><use href="#i-download"/></svg>Cetak / Simpan PDF
                                 </button>
                             </div>
                             <div class="rounded-2xl bg-slate-300/60 p-2 sm:p-3">
@@ -736,7 +801,7 @@
                                     <div id="report-paper" style="width:794px;min-height:1123px;box-sizing:border-box;padding:48px 56px;transform-origin:top left;font-size:12px;line-height:1.5;color:#0f172a"></div>
                                 </div>
                             </div>
-                            <p class="text-[11px] text-slate-400 text-center">Pratinjau kertas A4. Pemisahan halaman akan diatur saat fitur PDF dikembangkan.</p>
+                            <p class="text-[11px] text-slate-400 text-center">Pratinjau kertas A4. Pemisahan halaman diatur otomatis saat Cetak / Simpan PDF; pilih "Simpan sebagai PDF" pada dialog cetak.</p>
                         </div>
                     </div>
                 </div>
@@ -1427,7 +1492,7 @@
             removeKey('yc_sdp_role', 'session');
             removeKey('yc_sdp_unit', 'session');
             currentUserRole = null;
-            currentUnit = null;
+            currentUnit = null; etdUnit = '';
             document.title = 'Portal Assessment SDP';
             resetUnitTheme();
             $('header-title').textContent = 'YUMMY CHOICE';
@@ -1440,6 +1505,7 @@
 
         function initPortal() {
             navReset();
+            renderUnitFilters();
             applyUnitTheme();
             renderPeranOptions();
             pullBagianCloud();
@@ -1597,7 +1663,21 @@
         }
 
         // Penguji unit hanya melihat data unitnya sendiri; ETD melihat semua
-        const inMyUnit = x => !currentUnit || ((x && (x.sdpUnit || x.unit)) || DEFAULT_UNIT) === currentUnit;
+        let etdUnit = ''; // filter unit khusus ETD ('' = semua unit)
+        const inMyUnit = x => { const u = (x && (x.sdpUnit || x.unit)) || DEFAULT_UNIT; return currentUnit ? u === currentUnit : (!etdUnit || u === etdUnit); };
+        function renderUnitFilters() {
+            const html = [''].concat(UNITS).map(u => {
+                const on = u === etdUnit;
+                return `<button type="button" onclick="setEtdUnit('${esc(u)}')" class="h-8 px-3 rounded-full text-xs font-bold border-2 inline-flex items-center gap-1 ${on ? 'border-amber-500 bg-amber-50 text-amber-800' : 'border-slate-200 bg-white text-slate-600'}">${u ? unitIcon(u, '!w-3.5 !h-3.5') : ''}${esc(u || 'Semua unit')}</button>`;
+            }).join('');
+            document.querySelectorAll('.unit-filter').forEach(el => { el.innerHTML = html; });
+        }
+        function setEtdUnit(u) {
+            etdUnit = UNITS.includes(u) ? u : '';
+            renderUnitFilters();
+            renderRiwayatCards(); renderRekapTable(); updateLaporanStats(); renderDraftCards();
+            if (!reportKey) renderReportPicker();
+        }
         const visibleAssessments = () => assessmentList.filter(inMyUnit);
         const visibleDrafts = () => draftList.filter(inMyUnit);
 
@@ -1641,7 +1721,7 @@
         // ================= REKAP (ETD) =================
         function renderRekapTable() {
             const kw = $('rekap-search').value.toLowerCase().trim();
-            const rows = assessmentList.filter(i =>
+            const rows = visibleAssessments().filter(i =>
                 i.namaPeserta.toLowerCase().includes(kw) || i.namaPenguji.toLowerCase().includes(kw) || i.sdpBagian.toLowerCase().includes(kw));
 
             const empty = '<div class="p-8 text-center text-slate-400 text-sm">Tidak ada data penilaian.</div>';
@@ -1650,7 +1730,7 @@
                     <div class="flex justify-between items-start gap-3">
                         <div class="min-w-0">
                             <div class="font-extrabold text-slate-900 break-words">${esc(item.namaPeserta)}</div>
-                            <div class="text-xs text-slate-500">${esc(item.sdpBagian)} / ${esc(item.sdpCabang)}</div>
+                            <div class="text-xs text-slate-500">${esc(unitOfA(item))} · ${esc(item.sdpBagian)} / ${esc(item.sdpCabang)}</div>
                         </div>
                         <div class="text-xl font-black text-amber-600 shrink-0">${esc(item.scoreTotal)}</div>
                     </div>
@@ -1669,7 +1749,7 @@
                 <tr class="hover:bg-amber-50/50">
                     <td class="p-3 text-slate-500 whitespace-nowrap">${esc(item.timestamp)}</td>
                     <td class="p-3 font-black text-slate-900">${esc(item.namaPeserta)}</td>
-                    <td class="p-3">${esc(item.sdpBagian)} / ${esc(item.sdpCabang)}</td>
+                    <td class="p-3">${esc(unitOfA(item))} · ${esc(item.sdpBagian)} / ${esc(item.sdpCabang)}</td>
                     <td class="p-3 font-bold">${esc(item.namaPenguji)}</td>
                     <td class="p-3 text-slate-600">${esc(item.peranPenguji)}</td>
                     <td class="p-3 text-center font-black text-amber-600 text-sm">${esc(item.scoreTotal)}</td>
@@ -1688,11 +1768,11 @@
         }
 
         function exportRekapData() {
-            if (!assessmentList.length) { toast('Tidak ada data untuk diexport', 'warn'); return; }
+            if (!visibleAssessments().length) { toast('Tidak ada data untuk diexport', 'warn'); return; }
             const head = ['ID', 'Waktu Kirim', 'Peserta SDP', 'Unit Bisnis', 'Bagian', 'Cabang', 'Batch', 'Penguji', 'Peran Penguji', 'Skor Rata-Rata']
                 .concat(kriteriaList.map(k => `K${k.id} ${k.title}`));
             const lines = [head.map(csvCell).join(',')];
-            assessmentList.forEach(i => {
+            visibleAssessments().forEach(i => {
                 lines.push([i.id, i.timestamp, i.namaPeserta, unitOfA(i), i.sdpBagian, i.sdpCabang, i.batch || '', i.namaPenguji, i.peranPenguji, i.scoreTotal]
                     .concat(kriteriaList.map(k => i.scores[k.id] ?? '')).map(csvCell).join(','));
             });
@@ -1768,12 +1848,13 @@
 
         // ================= STATISTIK =================
         function updateLaporanStats() {
-            const total = assessmentList.length;
+            const list = visibleAssessments();
+            const total = list.length;
             $('stat-total').textContent = total;
             if (!total) { $('stat-avg').textContent = '0.0'; $('stat-pass').textContent = '0%'; return; }
-            const sum = assessmentList.reduce((a, i) => a + i.scoreTotal, 0);
+            const sum = list.reduce((a, i) => a + i.scoreTotal, 0);
             $('stat-avg').textContent = (sum / total).toFixed(1);
-            const passed = assessmentList.filter(i => i.scoreTotal >= 7.0).length;
+            const passed = list.filter(i => i.scoreTotal >= 7.0).length;
             $('stat-pass').textContent = `${Math.round((passed / total) * 100)}%`;
         }
 
@@ -1829,6 +1910,8 @@
             sel.value = UNITS.includes(selected) ? selected : DEFAULT_UNIT;
         }
         let bagianUnit = DEFAULT_UNIT;
+        const UNIT_ICON = { 'Yummy Choice': '#u-yc', 'Mister Donut': '#u-md', 'Washoku Sato': '#u-ws' };
+        const unitIcon = (unit, cls = '') => `<svg class="ic ${cls}" aria-hidden="true"><use href="${UNIT_ICON[unit] || '#b-building'}"/></svg>`;
         const UNIT_LOGO = { 'Yummy Choice': '#logo-yc', 'Mister Donut': '#logo-md', 'Washoku Sato': '#logo-ws' };
         const UNIT_THEME = { 'Yummy Choice': { p: '#b91c1c', d: '#7f1d1d' }, 'Mister Donut': { p: '#be185d', d: '#831843' }, 'Washoku Sato': { p: '#0f766e', d: '#134e4a' } };
 
@@ -2141,15 +2224,35 @@
         // =====================================================================
         const REPORT_KEY = 'yc_sdp_reports';
         const REPORT_PAPER_W = 794; // lebar A4 @96dpi
-        let reportKey = null, reportGroupsCache = [], reportForm = null, reportSaveTimer = null;
+
+        // Tiga periode assessment SDP
+        const PERIODES = [
+            { id: 'A1', short: 'Assessment I', bulan: 3, label: 'Assessment I (Bulan 3)' },
+            { id: 'A2', short: 'Assessment II', bulan: 6, label: 'Assessment II (Bulan 6)' },
+            { id: 'A3', short: 'Assessment III', bulan: 11, label: 'Assessment III (Bulan 11)' }
+        ];
+        const periodeById = id => PERIODES.find(p => p.id === id) || PERIODES[0];
+
+        // Jenis catatan pada Sesi Pertanyaan & Evaluasi
+        const QA_TYPES = {
+            pertanyaan: { label: 'Pertanyaan', c: '#1d4ed8', bg: '#dbeafe' },
+            jawaban: { label: 'Jawaban', c: '#047857', bg: '#d1fae5' },
+            evaluasi: { label: 'Evaluasi', c: '#b45309', bg: '#fef3c7' },
+            konfirmasi: { label: 'Konfirmasi', c: '#6d28d9', bg: '#ede9fe' }
+        };
+
+        let reportKey = null, reportPeriode = 'A1', reportGroupsCache = [], reportForm = null, reportSaveTimer = null, reportDirty = false;
+        let qaType = 'pertanyaan', qaEditId = null;
 
         const reportsStore = () => readJSON(REPORT_KEY, {});
+        const reportStoreKey = (k, pid) => k + '::' + pid;
+        const newId = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-3);
         const scoreColor = v => v >= 8.5 ? '#047857' : v >= 7 ? '#059669' : v >= 6 ? '#ca8a04' : v >= 4 ? '#b45309' : '#e11d48';
 
-        // Gabungkan semua penilaian untuk peserta yang sama (nama + bagian)
+        // Gabungkan semua penilaian untuk peserta yang sama (nama + bagian + unit)
         function reportGroups() {
             const map = new Map();
-            assessmentList.forEach(a => {
+            assessmentList.filter(a => !currentUnit || unitOfA(a) === currentUnit).forEach(a => {
                 const nama = String(a.namaPeserta || '').trim();
                 const key = nama.toLowerCase() + '|' + (a.sdpBagian || '') + (unitOfA(a) !== DEFAULT_UNIT ? '|' + unitOfA(a) : ''); // kunci Yummy Choice tetap sama agar laporan lama aman
                 if (!map.has(key)) map.set(key, { key, nama, unit: unitOfA(a), bagian: a.sdpBagian, cabang: a.sdpCabang, batch: a.batch || '', items: [] });
@@ -2163,6 +2266,14 @@
         }
 
         function currentGroup() { return reportKey ? reportGroups().find(g => g.key === reportKey) : null; }
+
+        // Form yang dicentang ETD -> dasar semua perhitungan resume
+        const selItems = (g, f) => g.items.filter(i => (f.sel || []).includes(i.id));
+        function resumeGroup(g, f) {
+            const items = selItems(g, f);
+            const avg = items.length ? items.reduce((s, i) => s + Number(i.scoreTotal || 0), 0) / items.length : 0;
+            return { ...g, items, avg };
+        }
 
         // Rata-rata per kriteria + komentar semua penilai
         function criteriaStats(g) {
@@ -2181,51 +2292,61 @@
         function defaultReport(g) {
             const d = new Date(), p = n => String(n).padStart(2, '0');
             return {
-                judul: 'Laporan Hasil Assessment Presentasi SDP',
+                judul: 'Resume Assessment SDP',
                 noDok: `ETD/SDP/${d.getFullYear()}/${p(d.getMonth() + 1)}/001`,
                 tanggal: `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`,
-                periode: '', penyusun: '', jabatan: 'Education & Training Department',
+                periode: g.batch ? `Batch ${g.batch}` : '', penyusun: '', jabatan: 'Education & Training Department',
                 status: suggestReco(g.avg), ringkasan: '', kekuatan: '', pengembangan: '', tindak: '',
-                showKriteria: true, showPenilai: true, showKomentar: false, showTtd: true
+                showKriteria: true, showPenilai: true, showKomentar: false, showTtd: true,
+                sel: g.items.map(i => i.id), qa: [], bebas: []
             };
         }
 
         const RP_TEXT = ['judul', 'noDok', 'tanggal', 'periode', 'penyusun', 'jabatan', 'status', 'ringkasan', 'kekuatan', 'pengembangan', 'tindak'];
         const RP_CHECK = ['showKriteria', 'showPenilai', 'showKomentar', 'showTtd'];
+        const ROMAWI = { A1: 'I', A2: 'II', A3: 'III' };
 
         function renderReportPicker() {
             const c = $('report-picker-list'); if (!c) return;
             reportGroupsCache = reportGroups();
             const kw = ($('rp-search')?.value || '').toLowerCase().trim();
             const saved = reportsStore();
-            $('report-picker-count').textContent = `${reportGroupsCache.length} peserta · ${assessmentList.length} penilaian`;
+            const scoped = reportGroupsCache.filter(g => !etdUnit || g.unit === etdUnit);
+            $('report-picker-count').textContent = `${scoped.length} peserta · ${scoped.reduce((n, g) => n + g.items.length, 0)} penilaian`;
 
             if (!reportGroupsCache.length) {
                 c.innerHTML = `<div class="col-span-full card p-8 text-center space-y-1">${ic('file-text', '!w-9 !h-9 text-slate-300')}
                     <p class="text-sm font-bold text-slate-800">Belum ada data assessment</p>
-                    <p class="text-xs text-slate-500">Laporan dibuat dari form yang sudah dikirim penguji.</p></div>`;
+                    <p class="text-xs text-slate-500">Resume dibuat dari form yang sudah dikirim penguji.</p></div>`;
                 return;
             }
             const rows = reportGroupsCache.map((g, i) => ({ g, i })).filter(({ g }) =>
-                !kw || g.nama.toLowerCase().includes(kw) || String(g.bagian || '').toLowerCase().includes(kw));
+                (!etdUnit || g.unit === etdUnit) &&
+                (!kw || g.nama.toLowerCase().includes(kw) || String(g.bagian || '').toLowerCase().includes(kw)));
             if (!rows.length) { c.innerHTML = '<div class="col-span-full p-6 text-center text-sm text-slate-400">Peserta tidak ditemukan.</div>'; return; }
 
-            c.innerHTML = rows.map(({ g, i }) => `
+            c.innerHTML = rows.map(({ g, i }) => {
+                const done = PERIODES.filter(pr => saved[reportStoreKey(g.key, pr.id)]);
+                const badges = done.length
+                    ? done.map(pr => `<span class="px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 text-[10px] font-bold">Resume ${ROMAWI[pr.id]}</span>`).join('')
+                    : (saved[g.key] ? '<span class="px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 text-[10px] font-bold">Draf laporan</span>' : '');
+                return `
                 <button onclick="selectReportPeserta(${i})" class="card p-3.5 text-left flex items-center gap-3 active:bg-violet-50">
                     ${bagianLogo(findBagian(g.bagian, g.unit), 46)}
                     <span class="flex-1 min-w-0">
                         <span class="block font-extrabold text-slate-900 text-sm break-words leading-tight">${esc(g.nama)}</span>
                         <span class="block text-[11px] text-slate-500 truncate mt-0.5">${esc(g.unit)} · ${esc(g.bagian)} · ${esc(g.cabang)}${g.batch ? ' · ' + esc(g.batch) : ''}</span>
                         <span class="mt-1.5 flex flex-wrap gap-1.5">
-                            <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold">${g.items.length} penilai</span>
-                            ${saved[g.key] ? '<span class="px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 text-[10px] font-bold">Draf laporan</span>' : ''}
+                            <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold">${g.items.length} form</span>
+                            ${badges}
                         </span>
                     </span>
                     <span class="text-right shrink-0 leading-none">
                         <span class="block text-xl font-black" style="color:${scoreColor(g.avg)}">${g.avg.toFixed(1)}</span>
                         <span class="block text-[9px] font-bold text-slate-400 mt-1">AVG</span>
                     </span>
-                </button>`).join('');
+                </button>`;
+            }).join('');
         }
 
         function showReportStage() {
@@ -2234,19 +2355,34 @@
         }
 
         function openLaporanHome() {
+            renderUnitFilters();
             renderReportPicker();
             showReportStage();
             if (reportKey) { switchReportTab('edit'); renderReportPreview(); }
         }
 
-        function selectReportPeserta(i) {
-            const g = reportGroupsCache[i]; if (!g) return;
-            reportKey = g.key;
-            reportForm = { ...defaultReport(g), ...(reportsStore()[g.key] || {}) };
+        // Muat dokumen resume untuk satu peserta + satu periode
+        function loadReportDoc(g, pid) {
+            reportPeriode = pid;
+            const st = reportsStore();
+            const stored = st[reportStoreKey(g.key, pid)] || (pid === 'A1' ? st[g.key] : null) || {};
+            reportForm = { ...defaultReport(g), ...stored };
+            if (!Array.isArray(reportForm.sel)) reportForm.sel = g.items.map(i => i.id);
+            if (!Array.isArray(reportForm.qa)) reportForm.qa = [];
+            if (!Array.isArray(reportForm.bebas)) reportForm.bebas = [];
+            reportDirty = false; qaEditId = null;
+            $('qa-teks').value = ''; $('qa-topik').value = '';
             $('rp-who-logo').innerHTML = bagianLogo(findBagian(g.bagian, g.unit), 40);
             $('rp-who-name').textContent = g.nama;
-            $('rp-who-meta').textContent = `${g.bagian} · ${g.cabang} · ${g.items.length} penilai · rata-rata ${g.avg.toFixed(1)}`;
+            $('rp-who-meta').textContent = `${g.unit} · ${g.bagian} · ${g.cabang} · ${g.items.length} form masuk`;
             fillReportForm();
+            renderPeriodeTabs(); renderResumeForms(); renderQAComposer(); renderQAList(); renderBebasList();
+        }
+
+        function selectReportPeserta(i, pid) {
+            const g = reportGroupsCache[i]; if (!g) return;
+            reportKey = g.key;
+            loadReportDoc(g, PERIODES.some(p => p.id === pid) ? pid : 'A1');
             showReportStage();
             switchReportTab('edit');
             renderReportPreview();
@@ -2260,6 +2396,25 @@
             window.scrollTo(0, 0);
         }
 
+        function switchReportPeriode(pid) {
+            const g = currentGroup(); if (!g || pid === reportPeriode) return;
+            clearTimeout(reportSaveTimer); persistReport();
+            loadReportDoc(g, pid);
+            renderReportPreview();
+        }
+
+        function renderPeriodeTabs() {
+            const box = $('rp-periode-tabs'); if (!box || !reportKey) return;
+            const st = reportsStore();
+            box.innerHTML = PERIODES.map(pr => {
+                const on = pr.id === reportPeriode, has = !!st[reportStoreKey(reportKey, pr.id)];
+                return `<button type="button" onclick="switchReportPeriode('${pr.id}')" class="relative h-14 rounded-lg text-center leading-tight ${on ? 'bg-white shadow text-violet-700' : 'text-slate-600'}">
+                    <span class="block text-xs font-extrabold">${pr.short}</span>
+                    <span class="block text-[10px] font-semibold ${on ? 'text-violet-500' : 'text-slate-400'}">Bulan ${pr.bulan}</span>
+                    ${has ? '<span class="absolute right-1.5 top-1.5 w-2 h-2 rounded-full bg-emerald-500" title="Sudah ada draf"></span>' : ''}</button>`;
+            }).join('');
+        }
+
         function fillReportForm() {
             RP_TEXT.forEach(k => { $('rp-' + k).value = reportForm[k] ?? ''; });
             RP_CHECK.forEach(k => { $('rp-' + k).checked = !!reportForm[k]; });
@@ -2271,22 +2426,171 @@
         }
 
         function persistReport() {
-            if (!reportKey || !reportForm) return;
-            const all = reportsStore(); all[reportKey] = reportForm; writeJSON(REPORT_KEY, all);
+            if (!reportKey || !reportForm || !reportDirty) return;
+            const all = reportsStore(); all[reportStoreKey(reportKey, reportPeriode)] = reportForm; writeJSON(REPORT_KEY, all);
+            reportDirty = false;
             const el = $('rp-saved');
             if (el) el.textContent = 'Draf tersimpan ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            renderPeriodeTabs();
         }
 
-        function onReportInput() {
+        // Dipanggil setiap ada perubahan isi resume: pratinjau + simpan otomatis
+        function touchReport() {
             if (!reportForm) return;
-            readReportForm();
+            reportDirty = true;
             renderReportPreview();
             clearTimeout(reportSaveTimer);
             reportSaveTimer = setTimeout(persistReport, 400);
         }
 
+        function onReportInput(e) {
+            if (!reportForm) return;
+            if (e && e.target && !String(e.target.id || '').startsWith('rp-')) return; // abaikan kolom komposer sesi / bagian bebas
+            readReportForm();
+            touchReport();
+        }
+
+        // ---- A. Form yang disertakan ----
+        function renderResumeForms() {
+            const g = currentGroup(), box = $('rp-forms'); if (!g || !box || !reportForm) return;
+            const sel = new Set(reportForm.sel);
+            box.innerHTML = g.items.map(i => `
+                <label class="flex items-start gap-3 p-2.5 rounded-xl border border-slate-200 cursor-pointer has-[:checked]:bg-violet-50 has-[:checked]:border-violet-300">
+                    <input type="checkbox" class="accent-violet-600 w-5 h-5 mt-0.5 shrink-0" ${sel.has(i.id) ? 'checked' : ''} onchange="toggleResumeForm('${esc(i.id)}', this.checked)">
+                    <span class="flex-1 min-w-0">
+                        <span class="block text-sm font-bold text-slate-800 break-words">${esc(i.namaPenguji)}</span>
+                        <span class="block text-[11px] text-slate-500 break-words">${esc(i.peranPenguji)}</span>
+                        <span class="block text-[10px] text-slate-400 mt-0.5">${esc(i.timestamp)}</span>
+                    </span>
+                    <span class="text-lg font-black shrink-0" style="color:${scoreColor(Number(i.scoreTotal))}">${esc(i.scoreTotal)}</span>
+                </label>`).join('');
+            updateResumeFormsInfo();
+        }
+        function updateResumeFormsInfo() {
+            const g = currentGroup(); if (!g || !reportForm) return;
+            const rg = resumeGroup(g, reportForm);
+            $('rp-forms-count').textContent = `${rg.items.length} dari ${g.items.length} form dipilih`;
+            $('rp-forms-avg').textContent = rg.items.length ? `Rata-rata ${rg.avg.toFixed(1)}` : 'Belum ada form dipilih';
+        }
+        function toggleResumeForm(id, on) {
+            if (!reportForm) return;
+            const set = new Set(reportForm.sel);
+            if (on) set.add(id); else set.delete(id);
+            reportForm.sel = [...set];
+            updateResumeFormsInfo(); touchReport();
+        }
+        function selectAllResumeForms(on) {
+            const g = currentGroup(); if (!g || !reportForm) return;
+            reportForm.sel = on ? g.items.map(i => i.id) : [];
+            renderResumeForms(); touchReport();
+        }
+
+        // ---- D. Sesi Pertanyaan & Evaluasi ----
+        function setQAType(t) { if (QA_TYPES[t]) { qaType = t; renderQAComposer(); } }
+        function renderQAComposer() {
+            const row = $('qa-type-row'); if (!row) return;
+            row.innerHTML = Object.entries(QA_TYPES).map(([k, v]) => `<button type="button" onclick="setQAType('${k}')" class="h-10 rounded-xl text-sm font-bold border-2" style="${k === qaType ? `border-color:${v.c};background:${v.bg};color:${v.c}` : 'border-color:#e2e8f0;background:#fff;color:#64748b'}">${v.label}</button>`).join('');
+            $('qa-type-label').textContent = '· ' + QA_TYPES[qaType].label;
+            $('qa-add-label').textContent = qaEditId ? 'Simpan perubahan' : `Tambahkan ${QA_TYPES[qaType].label.toLowerCase()} (+)`;
+            $('qa-cancel-btn').classList.toggle('hidden', !qaEditId);
+        }
+        function addQA() {
+            if (!reportForm) return;
+            const teks = $('qa-teks').value.trim();
+            if (!teks) { toast('Isi teks terlebih dahulu', 'warn'); return; }
+            const topik = $('qa-topik').value.trim().replace(/\s+/g, ' ');
+            const label = QA_TYPES[qaType].label, wasEdit = !!qaEditId;
+            if (wasEdit) {
+                const e = reportForm.qa.find(x => x.id === qaEditId);
+                if (e) { e.type = qaType; e.topik = topik; e.teks = teks; }
+            } else {
+                reportForm.qa.push({ id: newId(), type: qaType, topik, teks });
+            }
+            qaEditId = null;
+            $('qa-teks').value = ''; // pembahasan dibiarkan agar mudah menambah jenis lain di topik yang sama
+            renderQAComposer(); renderQAList(); touchReport();
+            toast(wasEdit ? 'Perubahan disimpan' : `${label} ditambahkan ke laporan`, 'success');
+        }
+        function editQA(id) {
+            const e = reportForm?.qa.find(x => x.id === id); if (!e) return;
+            qaEditId = id; qaType = QA_TYPES[e.type] ? e.type : 'pertanyaan';
+            $('qa-topik').value = e.topik || ''; $('qa-teks').value = e.teks || '';
+            renderQAComposer();
+            $('qa-teks').scrollIntoView({ block: 'center', behavior: 'smooth' });
+            $('qa-teks').focus();
+        }
+        function cancelQAEdit() { qaEditId = null; $('qa-teks').value = ''; renderQAComposer(); }
+        function deleteQA(id) {
+            if (!reportForm || !confirm('Hapus catatan ini dari laporan?')) return;
+            reportForm.qa = reportForm.qa.filter(x => x.id !== id);
+            if (qaEditId === id) cancelQAEdit();
+            renderQAList(); touchReport();
+        }
+        function moveQA(id, dir) {
+            const a = reportForm?.qa; if (!a) return;
+            const i = a.findIndex(x => x.id === id), j = i + dir;
+            if (i < 0 || j < 0 || j >= a.length) return;
+            [a[i], a[j]] = [a[j], a[i]];
+            renderQAList(); touchReport();
+        }
+        function renderQAList() {
+            const box = $('qa-list'); if (!box || !reportForm) return;
+            const list = reportForm.qa;
+            $('dl-qa-topik').innerHTML = uniq(list.map(x => x.topik)).map(t => `<option value="${esc(t)}">`).join('');
+            if (!list.length) { box.innerHTML = '<div class="p-3 text-center text-xs text-slate-400 rounded-xl border border-dashed border-slate-200">Belum ada catatan sesi.</div>'; return; }
+            const ib = 'w-8 h-8 rounded-lg bg-slate-100 active:bg-slate-200 text-slate-600 flex items-center justify-center disabled:opacity-30';
+            box.innerHTML = list.map((e, i) => {
+                const t = QA_TYPES[e.type] || QA_TYPES.pertanyaan;
+                return `
+                <div class="rounded-xl border border-slate-200 p-2.5 space-y-1.5 ${qaEditId === e.id ? 'ring-2 ring-violet-400' : ''}">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wide" style="background:${t.bg};color:${t.c}">${t.label}</span>
+                        ${e.topik ? `<span class="text-[11px] font-bold text-slate-600 break-words">${esc(e.topik)}</span>` : ''}
+                    </div>
+                    <div class="text-xs text-slate-700 whitespace-pre-line break-words" style="display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden">${esc(e.teks)}</div>
+                    <div class="flex items-center justify-end gap-1">
+                        <button type="button" class="${ib}" ${i === 0 ? 'disabled' : ''} onclick="moveQA('${e.id}',-1)" aria-label="Naikkan"><svg class="ic !w-3.5 !h-3.5"><use href="#i-chevron-up"/></svg></button>
+                        <button type="button" class="${ib}" ${i === list.length - 1 ? 'disabled' : ''} onclick="moveQA('${e.id}',1)" aria-label="Turunkan"><svg class="ic !w-3.5 !h-3.5"><use href="#i-chevron-down"/></svg></button>
+                        <button type="button" class="${ib}" onclick="editQA('${e.id}')" aria-label="Ubah">${ic('edit', '!w-3.5 !h-3.5')}</button>
+                        <button type="button" class="w-8 h-8 rounded-lg bg-red-50 active:bg-red-100 text-red-600 flex items-center justify-center" onclick="deleteQA('${e.id}')" aria-label="Hapus">${ic('trash', '!w-3.5 !h-3.5')}</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // ---- E. Bagian bebas ----
+        function renderBebasList() {
+            const box = $('bebas-list'); if (!box || !reportForm) return;
+            if (!reportForm.bebas.length) { box.innerHTML = '<div class="p-3 text-center text-xs text-slate-400 rounded-xl border border-dashed border-slate-200">Belum ada bagian bebas.</div>'; return; }
+            box.innerHTML = reportForm.bebas.map(b => `
+                <div class="rounded-xl border border-slate-200 p-2.5 space-y-2">
+                    <div class="flex gap-2">
+                        <input class="field !py-2 flex-1" placeholder="Judul bagian" value="${esc(b.judul)}" oninput="setBebas('${b.id}','judul',this.value)">
+                        <button type="button" onclick="deleteBebas('${b.id}')" class="w-10 h-10 shrink-0 rounded-xl bg-red-50 active:bg-red-100 text-red-600 flex items-center justify-center" aria-label="Hapus">${ic('trash', '!w-4 !h-4')}</button>
+                    </div>
+                    <textarea rows="4" class="field !font-medium" placeholder="Isi bagian..." oninput="setBebas('${b.id}','isi',this.value)">${esc(b.isi)}</textarea>
+                </div>`).join('');
+        }
+        function addBebas() {
+            if (!reportForm) return;
+            reportForm.bebas.push({ id: newId(), judul: '', isi: '' });
+            renderBebasList(); touchReport();
+            const f = $('bebas-list').querySelectorAll('input'); if (f.length) f[f.length - 1].focus();
+        }
+        function setBebas(id, k, v) {
+            const b = reportForm?.bebas.find(x => x.id === id); if (!b) return;
+            b[k] = v; touchReport();
+        }
+        function deleteBebas(id) {
+            if (!reportForm) return;
+            reportForm.bebas = reportForm.bebas.filter(x => x.id !== id);
+            renderBebasList(); touchReport();
+        }
+
         function autoFillInsights() {
-            const g = currentGroup(); if (!g) return;
+            const g0 = currentGroup(); if (!g0 || !reportForm) return;
+            const g = resumeGroup(g0, reportForm);
+            if (!g.items.length) { toast('Centang minimal 1 form penilaian dulu', 'warn'); return; }
             const hasText = ['kekuatan', 'pengembangan'].some(k => $('rp-' + k).value.trim());
             if (hasText && !confirm('Isi Kekuatan & Area Pengembangan akan ditimpa. Lanjutkan?')) return;
             const st = criteriaStats(g).filter(s => s.avg > 0).sort((a, b) => b.avg - a.avg);
@@ -2294,8 +2598,8 @@
             $('rp-kekuatan').value = st.slice(0, 3).map(line).join('\n');
             $('rp-pengembangan').value = st.slice(-3).reverse().map(line).join('\n');
             $('rp-status').value = suggestReco(g.avg);
-            onReportInput();
-            toast('Diisi dari nilai tertinggi & terendah', 'success');
+            readReportForm(); touchReport();
+            toast('Diisi dari nilai tertinggi & terendah form terpilih', 'success');
         }
 
         function switchReportTab(tab) {
@@ -2317,29 +2621,49 @@
         }
         window.addEventListener('resize', fitReportPreview);
 
-        // Model data laporan: dipakai pratinjau sekarang dan generator PDF nanti
+        // Model data laporan: dipakai pratinjau dan PDF. Hanya form yang dicentang yang dihitung.
         function getReportModel() {
-            const g = currentGroup(); if (!g || !reportForm) return null;
-            return { peserta: g, form: reportForm, criteria: criteriaStats(g), predikat: getPredikat(g.avg), bagian: findBagian(g.bagian, g.unit) };
+            const g0 = currentGroup(); if (!g0 || !reportForm) return null;
+            const g = resumeGroup(g0, reportForm);
+            return { peserta: g, form: reportForm, criteria: criteriaStats(g), predikat: getPredikat(g.avg), bagian: findBagian(g.bagian, g.unit), periode: periodeById(reportPeriode) };
         }
 
-        // TODO (tahap berikutnya): bangun PDF dari getReportModel()
+        // Cetak / simpan PDF: teks tetap vektor, halaman dipotong otomatis oleh browser
         function exportReportPDF() {
-            toast('Ekspor PDF akan dikembangkan di tahap berikutnya', 'info');
+            const m = getReportModel(); if (!m) return;
+            clearTimeout(reportSaveTimer); persistReport();
+            const sprite = document.querySelector('body > svg[aria-hidden="true"]');
+            const title = `Resume ${m.periode.short} - ${m.peserta.nama}`;
+            const html = `<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><title>${esc(title)}</title>
+                <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+                <style>@page{size:A4;margin:14mm 12mm}*{box-sizing:border-box}html,body{margin:0;padding:0}
+                body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:12px;line-height:1.5;color:#0f172a;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+                tr{break-inside:avoid;page-break-inside:avoid}thead{display:table-header-group}</style></head>
+                <body>${sprite ? sprite.outerHTML : ''}<div>${$('report-paper').innerHTML}</div></body></html>`;
+            const old = $('print-frame'); if (old) old.remove();
+            const fr = document.createElement('iframe');
+            fr.id = 'print-frame'; fr.setAttribute('aria-hidden', 'true');
+            fr.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+            document.body.appendChild(fr);
+            const d = fr.contentWindow.document; d.open(); d.write(html); d.close();
+            const go = () => { try { fr.contentWindow.focus(); fr.contentWindow.print(); } catch (e) { toast('Gagal membuka dialog cetak', 'warn'); } };
+            if (d.fonts && d.fonts.ready) d.fonts.ready.then(() => setTimeout(go, 150)); else setTimeout(go, 600);
+            toast('Pilih "Simpan sebagai PDF" pada dialog cetak', 'info');
         }
 
         function renderReportPreview() {
             const m = getReportModel(); const paper = $('report-paper'); if (!m || !paper) return;
-            const { peserta: g, form: f, criteria, predikat } = m;
+            const { peserta: g, form: f, criteria, predikat, periode } = m;
+            const has = g.items.length > 0;
             const P = t => esc(t).replace(/\n/g, '<br>');
             const tgl = f.tanggal ? new Date(f.tanggal + 'T00:00').toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
             const ph = '<span style="color:#cbd5e1;font-style:italic">Belum diisi</span>';
             const UT = UNIT_THEME[g.unit] || UNIT_THEME[DEFAULT_UNIT];
-            const sec = t => `<div style="display:flex;align-items:center;gap:8px;margin:20px 0 8px"><span style="width:4px;height:14px;background:${UT.p};border-radius:2px"></span><span style="font-weight:800;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:${UT.d}">${t}</span></div>`;
+            const sec = t => `<div style="display:flex;align-items:center;gap:8px;margin:20px 0 8px;break-after:avoid;page-break-after:avoid"><span style="width:4px;height:14px;background:${UT.p};border-radius:2px"></span><span style="font-weight:800;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:${UT.d}">${t}</span></div>`;
             const th = 'padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#475569;background:#f1f5f9;border-bottom:1px solid #e2e8f0';
             const td = 'padding:6px 8px;border-bottom:1px solid #f1f5f9;vertical-align:top';
             const [lbg, lfg] = BAGIAN_COLORS[m.bagian.color] || BAGIAN_COLORS.slate;
-            const textBlock = (label, val) => `<div style="margin-bottom:10px"><div style="font-weight:700;font-size:11px;color:#334155;margin-bottom:2px">${label}</div><div style="color:#1e293b">${val.trim() ? P(val) : ph}</div></div>`;
+            const textBlock = (label, val) => `<div style="margin-bottom:10px"><div style="font-weight:700;font-size:11px;color:#334155;margin-bottom:2px">${label}</div><div style="color:#1e293b">${String(val || '').trim() ? P(val) : ph}</div></div>`;
 
             let html = `
             <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid ${UT.p};padding-bottom:14px">
@@ -2352,8 +2676,9 @@
             </div>
 
             <div style="text-align:center;margin:22px 0 4px">
-                <div style="font-size:19px;font-weight:800;color:#0f172a">${esc(f.judul) || 'Laporan Assessment'}</div>
-                ${f.periode ? `<div style="font-size:11px;color:#64748b;margin-top:2px">${esc(f.periode)}</div>` : ''}
+                <div style="font-size:20px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#0f172a">${esc(f.judul) || 'Resume Assessment SDP'}</div>
+                <div style="display:inline-block;margin-top:6px;padding:3px 14px;border-radius:999px;background:${UT.p};color:#fff;font-size:11px;font-weight:700">${esc(periode.label)}</div>
+                ${f.periode ? `<div style="font-size:11px;color:#64748b;margin-top:4px">${esc(f.periode)}</div>` : ''}
             </div>
 
             <div style="display:flex;gap:16px;align-items:stretch;margin-top:16px">
@@ -2370,20 +2695,20 @@
                         <tr><td style="color:#64748b;padding:2px 0">Penempatan</td><td style="font-weight:700">${esc(g.cabang) || '-'}</td></tr>
                         ${g.batch ? `<tr><td style="color:#64748b;padding:2px 0">Batch</td><td style="font-weight:700">${esc(g.batch)}</td></tr>` : ''}
                         <tr><td style="color:#64748b;padding:2px 0">Jumlah penilai</td><td style="font-weight:700">${g.items.length} orang</td></tr>
-                        <tr><td style="color:#64748b;padding:2px 0">Tanggal laporan</td><td style="font-weight:700">${tgl}</td></tr>
+                        <tr><td style="color:#64748b;padding:2px 0">Tanggal resume</td><td style="font-weight:700">${tgl}</td></tr>
                     </table>
                 </div>
                 <div style="width:190px;border-radius:12px;background:#0f172a;color:#fff;padding:12px 14px;text-align:center;display:flex;flex-direction:column;justify-content:center">
                     <div style="font-size:9px;font-weight:700;letter-spacing:.14em;color:#fcd34d;text-transform:uppercase">Skor rata-rata</div>
-                    <div style="font-size:38px;font-weight:800;line-height:1.1">${g.avg.toFixed(1)}<span style="font-size:13px;color:#94a3b8"> / 10</span></div>
-                    <div style="display:inline-block;margin:4px auto 0;padding:2px 10px;border-radius:999px;background:#fff;color:${scoreColor(g.avg)};font-size:10px;font-weight:800">${predikat.label}</div>
+                    <div style="font-size:38px;font-weight:800;line-height:1.1">${has ? g.avg.toFixed(1) : '-'}<span style="font-size:13px;color:#94a3b8"> / 10</span></div>
+                    <div style="display:inline-block;margin:4px auto 0;padding:2px 10px;border-radius:999px;background:#fff;color:${has ? scoreColor(g.avg) : '#64748b'};font-size:10px;font-weight:800">${has ? predikat.label : 'Belum ada form dipilih'}</div>
                 </div>
             </div>
 
             <div style="margin-top:12px;padding:8px 12px;border-radius:10px;background:#fffbeb;border:1px solid #fde68a;font-size:11px"><b>Rekomendasi ETD:</b> ${esc(f.status)}</div>`;
 
-            if (f.showKriteria) {
-                html += sec('Hasil per kriteria (rata-rata seluruh penilai)') + `
+            if (f.showKriteria && has) {
+                html += sec('Hasil per kriteria (rata-rata form terpilih)') + `
                 <table style="width:100%;border-collapse:collapse;font-size:11px">
                     <thead><tr><th style="${th};width:26px">No</th><th style="${th}">Kriteria</th><th style="${th};width:170px">Skor</th><th style="${th};width:40px;text-align:center">Nilai</th><th style="${th};width:90px">Kategori</th></tr></thead>
                     <tbody>${criteria.map((s, i) => `<tr>
@@ -2396,7 +2721,7 @@
                 </table>`;
             }
 
-            if (f.showPenilai) {
+            if (f.showPenilai && has) {
                 html += sec('Daftar penilai') + `
                 <table style="width:100%;border-collapse:collapse;font-size:11px">
                     <thead><tr><th style="${th}">Nama penilai</th><th style="${th}">Peran</th><th style="${th};width:50px;text-align:center">Skor</th></tr></thead>
@@ -2408,7 +2733,30 @@
                 textBlock('Ringkasan hasil', f.ringkasan) + textBlock('Kekuatan utama', f.kekuatan) +
                 textBlock('Area pengembangan', f.pengembangan) + textBlock('Rencana tindak lanjut', f.tindak);
 
-            if (f.showKomentar) {
+            // Sesi Pertanyaan & Evaluasi: dikelompokkan per pembahasan, urutan sesuai input
+            if (f.qa.length) {
+                const groups = [], idx = new Map();
+                f.qa.forEach(e => {
+                    const k = String(e.topik || '').trim().toLowerCase();
+                    if (!idx.has(k)) { idx.set(k, groups.length); groups.push({ topik: String(e.topik || '').trim(), items: [] }); }
+                    groups[idx.get(k)].items.push(e);
+                });
+                let n = 0;
+                html += sec('Sesi Pertanyaan &amp; Evaluasi') + groups.map(gr => {
+                    const head = gr.topik ? `<div style="font-weight:800;font-size:11.5px;color:#0f172a;margin:10px 0 6px;break-after:avoid;page-break-after:avoid">${++n}. ${esc(gr.topik)}</div>` : '';
+                    return head + gr.items.map(e => {
+                        const t = QA_TYPES[e.type] || QA_TYPES.pertanyaan;
+                        return `<div style="display:flex;gap:10px;margin:0 0 8px;${gr.topik ? 'margin-left:12px;' : ''}"><span style="flex:0 0 76px;text-align:center;align-self:flex-start;padding:2px 0;border-radius:6px;background:${t.bg};color:${t.c};font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">${t.label}</span><div style="flex:1;min-width:0;color:#1e293b;word-break:break-word">${P(e.teks)}</div></div>`;
+                    }).join('');
+                }).join('');
+            }
+
+            // Bagian bebas buatan ETD
+            f.bebas.filter(b => String(b.judul || '').trim() || String(b.isi || '').trim()).forEach(b => {
+                html += sec(esc(b.judul) || 'Catatan') + `<div style="color:#1e293b;word-break:break-word">${P(b.isi)}</div>`;
+            });
+
+            if (f.showKomentar && has) {
                 const withC = criteria.filter(s => s.comments.length);
                 html += sec('Komentar penilai') + (withC.length ? withC.map(s => `
                     <div style="margin-bottom:8px"><div style="font-weight:700;font-size:11px">${s.k.id}. ${esc(s.k.title)}</div>
@@ -2417,13 +2765,13 @@
 
             if (f.showTtd) {
                 html += `
-                <div style="display:flex;justify-content:space-between;gap:24px;margin-top:34px;font-size:11px;page-break-inside:avoid">
+                <div style="display:flex;justify-content:space-between;gap:24px;margin-top:34px;font-size:11px;break-inside:avoid;page-break-inside:avoid">
                     <div style="width:220px;text-align:center"><div>Mengetahui,</div><div style="height:64px"></div><div style="border-top:1px solid #0f172a;padding-top:3px;color:#94a3b8">(............................)</div></div>
                     <div style="width:220px;text-align:center"><div>${tgl}<br>Disusun oleh,</div><div style="height:48px"></div><div style="border-top:1px solid #0f172a;padding-top:3px;font-weight:700">${esc(f.penyusun) || '(............................)'}</div><div style="font-size:10px;color:#64748b">${esc(f.jabatan)}</div></div>
                 </div>`;
             }
 
-            html += `<div style="margin-top:28px;padding-top:8px;border-top:1px solid #e2e8f0;font-size:9px;color:#94a3b8;display:flex;justify-content:space-between"><span>Disusun dari data Portal Assessment SDP - Yummy Choice</span><span>Dokumen internal</span></div>`;
+            html += `<div style="margin-top:28px;padding-top:8px;border-top:1px solid #e2e8f0;font-size:9px;color:#94a3b8;display:flex;justify-content:space-between"><span>Disusun dari data Portal Assessment SDP - ${esc(g.unit)}</span><span>Dokumen internal</span></div>`;
 
             paper.innerHTML = html;
             fitReportPreview();
@@ -2434,7 +2782,7 @@
             if (!$('report-picker-list')) return;
             if (reportKey && !currentGroup()) { reportKey = null; reportForm = null; }
             renderReportPicker(); showReportStage();
-            if (reportKey) renderReportPreview();
+            if (reportKey) { renderResumeForms(); renderReportPreview(); }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -2574,7 +2922,7 @@
                     <div class="px-4 pt-8 pb-3 flex-1 space-y-2.5">
                         <h4 class="font-extrabold text-slate-900 leading-tight break-words">${esc(p.nama)}</h4>
                         <div class="space-y-1.5 text-xs text-slate-600">
-                            <div class="flex items-center gap-2"><span class="w-[22px] flex justify-center text-slate-400">${ic('building', '!w-4 !h-4')}</span><span class="font-bold text-slate-800 break-words">${esc(unitOf(p))}</span></div>
+                            <div class="flex items-center gap-2"><span class="w-[22px] flex justify-center text-slate-400">${unitIcon(unitOf(p), '!w-4 !h-4')}</span><span class="font-bold text-slate-800 break-words">${esc(unitOf(p))}</span></div>
                             <div class="flex items-center gap-2">${bagianLogo(b, 22)}<span class="font-bold text-slate-800 break-words">${esc(p.bagian)}</span></div>
                             <div class="flex items-center gap-2"><span class="w-[22px] flex justify-center text-slate-400">${ic('map-pin', '!w-4 !h-4')}</span><span class="break-words">${esc(p.lokasi) || '-'}</span></div>
                             <div class="flex items-center gap-2"><span class="w-[22px] flex justify-center text-slate-400">${ic('calendar', '!w-4 !h-4')}</span><span class="${exp ? 'text-slate-500' : endL ? '' : 'text-amber-600 font-bold'}">${endL ? (exp ? 'Masa SDP selesai ' : 'Masa SDP s.d. ') + endL : 'Batch belum terbaca'}</span></div>
@@ -2737,7 +3085,7 @@
                         <div class="min-w-0"><div class="font-extrabold text-slate-900 leading-tight break-words">${esc(nama)}</div><div class="text-[11px] font-semibold" style="color:${cfg}">Peserta SDP Trainee</div></div>
                     </div>
                     <div class="p-3.5 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        ${row(ic('building', '!w-4 !h-4'), 'Unit', esc(unit) || '-')}
+                        ${row(unitIcon(unit, '!w-4 !h-4'), 'Unit', esc(unit) || '-')}
                         ${row(bagianLogo(b, 28).replace('width:28px;height:28px', 'width:28px;height:28px'), 'Bagian', esc(bagian) || '-')}
                         ${row(ic('map-pin', '!w-4 !h-4'), 'Lokasi penempatan', esc(lokasi) || '-')}
                         ${row(ic('calendar', '!w-4 !h-4'), 'Batch / Angkatan', esc(batch) || '-')}
@@ -2769,7 +3117,7 @@
         function navSnapshot() {
             const e = { v: currentNav, y: window.scrollY || 0 };
             if (currentNav === 'view-kelola') e.tab = kelolaTab;
-            if (currentNav === 'view-laporan') e.rk = reportKey;
+            if (currentNav === 'view-laporan') { e.rk = reportKey; e.rp = reportPeriode; }
             return e;
         }
 
@@ -2814,7 +3162,7 @@
             if (e.v === 'view-kelola' && e.tab) switchKelolaTab(e.tab);
             if (e.v === 'view-laporan' && e.rk) {
                 const gs = reportGroups(), i = gs.findIndex(g => g.key === e.rk);
-                if (i >= 0) { reportGroupsCache = gs; selectReportPeserta(i); }
+                if (i >= 0) { reportGroupsCache = gs; selectReportPeserta(i, e.rp); }
             }
             requestAnimationFrame(() => window.scrollTo(0, e.y || 0));
             navUpdateBtn();
