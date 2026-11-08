@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#b91c1c">
+    <script>
+        /* Tentukan status login SEBELUM halaman tergambar agar refresh tidak berkedip ke menu login */
+        (function () {
+            try {
+                var r = JSON.parse(sessionStorage.getItem('yc_sdp_role') || 'null'), u = JSON.parse(sessionStorage.getItem('yc_sdp_unit') || 'null');
+                var U = ['Yummy Choice', 'Mister Donut', 'Washoku Sato'], h = document.documentElement;
+                if (r === 'ETD' || (r === 'USER' && U.indexOf(u) > -1)) { h.classList.add('s-app'); if (r === 'USER') h.setAttribute('data-unit', u); }
+            } catch (e) {}
+        })();
+    </script>
     <title>Portal Assessment SDP - Yummy Choice</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,9 +24,9 @@
                     fontFamily: { sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'] },
                     colors: {
                         yc: {
-                            50: '#fff1f2', 100: '#ffe4e6', 200: '#fecdd3', 300: '#fda4af',
-                            400: '#fb7185', 500: '#f43f5e', 600: '#dc2626', 700: '#b91c1c',
-                            800: '#991b1b', 900: '#7f1d1d'
+                            50: 'var(--yc-50)', 100: 'var(--yc-100)', 200: 'var(--yc-200)', 300: 'var(--yc-300)',
+                            400: 'var(--yc-400)', 500: 'var(--yc-500)', 600: 'var(--yc-600)', 700: 'var(--yc-700)',
+                            800: 'var(--yc-800)', 900: 'var(--yc-900)'
                         }
                     }
                 }
@@ -25,12 +35,33 @@
     </script>
     <style>
         html { -webkit-text-size-adjust: 100%; }
+        /* Kritis: berlaku sebelum Tailwind selesai dimuat, mencegah tampilan "mentah" sesaat */
+        .hidden { display: none; }
+        html:not(.s-app) #dashboard-content, html:not(.s-app) #app-header { display: none !important; }
+        html.s-app #section-login { display: none !important; }
+
+        /* Tema per Unit Bisnis (default = Yummy Choice / ETD) */
+        :root {
+            --yc-50: #fff1f2; --yc-100: #ffe4e6; --yc-200: #fecdd3; --yc-300: #fda4af; --yc-400: #fb7185;
+            --yc-500: #f43f5e; --yc-600: #dc2626; --yc-700: #b91c1c; --yc-800: #991b1b; --yc-900: #7f1d1d;
+            --bg-a: rgba(251,191,36,.15); --bg-b: rgba(20,184,166,.12);
+        }
+        html[data-unit="Mister Donut"] {
+            --yc-50: #fdf2f8; --yc-100: #fce7f3; --yc-200: #fbcfe8; --yc-300: #f9a8d4; --yc-400: #f472b6;
+            --yc-500: #ec4899; --yc-600: #db2777; --yc-700: #be185d; --yc-800: #9d174d; --yc-900: #831843;
+            --bg-a: rgba(244,114,182,.16); --bg-b: rgba(251,191,36,.12);
+        }
+        html[data-unit="Washoku Sato"] {
+            --yc-50: #f0fdfa; --yc-100: #ccfbf1; --yc-200: #99f6e4; --yc-300: #5eead4; --yc-400: #2dd4bf;
+            --yc-500: #14b8a6; --yc-600: #0d9488; --yc-700: #0f766e; --yc-800: #115e59; --yc-900: #134e4a;
+            --bg-a: rgba(45,212,191,.16); --bg-b: rgba(251,113,133,.10);
+        }
         body {
             min-height: 100dvh; -webkit-tap-highlight-color: transparent;
             background-color: #fcf9f2;
             background-image:
-                radial-gradient(at 10% 10%, rgba(251,191,36,.15) 0, transparent 50%),
-                radial-gradient(at 90% 90%, rgba(20,184,166,.12) 0, transparent 50%);
+                radial-gradient(at 10% 10%, var(--bg-a) 0, transparent 50%),
+                radial-gradient(at 90% 90%, var(--bg-b) 0, transparent 50%);
             background-attachment: fixed;
         }
         .ic { width: 1.25rem; height: 1.25rem; flex-shrink: 0; display: inline-block; vertical-align: middle; }
@@ -76,6 +107,31 @@
             <rect x="13" y="11" width="22" height="27" rx="4" fill="#fff"/>
             <rect x="19" y="8" width="10" height="7" rx="2.5" fill="#fbbf24"/>
             <path d="m18.5 26 4 4 7.5-8" fill="none" stroke="#b91c1c" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </symbol>
+        <!-- Logo Unit Bisnis -->
+        <symbol id="logo-yc" viewBox="0 0 48 48"><!-- Yummy Choice: onigiri -->
+            <rect width="48" height="48" rx="12" fill="#b91c1c"/>
+            <path d="M24 9.5C26.3 9.5 28 10.8 29.4 13.4L38.2 30C39.9 33.2 37.7 37 34.1 37H13.9C10.3 37 8.1 33.2 9.8 30L18.6 13.4C20 10.8 21.7 9.5 24 9.5Z" fill="#fff"/>
+            <path d="M16.4 29H31.6L35.6 35.6C36.4 37 34.1 37 34.1 37H13.9C13.9 37 11.6 37 12.4 35.6Z" fill="#1f2937"/>
+            <circle cx="24" cy="20" r="2.3" fill="#f43f5e"/>
+        </symbol>
+        <symbol id="logo-md" viewBox="0 0 48 48"><!-- Mister Donut: donat tergigit di ujung -->
+            <rect width="48" height="48" rx="12" fill="#db2777"/>
+            <circle cx="24" cy="25" r="14.5" fill="#f2b25f"/>
+            <circle cx="24" cy="24.2" r="12.2" fill="#fbcfe8"/>
+            <circle cx="24" cy="24.5" r="4.6" fill="#db2777"/>
+            <g fill="none" stroke-linecap="round" stroke-width="1.9">
+                <path d="M15.2 21.2l2-1" stroke="#fff"/><path d="M30.5 31.6l2 1" stroke="#be185d"/>
+                <path d="M17.2 31.6l1.4 1.6" stroke="#fbbf24"/><path d="M21.5 16.8l.5-2" stroke="#be185d"/>
+                <path d="M13.6 26.6l2 .2" stroke="#fbbf24"/><path d="M26 33.5l.4 2" stroke="#fff"/>
+            </g>
+            <circle cx="36" cy="14" r="4.8" fill="#db2777"/><circle cx="31.2" cy="11" r="3.4" fill="#db2777"/><circle cx="38.8" cy="19.6" r="3.2" fill="#db2777"/>
+        </symbol>
+        <symbol id="logo-ws" viewBox="0 0 48 48"><!-- Washoku Sato: sushi -->
+            <rect width="48" height="48" rx="12" fill="#0f766e"/>
+            <rect x="9.5" y="25" width="29" height="12" rx="6" fill="#fff"/>
+            <path d="M8.5 27.5C8.5 20.5 15.5 17 24 17C32.5 17 39.5 20.5 39.5 27.5C39.5 30 36 29.5 24 29.5C12 29.5 8.5 30 8.5 27.5Z" fill="#fb7185"/>
+            <path d="M16.5 19.6q2.2 4 0 8.2M24 18.3q2.2 4.6 0 10M31.5 19.6q2.2 4 0 8.2" fill="none" stroke="#fff" stroke-width="1.3" stroke-linecap="round" opacity=".7"/>
         </symbol>
         <defs>
             <g id="g-none" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -150,7 +206,7 @@
         <div class="max-w-5xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between">
             <div class="flex items-center gap-2 min-w-0">
                         <button onclick="goToHome()" class="flex items-center gap-2.5 text-left">
-                <svg class="w-9 h-9 rounded-xl shadow" viewBox="0 0 48 48" aria-hidden="true"><use href="#logo"/></svg>
+                <svg class="w-9 h-9 rounded-xl shadow" viewBox="0 0 48 48" aria-hidden="true"><use id="header-logo-use" href="#logo"/></svg>
                 <span class="leading-tight">
                     <span id="header-title" class="block text-sm font-extrabold tracking-tight">YUMMY CHOICE</span>
                     <span class="block text-[10px] font-semibold text-yc-200 uppercase tracking-wider">Assessment SDP</span>
@@ -172,7 +228,7 @@
         <section id="section-login" class="max-w-sm mx-auto mt-10 sm:mt-16">
             <div class="card p-6 border-t-4 border-t-yc-600 space-y-5">
                 <div class="text-center space-y-2">
-                    <svg class="w-16 h-16 mx-auto rounded-2xl shadow-lg" viewBox="0 0 48 48" aria-hidden="true"><use href="#logo"/></svg>
+                    <div class="flex items-start justify-center gap-4"><div class="text-center"><svg class="w-14 h-14 rounded-2xl shadow-lg" viewBox="0 0 48 48" aria-hidden="true"><use href="#logo-yc"/></svg><span class="block mt-1.5 text-[10px] font-bold text-slate-500 leading-tight">Yummy<br>Choice</span></div><div class="text-center"><svg class="w-14 h-14 rounded-2xl shadow-lg" viewBox="0 0 48 48" aria-hidden="true"><use href="#logo-md"/></svg><span class="block mt-1.5 text-[10px] font-bold text-slate-500 leading-tight">Mister<br>Donut</span></div><div class="text-center"><svg class="w-14 h-14 rounded-2xl shadow-lg" viewBox="0 0 48 48" aria-hidden="true"><use href="#logo-ws"/></svg><span class="block mt-1.5 text-[10px] font-bold text-slate-500 leading-tight">Washoku<br>Sato</span></div></div>
                     <h2 class="text-xl font-extrabold text-slate-900">Portal Assessment SDP</h2>
                     <p class="text-sm text-slate-500">Masukkan passkey untuk melanjutkan</p>
                 </div>
@@ -325,24 +381,7 @@
 
                         <div>
                             <span class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">2. Peran Penguji <span class="text-rose-500">*</span></span>
-                            <div id="peran-group" class="space-y-2">
-                                <label class="flex items-center gap-3 p-3 rounded-xl border-2 border-slate-200 bg-white cursor-pointer has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50">
-                                    <input type="radio" name="peran_penguji" value="MANAGER OPERASIONAL" class="accent-amber-600 w-5 h-5 shrink-0">
-                                    <span class="text-sm font-bold text-slate-800">Manager Operasional</span>
-                                </label>
-                                <label class="flex items-center gap-3 p-3 rounded-xl border-2 border-slate-200 bg-white cursor-pointer has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50">
-                                    <input type="radio" name="peran_penguji" value="MANAGER CENTRAL KITCHEN CABANG (STRUKTURAL)" class="accent-amber-600 w-5 h-5 shrink-0">
-                                    <span class="text-sm font-bold text-slate-800">Manager Central Kitchen Cabang <span class="font-semibold text-slate-500">(Struktural)</span></span>
-                                </label>
-                                <label class="flex items-center gap-3 p-3 rounded-xl border-2 border-slate-200 bg-white cursor-pointer has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50">
-                                    <input type="radio" name="peran_penguji" value="MANAGER FUNGSIONAL (MGR. QC, ADM, SUPPORT/GA, LOGISTIK, DEVELOPMENT CK, dll.)" class="accent-amber-600 w-5 h-5 shrink-0">
-                                    <span class="text-sm font-bold text-slate-800">Manager Fungsional <span class="block text-xs font-medium text-slate-500">QC, ADM, Support/GA, Logistik, Development CK, dll.</span></span>
-                                </label>
-                                <label class="flex items-center gap-3 p-3 rounded-xl border-2 border-slate-200 bg-white cursor-pointer has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50">
-                                    <input type="radio" name="peran_penguji" value="MENTOR" class="accent-amber-600 w-5 h-5 shrink-0">
-                                    <span class="text-sm font-bold text-slate-800">Mentor</span>
-                                </label>
-                            </div>
+                            <div id="peran-group" class="space-y-2"></div>
                         </div>
 
                         <div>
@@ -707,7 +746,7 @@
     </main>
 
     <footer class="text-center text-[11px] text-slate-400 font-medium py-4">
-        © 2026 Education & Training Department (ETD) - Yummy Choice
+        © 2026 Education & Training Department (ETD) - Food Beverage Industry
     </footer>
 
     <!-- MODAL DETAIL -->
@@ -1248,6 +1287,7 @@
             }
             updateBagianPreview();
             
+            renderPeranOptions();
             if (d.peranPenguji) {
                 const radio = [...document.querySelectorAll('input[name="peran_penguji"]')].find(r => r.value === d.peranPenguji);
                 if (radio) radio.checked = true;
@@ -1389,6 +1429,7 @@
             currentUserRole = null;
             currentUnit = null;
             document.title = 'Portal Assessment SDP';
+            resetUnitTheme();
             $('header-title').textContent = 'YUMMY CHOICE';
             $('section-login').classList.remove('hidden');
             $('dashboard-content').classList.add('hidden');
@@ -1399,6 +1440,8 @@
 
         function initPortal() {
             navReset();
+            applyUnitTheme();
+            renderPeranOptions();
             pullBagianCloud();
             pullPesertaCloud();
             $('section-login').classList.add('hidden');
@@ -1530,6 +1573,7 @@
         function resetForm(keepCurrentDraftId = false) {
             clearTimeout(autosaveTimer);
             $('assessment-form').reset();
+            renderPeranOptions();
             $('realtime-score').textContent = '0.0';
             kriteriaList.forEach(item => {
                 $(`emoji-icon-${item.id}`).textContent = '😶';
@@ -1785,6 +1829,53 @@
             sel.value = UNITS.includes(selected) ? selected : DEFAULT_UNIT;
         }
         let bagianUnit = DEFAULT_UNIT;
+        const UNIT_LOGO = { 'Yummy Choice': '#logo-yc', 'Mister Donut': '#logo-md', 'Washoku Sato': '#logo-ws' };
+        const UNIT_THEME = { 'Yummy Choice': { p: '#b91c1c', d: '#7f1d1d' }, 'Mister Donut': { p: '#be185d', d: '#831843' }, 'Washoku Sato': { p: '#0f766e', d: '#134e4a' } };
+
+        function applyUnitTheme() {
+            const h = document.documentElement;
+            h.classList.add('s-app');
+            if (currentUnit) h.setAttribute('data-unit', currentUnit); else h.removeAttribute('data-unit');
+            const th = UNIT_THEME[currentUnit] || UNIT_THEME[DEFAULT_UNIT];
+            document.querySelector('meta[name="theme-color"]')?.setAttribute('content', th.p);
+            $('header-logo-use')?.setAttribute('href', UNIT_LOGO[currentUnit] || '#logo');
+        }
+        function resetUnitTheme() {
+            const h = document.documentElement;
+            h.classList.remove('s-app'); h.removeAttribute('data-unit');
+            document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#b91c1c');
+            $('header-logo-use')?.setAttribute('href', '#logo');
+        }
+
+        // Peran penilai: Yummy Choice 4 peran; Mister Donut & Washoku Sato 3 peran
+        const PERAN_3 = [
+            { v: 'MANAGER OPERASIONAL', t: 'Manager Operasional' },
+            { v: 'MANAGER STRUKTURAL', t: 'Manager Struktural' },
+            { v: 'MENTOR', t: 'Mentor' }
+        ];
+        const PERAN_CONFIG = {
+            'Yummy Choice': [
+                { v: 'MANAGER OPERASIONAL', t: 'Manager Operasional' },
+                { v: 'MANAGER CENTRAL KITCHEN CABANG (STRUKTURAL)', t: 'Manager Central Kitchen Cabang', inl: '(Struktural)' },
+                { v: 'MANAGER FUNGSIONAL (MGR. QC, ADM, SUPPORT/GA, LOGISTIK, DEVELOPMENT CK, dll.)', t: 'Manager Fungsional', sub: 'QC, ADM, Support/GA, Logistik, Development CK, dll.' },
+                { v: 'MENTOR', t: 'Mentor' }
+            ],
+            'Mister Donut': PERAN_3,
+            'Washoku Sato': PERAN_3
+        };
+        // Penguji unit memakai unitnya; ETD mengikuti unit peserta yang dipilih (default Yummy Choice)
+        const peranUnit = () => currentUnit || ($('sdp-unit') && $('sdp-unit').value) || DEFAULT_UNIT;
+        function renderPeranOptions() {
+            const g = $('peran-group'); if (!g) return;
+            const cur = document.querySelector('input[name="peran_penguji"]:checked')?.value;
+            const list = PERAN_CONFIG[peranUnit()] || PERAN_CONFIG[DEFAULT_UNIT];
+            g.innerHTML = list.map(r => `
+                <label class="flex items-center gap-3 p-3 rounded-xl border-2 border-slate-200 bg-white cursor-pointer has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50">
+                    <input type="radio" name="peran_penguji" value="${esc(r.v)}" class="accent-amber-600 w-5 h-5 shrink-0">
+                    <span class="text-sm font-bold text-slate-800">${esc(r.t)}${r.inl ? ` <span class="font-semibold text-slate-500">${esc(r.inl)}</span>` : ''}${r.sub ? `<span class="block text-xs font-medium text-slate-500">${esc(r.sub)}</span>` : ''}</span>
+                </label>`).join('');
+            if (cur) { const r = [...g.querySelectorAll('input')].find(x => x.value === cur); if (r) r.checked = true; }
+        }
         // Daftar ikon yang bisa dipilih (symbol "b-..." ada di sprite SVG di atas).
         // Mau tambah ikon baru? Tambahkan <symbol id="b-nama"> di sprite lalu masukkan namanya di sini.
         const BAGIAN_ICONS = ['briefcase', 'factory', 'wrench', 'headset', 'users', 'truck', 'shield-check', 'flask', 'bag', 'life-buoy',
@@ -2243,17 +2334,18 @@
             const P = t => esc(t).replace(/\n/g, '<br>');
             const tgl = f.tanggal ? new Date(f.tanggal + 'T00:00').toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
             const ph = '<span style="color:#cbd5e1;font-style:italic">Belum diisi</span>';
-            const sec = t => `<div style="display:flex;align-items:center;gap:8px;margin:20px 0 8px"><span style="width:4px;height:14px;background:#b91c1c;border-radius:2px"></span><span style="font-weight:800;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7f1d1d">${t}</span></div>`;
+            const UT = UNIT_THEME[g.unit] || UNIT_THEME[DEFAULT_UNIT];
+            const sec = t => `<div style="display:flex;align-items:center;gap:8px;margin:20px 0 8px"><span style="width:4px;height:14px;background:${UT.p};border-radius:2px"></span><span style="font-weight:800;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:${UT.d}">${t}</span></div>`;
             const th = 'padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#475569;background:#f1f5f9;border-bottom:1px solid #e2e8f0';
             const td = 'padding:6px 8px;border-bottom:1px solid #f1f5f9;vertical-align:top';
             const [lbg, lfg] = BAGIAN_COLORS[m.bagian.color] || BAGIAN_COLORS.slate;
             const textBlock = (label, val) => `<div style="margin-bottom:10px"><div style="font-weight:700;font-size:11px;color:#334155;margin-bottom:2px">${label}</div><div style="color:#1e293b">${val.trim() ? P(val) : ph}</div></div>`;
 
             let html = `
-            <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #b91c1c;padding-bottom:14px">
+            <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid ${UT.p};padding-bottom:14px">
                 <div style="display:flex;align-items:center;gap:12px">
-                    <svg style="width:46px;height:46px;border-radius:12px" viewBox="0 0 48 48"><use href="#logo"/></svg>
-                    <div><div style="font-weight:800;font-size:16px;letter-spacing:.02em;color:#7f1d1d">${esc(String(g.unit || DEFAULT_UNIT).toUpperCase())}</div>
+                    <svg style="width:46px;height:46px;border-radius:12px" viewBox="0 0 48 48"><use href="${UNIT_LOGO[g.unit] || '#logo'}"/></svg>
+                    <div><div style="font-weight:800;font-size:16px;letter-spacing:.02em;color:${UT.d}">${esc(String(g.unit || DEFAULT_UNIT).toUpperCase())}</div>
                     <div style="font-size:9px;font-weight:700;letter-spacing:.16em;color:#64748b;text-transform:uppercase">Education &amp; Training Department</div></div>
                 </div>
                 <div style="text-align:right;font-size:10px;color:#64748b"><div style="font-weight:700;color:#0f172a">No. Dokumen</div><div>${esc(f.noDok) || '-'}</div></div>
@@ -2625,6 +2717,7 @@
             const nama = $('peserta-nama').value;
             if (!nama) { $('sdp-bagian').value = ''; $('sdp-cabang').value = ''; $('sdp-batch').value = ''; $('sdp-unit').value = ''; }
             else applyPesertaFromMaster(nama);
+            renderPeranOptions(); // opsi peran mengikuti unit peserta (relevan untuk ETD)
             updateBagianPreview();
         }
 
