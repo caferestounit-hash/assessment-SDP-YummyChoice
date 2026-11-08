@@ -227,6 +227,7 @@
             </button>
             </div>
             <div class="flex items-center gap-2">
+                <span id="sync-pill" class="px-2 py-1 rounded-full text-[10px] font-bold inline-flex items-center gap-1 bg-white/15 text-white" title=""></span>
                 <span id="user-role-badge" class="px-2.5 py-1 rounded-full text-[11px] font-bold inline-flex items-center gap-1"></span>
                 <button onclick="logout()" class="w-10 h-10 rounded-xl bg-yc-800 active:bg-yc-900 flex items-center justify-center" aria-label="Keluar">
                     <svg class="ic"><use href="#i-log-out"/></svg>
@@ -949,9 +950,8 @@
 
     <!-- Script Module Firebase (tambahkan sebelum <script> utama) -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
+        // Dimuat dinamis agar kegagalan CDN tidak mematikan seluruh halaman
+        const FB = "https://www.gstatic.com/firebasejs/10.7.1/";
         const firebaseConfig = {
             apiKey: "AIzaSyDLiB1PW_-yFKBm5k29bs20jlLkx2Nz820",
             authDomain: "assessment-sdp-yummy-choice.firebaseapp.com",
@@ -961,14 +961,30 @@
             appId: "1:13348685369:web:4c71b77f7cde5da94f6fe8",
             measurementId: "G-TNW6HQKL92"
         };
-
-        const app = initializeApp(firebaseConfig);
-        window.db = getFirestore(app);
-        window.fsCollection = collection;
-        window.fsAddDoc = addDoc;
-        window.fsDoc = doc;
-        window.fsGetDoc = getDoc;
-        window.fsSetDoc = setDoc;
+        (async () => {
+            try {
+                const [{ initializeApp }, fs] = await Promise.all([import(FB + "firebase-app.js"), import(FB + "firebase-firestore.js")]);
+                const app = initializeApp(firebaseConfig);
+                let db;
+                try {
+                    // Cache offline: data tetap bisa dibuka & ditulis tanpa internet, lalu otomatis tersinkron
+                    db = fs.initializeFirestore(app, { ignoreUndefinedProperties: true, localCache: fs.persistentLocalCache({ tabManager: fs.persistentMultipleTabManager() }) });
+                } catch (e) { db = fs.getFirestore(app); }
+                window.db = db;
+                window.fsCollection = fs.collection;
+                window.fsAddDoc = fs.addDoc;
+                window.fsDoc = fs.doc;
+                window.fsGetDoc = fs.getDoc;
+                window.fsSetDoc = fs.setDoc;
+                window.fsDeleteDoc = fs.deleteDoc;
+                window.fsOnSnapshot = fs.onSnapshot;
+                window.dispatchEvent(new Event('fs-ready'));
+            } catch (e) {
+                console.error('Firebase gagal dimuat:', e);
+                window.fsFailed = true;
+                window.dispatchEvent(new Event('fs-failed'));
+            }
+        })();
     </script>
 
     <script>
@@ -1311,7 +1327,7 @@
 
         function saveDraft(silent) {
             clearTimeout(autosaveTimer);
-            const d = collectDraft();
+            const d = collectDraft(); d.updatedAt = Date.now();
             if (isDraftEmpty(d)) { 
                 if (silent !== true) toast('Belum ada isian untuk disimpan', 'info'); 
                 return; 
@@ -1319,8 +1335,8 @@
             currentDraftId = d.id;
             const idx = draftList.findIndex(x => x.id === currentDraftId);
             if (idx > -1) draftList[idx] = d; else draftList.unshift(d);
-            
             writeJSON('yc_sdp_drafts', draftList);
+            cloudSet(COL.draft, d.id, d);
             $('draft-indicator').classList.remove('hidden');
             renderDraftCards();
             if (silent !== true) toast('Draft berhasil disimpan', 'success');
@@ -1381,6 +1397,7 @@
 
         function deleteDraft(id) {
             if (!confirm('Hapus draft ini secara permanen?')) return;
+            cloudDelete(COL.draft, id);
             draftList = draftList.filter(x => x.id !== id);
             writeJSON('yc_sdp_drafts', draftList);
             
@@ -1394,6 +1411,7 @@
         function discardDraft(force) {
             if (!force && !confirm('Kosongkan seluruh isian form ini?')) return;
             if (currentDraftId) {
+                cloudDelete(COL.draft, currentDraftId);
                 draftList = draftList.filter(x => x.id !== currentDraftId);
                 writeJSON('yc_sdp_drafts', draftList);
                 renderDraftCards();
@@ -1464,6 +1482,173 @@
         const saveAssessments = () => writeJSON('yc_sdp_assessments', assessmentList);
         const saveTrash = () => writeJSON('yc_sdp_trash', trashList);
 
+        // =====================================================================
+        // SINKRON LIVE (Firestore realtime): semua perangkat melihat data yang sama
+        // localStorage hanya dipakai sebagai cache agar tetap bisa dibuka saat offline
+        // =====================================================================
+        const COL = { hasil: 'hasil_form_penilaian', draft: 'draft_form_penilaian', resume: 'resume_assessment', setting: 'pengaturan' };
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyM0wRhLaAV9seglEJ3XhxDEMOaYGGCrv2Kpdi8-e3kgqivWMSjVUyQ1EhBHEmj8GURzA/exec";
+        // true = Apps Script versi 2 (Code.gs terbaru) sudah di-deploy: hapus / pulihkan ikut tercermin di Spreadsheet.
+        // Jika belum deploy ulang, ubah ke false agar Spreadsheet lama tidak menerima baris aneh.
+        const GAS_V2 = true;
+
+        let cloudStarted = false, cloudWaiting = false, cloudUnsubs = [], cloudDeniedShown = false, renderAllTimer = null;
+        const cloudOK = () => !!(window.db && window.fsOnSnapshot && window.fsDoc && window.fsSetDoc && window.fsCollection);
+        const cleanData = o => JSON.parse(JSON.stringify(o));
+        const stripLocal = o => { const c = cleanData(o); delete c._fsId; return c; };
+        const withTimeout = (p, ms) => Promise.race([p, new Promise(r => setTimeout(() => r('timeout'), ms))]);
+        const renderAllSoon = () => { clearTimeout(renderAllTimer); renderAllTimer = setTimeout(() => { if (currentUserRole) renderAll(); }, 120); };
+
+        function setSyncPill(state, detail) {
+            const el = $('sync-pill'); if (!el) return;
+            const m = {
+                wait: ['Menyambung…', 'bg-white/15 text-white', '#fde68a'],
+                live: ['Live', 'bg-emerald-500/25 text-emerald-50', '#34d399'],
+                off: ['Offline', 'bg-amber-500/30 text-amber-50', '#fbbf24'],
+                err: ['Cloud error', 'bg-red-500/40 text-red-50', '#f87171']
+            }[state] || ['-', '', '#fff'];
+            el.className = 'px-2 py-1 rounded-full text-[10px] font-bold inline-flex items-center gap-1 ' + m[1];
+            el.innerHTML = `<span style="width:6px;height:6px;border-radius:99px;background:${m[2]};display:inline-block"></span>${m[0]}`;
+            el.title = detail ? String(detail) : '';
+        }
+
+        function handleCloudError(e) {
+            console.error('Firestore:', e);
+            setSyncPill('err', (e && e.code) || 'error');
+            if (e && e.code === 'permission-denied' && !cloudDeniedShown) {
+                cloudDeniedShown = true;
+                toast('Firestore menolak akses. Perbarui Rules di Firebase Console (lihat file firestore.rules).', 'warn');
+            }
+        }
+
+        async function cloudSet(col, id, data, merge) {
+            if (!cloudOK()) return false;
+            try {
+                const ref = window.fsDoc(window.db, col, id);
+                if (merge) await window.fsSetDoc(ref, cleanData(data), { merge: true });
+                else await window.fsSetDoc(ref, cleanData(data));
+                return true;
+            } catch (e) { handleCloudError(e); return false; }
+        }
+        async function cloudDelete(col, id) {
+            if (!(cloudOK() && window.fsDeleteDoc)) return false;
+            try { await window.fsDeleteDoc(window.fsDoc(window.db, col, id)); return true; }
+            catch (e) { handleCloudError(e); return false; }
+        }
+
+        // Apps Script: cermin ke Spreadsheet
+        const gasPost = body => fetch(GAS_WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }).then(r => r.ok).catch(() => false);
+        const gasSync = body => GAS_V2 ? gasPost(body) : Promise.resolve(false);
+
+        // Data lokal lama (sebelum fitur live) diunggah sekali per perangkat
+        function migrateOnce(flag, items, cloudIds, pushFn) {
+            if (readJSON(flag, false)) return;
+            items.filter(x => x && x.id && !cloudIds.has(x.id)).forEach(pushFn);
+            writeJSON(flag, true);
+        }
+
+        function purgeOldTrash() {
+            if (currentUserRole !== 'ETD') return;
+            const now = Date.now();
+            trashList = trashList.filter(i => {
+                if (now - (i.deletedTimestamp || now) < THIRTY_DAYS) return true;
+                cloudDelete(COL.hasil, i._fsId || i.id); gasSync({ action: 'purge', id: i.id });
+                return false;
+            });
+        }
+
+        function stopCloudSync() {
+            cloudUnsubs.forEach(f => { try { f(); } catch (e) {} });
+            cloudUnsubs = []; cloudStarted = false;
+        }
+
+        function startCloudSync() {
+            if (cloudStarted) return;
+            if (!cloudOK()) {
+                setSyncPill(window.fsFailed ? 'err' : 'wait', window.fsFailed ? 'Firebase gagal dimuat (cek koneksi)' : 'Menyambung ke cloud');
+                if (!cloudWaiting) {
+                    cloudWaiting = true;
+                    window.addEventListener('fs-ready', () => { cloudWaiting = false; if (currentUserRole) startCloudSync(); }, { once: true });
+                    window.addEventListener('fs-failed', () => setSyncPill('err', 'Firebase gagal dimuat (cek koneksi)'), { once: true });
+                }
+                return;
+            }
+            cloudStarted = true;
+            setSyncPill('wait', 'Menyambung ke cloud');
+            const boot = { a: readJSON('yc_sdp_assessments', []), t: readJSON('yc_sdp_trash', []), d: readJSON('yc_sdp_drafts', []), r: readJSON(REPORT_KEY, {}) };
+            const db = window.db, C = n => window.fsCollection(db, n), D = (c, id) => window.fsDoc(db, c, id);
+            const sub = (ref, cb) => cloudUnsubs.push(window.fsOnSnapshot(ref, snap => {
+                try { cb(snap); setSyncPill(snap.metadata.fromCache && !navigator.onLine ? 'off' : 'live'); } catch (e) { console.error(e); }
+            }, handleCloudError));
+
+            // 1. Hasil penilaian (+ tempat sampah lewat flag deleted)
+            const flagA = 'yc_sdp_mig_hasil';
+            sub(C(COL.hasil), snap => {
+                if (snap.metadata.fromCache && !readJSON(flagA, false)) return; // tunggu data server dulu
+                const act = [], tr = [];
+                snap.forEach(ds => { const x = ds.data(); x.id = x.id || ds.id; x._fsId = ds.id; (x.deleted ? tr : act).push(x); });
+                if (!snap.metadata.fromCache) {
+                    migrateOnce(flagA, boot.a.concat(boot.t.map(i => ({ ...i, deleted: true }))), new Set(act.concat(tr).map(x => x.id)), x => cloudSet(COL.hasil, x.id, stripLocal(x)));
+                }
+                act.sort((a, b) => (b.createdDate || 0) - (a.createdDate || 0));
+                tr.sort((a, b) => (b.deletedTimestamp || 0) - (a.deletedTimestamp || 0));
+                assessmentList = act; trashList = tr;
+                purgeOldTrash();
+                saveAssessments(); saveTrash();
+                renderAllSoon();
+            });
+
+            // 2. Draft form (bisa dilanjutkan dari perangkat lain)
+            const flagD = 'yc_sdp_mig_draft';
+            sub(C(COL.draft), snap => {
+                if (snap.metadata.fromCache && !readJSON(flagD, false)) return;
+                const l = [];
+                snap.forEach(ds => { const x = ds.data(); x.id = x.id || ds.id; l.push(x); });
+                if (!snap.metadata.fromCache) migrateOnce(flagD, boot.d, new Set(l.map(x => x.id)), x => cloudSet(COL.draft, x.id, x));
+                l.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+                draftList = l; writeJSON('yc_sdp_drafts', draftList);
+                renderDraftCards();
+            });
+
+            // 3. Resume assessment (khusus ETD)
+            if (currentUserRole === 'ETD') {
+                const flagR = 'yc_sdp_mig_resume';
+                sub(C(COL.resume), snap => {
+                    if (snap.metadata.fromCache && !readJSON(flagR, false)) return;
+                    const all = {}, skeys = new Set();
+                    snap.forEach(ds => { const x = ds.data(); if (x.skey && x.form) { all[x.skey] = x.form; skeys.add(x.skey); } });
+                    if (!snap.metadata.fromCache && !readJSON(flagR, false)) {
+                        Object.entries(boot.r).filter(([k]) => !skeys.has(k)).forEach(([k, f]) => {
+                            all[k] = f; cloudSet(COL.resume, encodeURIComponent(k), { skey: k, form: f, updatedAt: Date.now() });
+                        });
+                        writeJSON(flagR, true);
+                    }
+                    if (reportKey && reportDirty && reportForm) all[reportStoreKey(reportKey, reportPeriode)] = reportForm; // jangan timpa ketikan yang belum tersimpan
+                    writeJSON(REPORT_KEY, all);
+                    if (!reportKey) renderReportPicker(); else renderPeriodeTabs();
+                });
+            }
+
+            // 4. Pengaturan: bagian & peserta
+            sub(D(COL.setting, 'bagian_sdp'), snap => {
+                if (snap.metadata.hasPendingWrites) return;
+                if (!snap.exists()) { if (!snap.metadata.fromCache && currentUserRole === 'ETD' && bagianList.length) pushBagianCloud(); return; }
+                const d = snap.data();
+                if (Array.isArray(d.list)) { bagianList = withUnit(d.list); saveBagian(); refreshBagianUI(); setBagianSync('Live · tersinkron dengan cloud', true); }
+            });
+            sub(D(COL.setting, 'peserta_sdp'), snap => {
+                if (snap.metadata.hasPendingWrites) return;
+                if (!snap.exists()) { if (!snap.metadata.fromCache && currentUserRole === 'ETD' && pesertaList.length) pushPesertaCloud(); return; }
+                const d = snap.data();
+                if (Array.isArray(d.list)) {
+                    pesertaList = withUnit(d.list); writeJSON(PESERTA_KEY, pesertaList); writeJSON(PESERTA_TS_KEY, d.updatedAt || Date.now());
+                    refreshPesertaUI(); setPesertaSync('Live · tersinkron dengan cloud', true);
+                }
+            });
+        }
+        window.addEventListener('online', () => { if (cloudStarted) setSyncPill('live'); });
+        window.addEventListener('offline', () => { if (cloudStarted) setSyncPill('off', 'Data disimpan di perangkat dan dikirim otomatis saat online'); });
+
         // ================= AUTH =================
         function handleLogin(e) {
             e.preventDefault();
@@ -1489,6 +1674,7 @@
 
         function logout() {
             navReset();
+            stopCloudSync();
             removeKey('yc_sdp_role', 'session');
             removeKey('yc_sdp_unit', 'session');
             currentUserRole = null;
@@ -1508,8 +1694,7 @@
             renderUnitFilters();
             applyUnitTheme();
             renderPeranOptions();
-            pullBagianCloud();
-            pullPesertaCloud();
+            startCloudSync();
             $('section-login').classList.add('hidden');
             $('dashboard-content').classList.remove('hidden');
             $('app-header').classList.remove('hidden');
@@ -1596,36 +1781,30 @@
             btnSubmit.disabled = true;
 
             try {
-                // 1. KIRIM KE GOOGLE APPS SCRIPT
-                const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyM0wRhLaAV9seglEJ3XhxDEMOaYGGCrv2Kpdi8-e3kgqivWMSjVUyQ1EhBHEmj8GURzA/exec";
-                
-                const reqGas = fetch(GAS_WEB_APP_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "text/plain;charset=utf-8" }, 
-                    body: JSON.stringify(payload)
-                });
-
-                // 2. KIRIM KE FIREBASE FIRESTORE
-                let reqFirebase = Promise.resolve();
-                if (window.db && window.fsAddDoc) {
-                    reqFirebase = window.fsAddDoc(window.fsCollection(window.db, "hasil_form_penilaian"), payload);
-                }
-
-                await Promise.all([reqGas, reqFirebase]);
+                // Firestore = sumber data live (semua perangkat); Apps Script = cermin ke Spreadsheet
+                const [cloudRes, gasRes] = await Promise.all([
+                    cloudOK() ? withTimeout(cloudSet(COL.hasil, payload.id, payload), 8000) : Promise.resolve('nocloud'),
+                    withTimeout(gasPost({ ...payload, action: 'upsert' }), 10000)
+                ]);
+                const queued = cloudRes === 'timeout'; // offline: tertulis di perangkat, terkirim otomatis saat online
+                if (cloudRes !== true && !queued && !(cloudRes === 'nocloud' && gasRes === true)) throw new Error('Pengiriman ke cloud gagal');
 
                 // Hapus draft aktif (karena form sudah sukses dikirim)
                 if (currentDraftId) {
+                    cloudDelete(COL.draft, currentDraftId);
                     draftList = draftList.filter(x => x.id !== currentDraftId);
                     writeJSON('yc_sdp_drafts', draftList);
                 }
 
-                assessmentList.unshift(payload);
+                if (!assessmentList.some(i => i.id === payload.id)) assessmentList.unshift(payload);
                 saveAssessments();
                 resetForm();
                 renderAll();
                 openView('view-riwayat');
                 navPurgeForm();
-                toast('Data berhasil disimpan ke Spreadsheet & Firebase!', 'success');
+                if (queued) toast('Tersimpan di perangkat, otomatis terkirim saat online', 'info');
+                else if (gasRes === true) toast('Data berhasil disimpan ke Cloud & Spreadsheet!', 'success');
+                else toast('Tersimpan di Cloud, tetapi Spreadsheet belum terupdate', 'warn');
 
             } catch (error) {
                 console.error("Gagal sinkronisasi ke server:", error);
@@ -1793,6 +1972,8 @@
             item.deletedTimestamp = Date.now();
             trashList.unshift(item);
             saveAssessments(); saveTrash(); renderAll();
+            cloudSet(COL.hasil, item._fsId || item.id, { deleted: true, deletedTimestamp: item.deletedTimestamp }, true);
+            gasSync({ action: 'trash', id: item.id });
             toast('Dipindahkan ke Tempat Sampah', 'info');
         }
 
@@ -1804,13 +1985,17 @@
             assessmentList.unshift(item);
             assessmentList.sort((a, b) => (b.createdDate || 0) - (a.createdDate || 0));
             saveAssessments(); saveTrash(); renderAll();
+            cloudSet(COL.hasil, item._fsId || item.id, { deleted: false, deletedTimestamp: null }, true);
+            gasSync({ ...stripLocal(item), action: 'upsert' });
             toast('Form dipulihkan', 'success');
         }
 
         function permanentDelete(id) {
             if (!confirm('Hapus permanen? Tindakan ini tidak bisa dibatalkan.')) return;
+            const item = trashList.find(i => i.id === id);
             trashList = trashList.filter(i => i.id !== id);
             saveTrash(); renderTrashItems();
+            if (item) { cloudDelete(COL.hasil, item._fsId || item.id); gasSync({ action: 'purge', id }); }
         }
 
         function renderTrashItems() {
@@ -2427,7 +2612,9 @@
 
         function persistReport() {
             if (!reportKey || !reportForm || !reportDirty) return;
-            const all = reportsStore(); all[reportStoreKey(reportKey, reportPeriode)] = reportForm; writeJSON(REPORT_KEY, all);
+            const all = reportsStore(); const sk = reportStoreKey(reportKey, reportPeriode);
+            all[sk] = reportForm; writeJSON(REPORT_KEY, all);
+            cloudSet(COL.resume, encodeURIComponent(sk), { skey: sk, form: reportForm, updatedAt: Date.now() });
             reportDirty = false;
             const el = $('rp-saved');
             if (el) el.textContent = 'Draf tersimpan ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
