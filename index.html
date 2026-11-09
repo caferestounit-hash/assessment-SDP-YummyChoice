@@ -606,46 +606,43 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-1 p-1 bg-slate-200/70 rounded-xl">
-                    <button id="ktab-peserta" onclick="switchKelolaTab('peserta')" class="seg-btn active h-11 rounded-lg text-sm font-bold flex items-center justify-center gap-1.5">
-                        <svg class="ic !w-4 !h-4"><use href="#b-users"/></svg>Peserta SDP <span id="ktab-peserta-n" class="px-1.5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-black">0</span>
+                <div class="grid grid-cols-2 gap-1 p-1 bg-slate-200/60 rounded-full">
+                    <button id="ktab-peserta" onclick="switchKelolaTab('peserta')" class="seg-btn active h-9 rounded-full text-[13px] font-bold flex items-center justify-center gap-1.5">
+                        <svg class="ic !w-4 !h-4"><use href="#b-users"/></svg>Peserta <span id="ktab-peserta-n" class="px-1.5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-black">0</span>
                     </button>
-                    <button id="ktab-bagian" onclick="switchKelolaTab('bagian')" class="seg-btn h-11 rounded-lg text-sm font-bold flex items-center justify-center gap-1.5">
-                        <svg class="ic !w-4 !h-4"><use href="#b-building"/></svg>Bagian SDP <span id="ktab-bagian-n" class="px-1.5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-black">0</span>
+                    <button id="ktab-bagian" onclick="switchKelolaTab('bagian')" class="seg-btn h-9 rounded-full text-[13px] font-bold flex items-center justify-center gap-1.5">
+                        <svg class="ic !w-4 !h-4"><use href="#b-building"/></svg>Bagian <span id="ktab-bagian-n" class="px-1.5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-black">0</span>
                     </button>
                 </div>
 
                 <!-- PANE: PESERTA SDP TRAINEE -->
-                <div id="kelola-pane-peserta" class="space-y-3">
-                    <div class="flex items-start justify-between gap-3">
-                        <div>
-                            <h3 class="font-extrabold text-slate-900">Peserta SDP Trainee</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Terisi otomatis di form saat dipilih. Peserta yang lewat 16 bulan sejak batch tidak lagi muncul di form. Ketuk kartu atau nama untuk membuka detail dan tombol Ubah (menutup otomatis setelah 20 detik).</p>
+                <div id="kelola-pane-peserta" class="space-y-2.5">
+                    <div class="flex items-center gap-2">
+                        <div class="relative flex-1">
+                            <svg class="ic !w-4 !h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                            <input type="search" id="pt-search" oninput="renderPesertaCards()" placeholder="Cari nama / lokasi / unit" class="field !py-1.5 !pl-9 !rounded-xl h-10 w-full">
                         </div>
-                        <button onclick="openPesertaModal()" class="h-10 px-3.5 shrink-0 bg-yc-600 active:bg-yc-800 text-white font-bold rounded-xl text-sm flex items-center gap-1.5">
-                            <svg class="ic !w-4 !h-4"><use href="#i-plus"/></svg>Tambah
-                        </button>
+                        <button onclick="openPesertaModal()" title="Tambah peserta" aria-label="Tambah peserta" class="h-10 w-10 shrink-0 bg-yc-600 active:bg-yc-800 text-white rounded-xl flex items-center justify-center"><svg class="ic"><use href="#i-plus"/></svg></button>
                     </div>
-
-                    <div class="grid grid-cols-3 gap-2">
-                        <div class="card p-3 border-l-4 border-l-amber-500"><div class="text-[10px] font-bold text-slate-500 uppercase leading-tight">Peserta</div><div id="pt-stat-total" class="text-2xl font-black text-slate-900 mt-0.5">0</div></div>
-                        <div class="card p-3 border-l-4 border-l-teal-500"><div class="text-[10px] font-bold text-slate-500 uppercase leading-tight">Bagian</div><div id="pt-stat-bagian" class="text-2xl font-black text-slate-900 mt-0.5">0</div></div>
-                        <div class="card p-3 border-l-4 border-l-violet-500"><div class="text-[10px] font-bold text-slate-500 uppercase leading-tight">Batch</div><div id="pt-stat-batch" class="text-2xl font-black text-slate-900 mt-0.5">0</div></div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                        <select id="pt-f-unit" onchange="renderPesertaCards()" class="field !py-1.5 !px-2.5 !rounded-xl h-9"></select>
+                        <select id="pt-f-bagian" onchange="renderPesertaCards()" class="field !py-1.5 !px-2.5 !rounded-xl h-9"></select>
+                        <select id="pt-f-batch" onchange="renderPesertaCards()" class="field !py-1.5 !px-2.5 !rounded-xl h-9"></select>
+                        <select id="pt-f-status" onchange="renderPesertaCards()" class="field !py-1.5 !px-2.5 !rounded-xl h-9"><option value="">Semua status</option><option value="aktif">Aktif (&le; 16 bln)</option><option value="selesai">Selesai SDP</option></select>
                     </div>
-
-                    <div class="grid grid-cols-2 sm:grid-cols-[1fr_150px_170px_130px_150px] gap-2">
-                        <input type="search" id="pt-search" oninput="renderPesertaCards()" placeholder="Cari nama / lokasi / unit" class="field !py-2.5 col-span-2 sm:col-span-1">
-                        <select id="pt-f-unit" onchange="renderPesertaCards()" class="field !py-2.5"></select>
-                        <select id="pt-f-bagian" onchange="renderPesertaCards()" class="field !py-2.5"></select>
-                        <select id="pt-f-batch" onchange="renderPesertaCards()" class="field !py-2.5"></select>
-                        <select id="pt-f-status" onchange="renderPesertaCards()" class="field !py-2.5 col-span-2 sm:col-span-1"><option value="">Semua status</option><option value="aktif">Aktif (&le; 16 bln)</option><option value="selesai">Selesai SDP (karyawan tetap)</option></select>
-                    </div>
-
-                    <div class="flex items-center justify-between gap-2">
-                        <span id="pt-count" class="text-[11px] font-bold text-slate-500"></span>
-                        <div class="grid grid-cols-2 gap-1 p-1 bg-slate-200/70 rounded-xl w-[188px] shrink-0">
-                            <button type="button" id="pv-card" onclick="setPesertaView('card')" class="seg-btn active h-9 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5"><svg class="ic !w-4 !h-4"><use href="#i-grid"/></svg>Card</button>
-                            <button type="button" id="pv-list" onclick="setPesertaView('list')" class="seg-btn h-9 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5"><svg class="ic !w-4 !h-4"><use href="#i-list"/></svg>List</button>
+                    <div class="flex items-center justify-between gap-2 px-0.5">
+                        <div class="flex items-center gap-2.5 text-[11px] font-bold text-slate-500 min-w-0">
+                            <span id="pt-count" class="truncate"></span>
+                            <span class="hidden sm:flex items-center gap-2 text-slate-400 font-semibold" title="Peserta · Bagian · Batch">
+                                <span class="flex items-center gap-1"><svg class="ic !w-3.5 !h-3.5"><use href="#b-users"/></svg><span id="pt-stat-total">0</span></span>
+                                <span class="flex items-center gap-1"><svg class="ic !w-3.5 !h-3.5"><use href="#b-building"/></svg><span id="pt-stat-bagian">0</span></span>
+                                <span class="flex items-center gap-1"><svg class="ic !w-3.5 !h-3.5"><use href="#i-calendar"/></svg><span id="pt-stat-batch">0</span></span>
+                            </span>
+                            <button type="button" class="text-slate-400" title="Terisi otomatis di form saat dipilih. Peserta yang lewat 16 bulan sejak batch tidak lagi muncul di form. Ketuk kartu atau nama untuk membuka detail dan tombol Ubah (menutup otomatis setelah 20 detik)." aria-label="Info"><svg class="ic !w-3.5 !h-3.5"><use href="#i-info"/></svg></button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-0.5 p-0.5 bg-slate-200/60 rounded-full w-[72px] shrink-0">
+                            <button type="button" id="pv-card" onclick="setPesertaView('card')" title="Kartu" aria-label="Kartu" class="seg-btn active h-7 rounded-full flex items-center justify-center"><svg class="ic !w-4 !h-4"><use href="#i-grid"/></svg></button>
+                            <button type="button" id="pv-list" onclick="setPesertaView('list')" title="Daftar" aria-label="Daftar" class="seg-btn h-7 rounded-full flex items-center justify-center"><svg class="ic !w-4 !h-4"><use href="#i-list"/></svg></button>
                         </div>
                     </div>
                     <div id="peserta-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
@@ -654,22 +651,17 @@
 
                 <!-- PANE: BAGIAN SDP -->
                 <div id="kelola-pane-bagian" class="hidden">
-                    <div class="card p-4 space-y-4">
-                        <div class="flex items-start justify-between gap-3">
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <h3 class="font-extrabold text-slate-900">Bagian SDP Trainee</h3>
-                                    <span id="bagian-count" class="px-2 py-0.5 bg-teal-100 text-teal-800 rounded-full text-xs font-black">0</span>
-                                </div>
-                                <p class="text-xs text-slate-500 mt-0.5">Dibedakan per Unit Bisnis. Dipakai saat menentukan bagian setiap peserta.</p>
+                    <div class="space-y-2.5">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2 text-[11px] font-bold text-slate-500">
+                                <span id="bagian-count" class="px-2 py-0.5 bg-teal-100 text-teal-800 rounded-full text-xs font-black">0</span>bagian
+                                <button type="button" class="text-slate-400" title="Dibedakan per Unit Bisnis. Dipakai saat menentukan bagian setiap peserta." aria-label="Info"><svg class="ic !w-3.5 !h-3.5"><use href="#i-info"/></svg></button>
                             </div>
-                            <button onclick="openBagianModal()" class="h-10 px-3.5 shrink-0 bg-yc-600 active:bg-yc-800 text-white font-bold rounded-xl text-sm flex items-center gap-1.5">
-                                <svg class="ic !w-4 !h-4"><use href="#i-plus"/></svg>Tambah
-                            </button>
+                            <button onclick="openBagianModal()" title="Tambah bagian" aria-label="Tambah bagian" class="h-10 w-10 shrink-0 bg-yc-600 active:bg-yc-800 text-white rounded-xl flex items-center justify-center"><svg class="ic"><use href="#i-plus"/></svg></button>
                         </div>
                         <div id="bagian-unit-tabs" class="flex flex-wrap gap-1.5"></div>
                         <div id="bagian-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-                        <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
                             <span id="bagian-sync-status" class="text-[11px] font-semibold text-slate-400"></span>
                         </div>
                     </div>
@@ -686,21 +678,6 @@
                     </div>
                 </div>
 
-                <!-- Hero + alur -->
-                <div class="rounded-2xl bg-gradient-to-br from-violet-700 via-violet-800 to-slate-900 text-white p-4 space-y-3 overflow-hidden relative">
-                    <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full bg-white/10"></div>
-                    <div class="absolute right-10 -bottom-10 w-24 h-24 rounded-full bg-amber-400/20"></div>
-                    <div class="relative">
-                        <div class="text-[10px] font-bold uppercase tracking-widest text-violet-200">Resume Assessment SDP</div>
-                        <p class="text-sm text-violet-100 mt-1 max-w-md">Nilai penguji ditarik otomatis dari form penilaian yang masuk. Centang form yang dimasukkan, lengkapi NIK dan sesi evaluasi, lalu simpan sebagai PDF A4.</p>
-                    </div>
-                    <div class="relative grid grid-cols-3 gap-2 text-center">
-                        <div class="rounded-xl bg-white/10 px-2 py-2"><div class="text-base font-black">1</div><div class="text-[10px] font-bold leading-tight">Pilih peserta & periode</div></div>
-                        <div class="rounded-xl bg-white/10 px-2 py-2"><div class="text-base font-black">2</div><div class="text-[10px] font-bold leading-tight">Centang form penilaian</div></div>
-                        <div class="rounded-xl bg-white/10 px-2 py-2"><div class="text-base font-black">3</div><div class="text-[10px] font-bold leading-tight">Lengkapi & simpan PDF</div></div>
-                    </div>
-                </div>
-
                 <!-- Tahap 1: pilih peserta -->
                 <div id="report-picker" class="space-y-3">
                     <div class="flex items-center justify-between gap-2">
@@ -714,34 +691,30 @@
 
                 <!-- Tahap 2-3: pilih form + resume -->
                 <div id="report-workspace" class="hidden space-y-3">
-                    <div class="card p-3 flex items-center gap-3">
-                        <span id="rp-who-logo"></span>
+                    <div class="flex items-center gap-2.5 px-1">
+                        <span id="rp-who-logo" class="shrink-0"></span>
                         <div class="flex-1 min-w-0">
-                            <div id="rp-who-name" class="font-extrabold text-slate-900 text-sm break-words">-</div>
-                            <div id="rp-who-meta" class="text-[11px] text-slate-500">-</div>
+                            <div id="rp-who-name" class="font-extrabold text-slate-900 text-sm truncate">-</div>
+                            <div id="rp-who-meta" class="text-[11px] text-slate-500 truncate">-</div>
                         </div>
-                        <button onclick="backToReportPicker()" class="h-9 px-3 shrink-0 rounded-xl bg-slate-100 active:bg-slate-200 text-slate-700 text-xs font-bold">Ganti</button>
+                        <button onclick="backToReportPicker()" class="h-8 px-3 shrink-0 rounded-full bg-white border border-slate-200 active:bg-slate-100 text-violet-700 text-xs font-bold">Ganti</button>
                     </div>
-                    <div id="rp-periode-tabs" class="grid grid-cols-3 gap-1 p-1 bg-slate-200/70 rounded-xl"></div>
+                    <div id="rp-periode-tabs" class="grid grid-cols-3 gap-1 p-1 bg-slate-200/60 rounded-full"></div>
 
                     <!-- Form penilaian yang masuk ke resume -->
-                    <details id="rp-forms-card" class="card group" open>
-                        <summary class="p-4 flex items-start justify-between gap-2 cursor-pointer list-none">
-                            <div class="min-w-0">
-                                <h3 class="text-xs font-black uppercase tracking-wider text-violet-700">Penilaian yang disertakan</h3>
-                                <p class="text-[11px] text-slate-500 mt-0.5">Centang form yang masuk ke resume periode ini. Nilai penguji dan nilai akhir dihitung dari form terpilih saja.</p>
-                                <div class="flex items-center gap-2 text-[11px] font-bold text-slate-500 mt-1.5"><span id="rp-forms-count">-</span><span class="text-slate-300">·</span><span id="rp-forms-avg">-</span></div>
-                            </div>
-                            <svg class="ic !w-4 !h-4 text-slate-400 mt-1 transition-transform group-open:rotate-90"><use href="#i-chevron-right"/></svg>
+                    <details id="rp-forms-card" class="rounded-2xl bg-white border border-slate-200/80 group" open>
+                        <summary class="px-3.5 py-2.5 flex items-center gap-2 cursor-pointer list-none">
+                            <svg class="ic !w-4 !h-4 text-slate-400 transition-transform group-open:rotate-90 shrink-0"><use href="#i-chevron-right"/></svg>
+                            <h3 class="text-[13px] font-extrabold text-slate-800">Penilaian disertakan</h3>
+                            <span class="ml-auto flex items-center gap-1.5 text-[11px] font-bold text-slate-500"><span id="rp-forms-count" class="px-2 py-0.5 rounded-full bg-violet-50 text-violet-700">-</span><span id="rp-forms-avg" class="text-emerald-600">-</span></span>
                         </summary>
-                        <div class="px-4 pb-4 space-y-3">
-                            <div class="flex flex-wrap gap-1.5">
-                                <button type="button" onclick="selectAllResumeForms(true)" class="h-8 px-2.5 rounded-lg bg-violet-100 text-violet-800 text-[11px] font-bold">Pilih semua</button>
-                                <button type="button" onclick="selectAllResumeForms(false)" class="h-8 px-2.5 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-bold">Kosongkan</button>
-                                <button type="button" onclick="pullKomentarPenilai()" class="h-8 px-2.5 rounded-lg bg-amber-100 text-amber-800 text-[11px] font-bold flex items-center gap-1"><svg class="ic !w-3.5 !h-3.5"><use href="#i-message"/></svg>Tarik komentar penilai</button>
+                        <div class="px-3.5 pb-3 space-y-2">
+                            <div class="flex items-center gap-1">
+                                <button type="button" onclick="selectAllResumeForms(true)" class="h-7 px-2.5 rounded-full text-violet-700 hover:bg-violet-50 text-[11px] font-bold">Pilih semua</button>
+                                <button type="button" onclick="selectAllResumeForms(false)" class="h-7 px-2.5 rounded-full text-slate-500 hover:bg-slate-100 text-[11px] font-bold">Kosongkan</button>
+                                <button type="button" onclick="pullKomentarPenilai()" title="Tarik komentar penilai" class="h-7 px-2.5 rounded-full text-amber-700 hover:bg-amber-50 text-[11px] font-bold flex items-center gap-1 ml-auto"><svg class="ic !w-3.5 !h-3.5"><use href="#i-message"/></svg>Komentar</button>
                             </div>
-                            <div id="rp-forms" class="space-y-2"></div>
-                            <p class="text-[11px] text-slate-500 leading-snug flex gap-1.5"><svg class="ic !w-3.5 !h-3.5 mt-0.5 text-slate-400"><use href="#i-info"/></svg><span><b>NIK</b> diketik manual: klik ikon pensil di lembar "Overview Kegiatan" pada resume. Nama, batch, bagian, tanggal, nilai penguji, dan daftar partisipan terisi otomatis.</span></p>
+                            <div id="rp-forms" class="divide-y divide-slate-100"></div>
                         </div>
                     </details>
 
@@ -2528,7 +2501,7 @@
                 f = { v: 2, sel: all, d: null };
             }
             reportForm = f; reportDirty = false;
-            $('rp-who-logo').innerHTML = bagianLogo(findBagian(g.bagian, g.unit), 40);
+            $('rp-who-logo').innerHTML = bagianLogo(findBagian(g.bagian, g.unit), 32);
             $('rp-who-name').textContent = g.nama;
             $('rp-who-meta').textContent = `${g.unit} · ${g.bagian} · ${g.cabang} · ${g.items.length} form masuk`;
             renderPeriodeTabs(); renderResumeForms();
@@ -2563,10 +2536,9 @@
             const st = reportsStore();
             box.innerHTML = PERIODES.map(pr => {
                 const on = pr.id === reportPeriode, has = !!st[reportStoreKey(reportKey, pr.id)];
-                return `<button type="button" onclick="switchReportPeriode('${pr.id}')" class="relative h-14 rounded-lg text-center leading-tight ${on ? 'bg-white shadow text-violet-700' : 'text-slate-600'}">
-                    <span class="block text-xs font-extrabold">${pr.short}</span>
-                    <span class="block text-[10px] font-semibold ${on ? 'text-violet-500' : 'text-slate-400'}">Bulan ${pr.bulan}</span>
-                    ${has ? '<span class="absolute right-1.5 top-1.5 w-2 h-2 rounded-full bg-emerald-500" title="Sudah ada draf"></span>' : ''}</button>`;
+                return `<button type="button" onclick="switchReportPeriode('${pr.id}')" class="relative h-9 rounded-full text-center leading-none transition ${on ? 'bg-white shadow-sm text-violet-700' : 'text-slate-500 hover:text-slate-700'}">
+                    <span class="text-xs font-extrabold">${pr.short.replace('Assessment ', '')}</span><span class="text-[10px] font-semibold ml-1 ${on ? 'text-violet-400' : 'text-slate-400'}">Bln ${pr.bulan}</span>
+                    ${has ? '<span class="absolute right-2.5 top-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500" title="Sudah ada draf"></span>' : ''}</button>`;
             }).join('');
         }
 
@@ -2670,22 +2642,21 @@
             const g = currentGroup(), box = $('rp-forms'); if (!g || !box || !reportForm) return;
             const sel = new Set(reportForm.sel);
             box.innerHTML = g.items.slice().sort((a, b) => (a.createdDate || 0) - (b.createdDate || 0)).map(i => `
-                <label class="flex items-start gap-3 p-2.5 rounded-xl border border-slate-200 cursor-pointer has-[:checked]:bg-violet-50 has-[:checked]:border-violet-300">
-                    <input type="checkbox" class="accent-violet-600 w-5 h-5 mt-0.5 shrink-0" ${sel.has(i.id) ? 'checked' : ''} onchange="toggleResumeForm('${esc(i.id)}', this.checked)">
-                    <span class="flex-1 min-w-0">
-                        <span class="block text-sm font-bold text-slate-800 break-words">${esc(i.namaPenguji)}</span>
-                        <span class="block text-[11px] text-slate-500 break-words">${esc(peranShort(i.peranPenguji))}</span>
-                        <span class="block text-[10px] text-slate-400 mt-0.5">${esc(i.timestamp)}</span>
+                <label title="${esc(i.timestamp)}" class="flex items-center gap-3 py-2 px-1 cursor-pointer rounded-lg transition-colors hover:bg-slate-50 has-[:checked]:bg-violet-50/60">
+                    <input type="checkbox" class="accent-violet-600 w-[18px] h-[18px] shrink-0" ${sel.has(i.id) ? 'checked' : ''} onchange="toggleResumeForm('${esc(i.id)}', this.checked)">
+                    <span class="flex-1 min-w-0 leading-tight">
+                        <span class="block text-[13px] font-bold text-slate-800 truncate">${esc(i.namaPenguji)}</span>
+                        <span class="block text-[11px] text-slate-400 truncate">${esc(peranShort(i.peranPenguji))}</span>
                     </span>
-                    <span class="text-lg font-black shrink-0" style="color:${scoreColor(Number(i.scoreTotal))}">${esc(i.scoreTotal)}</span>
+                    <span class="text-sm font-black shrink-0 tabular-nums" style="color:${scoreColor(Number(i.scoreTotal))}">${esc(i.scoreTotal)}</span>
                 </label>`).join('');
             updateResumeFormsInfo();
         }
         function updateResumeFormsInfo() {
             const g = currentGroup(); if (!g || !reportForm) return;
             const rg = resumeGroup(g, reportForm);
-            $('rp-forms-count').textContent = `${rg.items.length} dari ${g.items.length} form dipilih`;
-            $('rp-forms-avg').textContent = rg.items.length ? `Rata-rata ${rg.avg.toFixed(1)}` : 'Belum ada form dipilih';
+            $('rp-forms-count').textContent = `${rg.items.length}/${g.items.length} dipilih`;
+            $('rp-forms-avg').textContent = rg.items.length ? `Rata² ${rg.avg.toFixed(1)}` : 'Belum ada';
         }
         function toggleResumeForm(id, on) {
             if (!reportForm) return;
