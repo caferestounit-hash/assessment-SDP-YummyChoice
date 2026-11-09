@@ -84,6 +84,7 @@
             font-size: 16px; font-weight: 600; color: #111827; transition: border-color .15s, box-shadow .15s;
         }
         .field:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 4px rgba(245,158,11,.16); }
+        details.tray > summary { list-style: none; } details.tray > summary::-webkit-details-marker { display: none; } details.tray[open] .tray-chev { transform: rotate(180deg); } .tray-chev { transition: transform .15s; }
         .card { background: #fff; border: 1px solid #ece7dc; border-radius: 1.25rem; box-shadow: 0 12px 30px -18px rgba(180,83,9,.18); }
         .safe-bottom { padding-bottom: max(.75rem, env(safe-area-inset-bottom)); }
         button, label { touch-action: manipulation; }
@@ -422,6 +423,7 @@
                             <span class="block font-extrabold text-slate-900">Rekap Penilaian</span>
                             <span class="block text-xs text-slate-500">Tabel rekap, statistik, export CSV</span>
                         </span>
+                        <span id="badge-pending-rekap" class="min-w-[20px] h-5 px-1.5 rounded-full bg-amber-500 text-white text-[11px] font-black items-center justify-center" style="display:none" title="Menunggu persetujuan"></span>
                         <svg class="ic text-slate-300"><use href="#i-chevron-right"/></svg>
                     </button>
 
@@ -628,6 +630,7 @@
                     </div>
                 </div>
                 <div class="unit-filter etd-only hidden flex flex-wrap gap-1.5"></div>
+                <div id="riwayat-pending"></div>
                 <div id="riwayat-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
             </div>
 
@@ -654,6 +657,7 @@
                 </div>
 
                 <div class="unit-filter etd-only hidden flex flex-wrap gap-1.5"></div>
+                <div id="rekap-pending"></div>
                 <div class="flex gap-1.5">
                     <input type="search" id="rekap-search" oninput="renderRekapTable()" placeholder="Cari nama / bagian / penguji" class="field flex-1 !py-1.5 h-10 !text-sm">
                     <button onclick="openImportRekap()" title="Impor data penilaian" aria-label="Impor data penilaian" class="h-10 w-10 shrink-0 bg-white border border-slate-200 active:bg-slate-100 text-slate-700 rounded-xl flex items-center justify-center"><svg class="ic"><use href="#i-upload"/></svg></button>
@@ -2125,7 +2129,8 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
                 scoreTotal: calculateTotalScore().avg,
                 scores, komentars,
                 timestamp: new Date().toLocaleString('id-ID'),
-                createdDate: Date.now()
+                createdDate: Date.now(),
+                status: currentUserRole === 'ETD' ? 'approved' : 'pending'
             };
 
             const btnSubmit = $('btn-submit');
@@ -2157,7 +2162,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
                 openView('view-riwayat');
                 navPurgeForm();
                 if (queued) toast('Tersimpan di perangkat, otomatis terkirim saat online', 'info');
-                else if (gasRes === true) toast('Data berhasil disimpan ke Cloud & Spreadsheet!', 'success');
+                else if (gasRes === true) toast(payload.status === 'pending' ? 'Terkirim, menunggu persetujuan ETD' : 'Data berhasil disimpan ke Cloud & Spreadsheet!', 'success');
                 else toast('Tersimpan di Cloud, tetapi Spreadsheet belum terupdate', 'warn');
 
             } catch (error) {
@@ -2212,11 +2217,65 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             renderRiwayatCards(); renderRekapTable(); updateLaporanStats(); renderDraftCards();
             if (!reportKey) renderReportPicker();
         }
-        const visibleAssessments = () => assessmentList.filter(inMyUnit);
+        // Form baru berstatus 'pending' sampai disetujui ETD; data lama tanpa status dianggap sudah disetujui
+        const isApproved = a => a.status !== 'pending';
+        const visibleAssessments = () => assessmentList.filter(inMyUnit).filter(isApproved);
+        const pendingAssessments = () => assessmentList.filter(inMyUnit).filter(a => !isApproved(a));
+        const trayOpen = { riwayat: false, rekap: false };
+        const trayToggle = (k, el) => { trayOpen[k] = el.open; };
+        const trayHead = (key, label, n, extra) => `<summary class="px-3 py-2 flex items-center gap-2 cursor-pointer select-none"><span class="w-6 h-6 shrink-0 rounded-md bg-amber-100 text-amber-700 flex items-center justify-center"><svg class="ic !w-3.5 !h-3.5"><use href="#i-clock"/></svg></span><span class="flex-1 text-xs font-bold text-slate-800">${label}</span><span class="px-1.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-black">${n}</span>${extra || ''}<svg class="ic !w-3.5 !h-3.5 text-slate-400 tray-chev"><use href="#i-chevron-down"/></svg></summary>`;
+        const trayTime = i => { const t = i.createdDate || Date.now(), d = new Date(t); return (d.toDateString() === new Date().toDateString() ? '' : d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) + ' · ') + logClock(t); };
+
+        // Tray penguji: form terkirim yang menunggu persetujuan ETD (tanpa skor / nama penilai)
+        function renderRiwayatTray() {
+            const box = $('riwayat-pending'); if (!box) return;
+            const l = currentUserRole === 'ETD' ? [] : pendingAssessments();
+            if (!l.length) { box.innerHTML = ''; return; }
+            box.innerHTML = `<details class="tray card overflow-hidden" style="border-radius:.85rem" ${trayOpen.riwayat ? 'open' : ''} ontoggle="trayToggle('riwayat',this)">${trayHead('riwayat', 'Menunggu persetujuan ETD', l.length)}
+                <div class="border-t border-slate-100 divide-y divide-slate-100">${l.map(i => `<div class="px-3 py-1.5 flex items-center gap-2"><svg class="ic !w-3.5 !h-3.5 text-emerald-500 shrink-0"><use href="#i-check-circle"/></svg><span class="flex-1 min-w-0"><span class="block text-[11.5px] text-slate-700 leading-snug">Form penilaian <b class="text-slate-900">${esc(i.namaPeserta)}</b> berhasil dikirim</span><span class="block text-[10px] text-slate-400">${esc(i.sdpBagian)}</span></span><span class="text-[10px] text-slate-400 font-semibold tabular-nums shrink-0">${esc(trayTime(i))}</span></div>`).join('')}</div></details>`;
+        }
+
+        // Tray ETD: setujui form agar tampil di Riwayat Terkirim penguji
+        function renderRekapTray() {
+            const all = assessmentList.filter(a => !isApproved(a)), mb = $('badge-pending-rekap');
+            if (mb) { mb.textContent = all.length; mb.style.display = all.length && currentUserRole === 'ETD' ? 'inline-flex' : 'none'; }
+            const box = $('rekap-pending'); if (!box) return;
+            const l = pendingAssessments();
+            if (!l.length || currentUserRole !== 'ETD') { box.innerHTML = ''; return; }
+            const bt = 'w-8 h-8 rounded-lg flex items-center justify-center shrink-0';
+            box.innerHTML = `<details class="tray card overflow-hidden" style="border-radius:.85rem" ${trayOpen.rekap ? 'open' : ''} ontoggle="trayToggle('rekap',this)">${trayHead('rekap', 'Menunggu persetujuan', l.length)}
+                <div class="border-t border-slate-100">
+                    <div class="px-3 py-1.5 flex items-center justify-between bg-slate-50"><span class="text-[10px] text-slate-500 font-semibold">Setelah disetujui, form tampil di Riwayat Terkirim penguji</span><button type="button" onclick="approveAllPending()" class="h-7 px-2.5 rounded-lg bg-emerald-600 active:bg-emerald-700 text-white text-[11px] font-bold inline-flex items-center gap-1 shrink-0"><svg class="ic !w-3.5 !h-3.5"><use href="#i-check-circle"/></svg>Setujui semua</button></div>
+                    <div class="divide-y divide-slate-100">${l.map(i => `<div class="px-3 py-1.5 flex items-center gap-2">
+                        <span class="flex-1 min-w-0"><span class="block text-[12px] font-bold text-slate-900 leading-snug truncate">${esc(i.namaPeserta)} <span class="font-semibold text-slate-400">· ${esc(i.sdpBagian)}</span></span><span class="block text-[10px] text-slate-500 truncate">${esc(i.namaPenguji)} · ${esc(String(i.peranPenguji).replace(/\s*\(.*$/, ''))} · ${esc(unitOfA(i))} · ${esc(trayTime(i))}</span></span>
+                        <b class="text-[12px] text-amber-600 tabular-nums shrink-0">${f2(i.scoreTotal)}</b>
+                        <button type="button" onclick="openModal('${i.id}')" title="Detail" aria-label="Detail" class="${bt} bg-slate-100 text-slate-600 active:bg-slate-200"><svg class="ic !w-4 !h-4"><use href="#i-eye"/></svg></button>
+                        <button type="button" onclick="approveForm('${i.id}')" title="Setujui" aria-label="Setujui" class="${bt} bg-emerald-100 text-emerald-700 active:bg-emerald-200"><svg class="ic !w-4 !h-4"><use href="#i-check-circle"/></svg></button>
+                        <button type="button" onclick="moveToTrash('${i.id}')" title="Hapus" aria-label="Hapus" class="${bt} bg-red-50 text-red-600 active:bg-red-100"><svg class="ic !w-4 !h-4"><use href="#i-trash"/></svg></button>
+                    </div>`).join('')}</div></div></details>`;
+        }
+        function approveForm(id, quiet) {
+            if (currentUserRole !== 'ETD') return false;
+            const it = assessmentList.find(i => i.id === id); if (!it || isApproved(it)) return false;
+            it.status = 'approved'; it.approvedAt = Date.now();
+            cloudSet(COL.hasil, it._fsId || it.id, { status: 'approved', approvedAt: it.approvedAt }, true);
+            gasSync({ ...stripLocal(it), action: 'upsert' });
+            if (!quiet) { saveAssessments(); renderAll(); logEvent('approve', 'penilaian', `Penilaian ${it.namaPeserta} disetujui`, { unit: unitOfA(it), ref: it.id, meta: aMeta(it) }); toast('Disetujui, kini tampil di riwayat penguji', 'success'); }
+            return true;
+        }
+        function approveAllPending() {
+            const l = pendingAssessments(); if (!l.length) return;
+            if (!confirm(`Setujui ${l.length} form sekaligus?`)) return;
+            const n = l.filter(i => approveForm(i.id, true)).length;
+            saveAssessments(); renderAll();
+            logEvent('approve', 'penilaian', `${n} penilaian disetujui sekaligus`);
+            toast(`${n} form disetujui`, 'success');
+        }
         const visibleDrafts = () => draftList.filter(inMyUnit);
 
         // ================= RIWAYAT =================
         function renderRiwayatCards() {
+            renderRiwayatTray();
             const c = $('riwayat-cards-container');
             const myAssess = visibleAssessments();
             { const _b = $('badge-count-riwayat'); if (_b) _b.textContent = myAssess.length; }
@@ -2254,6 +2313,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
 
         // ================= REKAP (ETD) =================
         function renderRekapTable() {
+            renderRekapTray();
             const kw = $('rekap-search').value.toLowerCase().trim();
             const rows = visibleAssessments().filter(i =>
                 i.namaPeserta.toLowerCase().includes(kw) || i.namaPenguji.toLowerCase().includes(kw) || i.sdpBagian.toLowerCase().includes(kw));
@@ -3672,7 +3732,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         // Gabungkan semua penilaian untuk peserta yang sama (nama + bagian + unit)
         function reportGroups() {
             const map = new Map();
-            assessmentList.filter(a => !currentUnit || unitOfA(a) === currentUnit).forEach(a => {
+            assessmentList.filter(a => isApproved(a) && (!currentUnit || unitOfA(a) === currentUnit)).forEach(a => {
                 const nama = String(a.namaPeserta || '').trim();
                 const key = nama.toLowerCase() + '|' + (a.sdpBagian || '') + (unitOfA(a) !== DEFAULT_UNIT ? '|' + unitOfA(a) : ''); // kunci Yummy Choice tetap sama agar laporan lama aman
                 if (!map.has(key)) map.set(key, { key, nama, unit: unitOfA(a), bagian: a.sdpBagian, cabang: a.sdpCabang, batch: a.batch || '', items: [] });
