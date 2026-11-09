@@ -671,19 +671,17 @@
                 </div>
 
                 <!-- PANE: KURIKULUM PER BAGIAN -->
-                <div id="kelola-pane-kurikulum" class="hidden space-y-2.5">
-                    <div class="flex items-center gap-2">
-                        <select id="kur-bagian" onchange="kurPick(this.value)" class="field !py-1.5 !px-2.5 !rounded-xl h-10 flex-1"></select>
-                        <button type="button" class="h-10 w-10 shrink-0 rounded-xl text-slate-400 flex items-center justify-center" title="Kurikulum dipakai otomatis pada tabel A. Pembelajaran Trainee di resume untuk peserta di bagian ini. Centang (sudah dipelajari) diatur di resume." aria-label="Info"><svg class="ic !w-4 !h-4"><use href="#i-info"/></svg></button>
+                <div id="kelola-pane-kurikulum" class="hidden space-y-3">
+                    <div id="kur-units" class="flex gap-1.5 overflow-x-auto pb-0.5" style="scrollbar-width:none"></div>
+                    <div id="kur-chips" class="flex gap-2 overflow-x-auto -mx-1 px-1 pb-1" style="scrollbar-width:none;scroll-snap-type:x proximity"></div>
+                    <div id="kur-head"></div>
+                    <div id="kur-list" class="space-y-2"></div>
+                    <div class="flex items-center gap-2 rounded-2xl border-2 border-dashed border-slate-300 bg-white/60 p-1.5 pl-3 focus-within:border-violet-400 focus-within:bg-white transition">
+                        <svg class="ic !w-4 !h-4 text-slate-300 shrink-0"><use href="#i-plus"/></svg>
+                        <input id="kur-new" type="text" placeholder="Tambah fokus pembelajaran…" onkeydown="if(event.key==='Enter'){event.preventDefault();kurAddFromInput()}" onpaste="kurPaste(event)" class="flex-1 min-w-0 bg-transparent outline-none text-slate-800 placeholder:text-slate-400 h-9" style="font-size:16px">
+                        <button type="button" onclick="kurAddFromInput()" title="Tambah" aria-label="Tambah" class="h-9 w-9 shrink-0 bg-violet-600 active:bg-violet-800 text-white rounded-xl flex items-center justify-center shadow-sm"><svg class="ic !w-4 !h-4"><use href="#i-plus"/></svg></button>
                     </div>
-                    <div class="rounded-2xl bg-white border border-slate-200/80 p-2.5 space-y-1.5">
-                        <div id="kur-list" class="space-y-1.5"></div>
-                        <div class="flex items-center gap-1.5">
-                            <input id="kur-new" type="text" placeholder="Tambah fokus pembelajaran…" onkeydown="if(event.key==='Enter'){event.preventDefault();kurAddFromInput()}" onpaste="kurPaste(event)" class="field !py-1.5 !px-2.5 !rounded-xl h-9 flex-1">
-                            <button type="button" onclick="kurAddFromInput()" title="Tambah" aria-label="Tambah" class="h-9 w-9 shrink-0 bg-yc-600 active:bg-yc-800 text-white rounded-xl flex items-center justify-center"><svg class="ic !w-4 !h-4"><use href="#i-plus"/></svg></button>
-                        </div>
-                    </div>
-                    <div id="kur-foot" class="text-[11px] font-semibold text-slate-400 text-center"></div>
+                    <div id="kur-foot" class="text-[11px] font-semibold text-slate-400 text-center px-4 leading-relaxed"></div>
                 </div>
             </div>
 
@@ -2237,27 +2235,60 @@
             saveBagian(); renderKurikulum(true);
             clearTimeout(kurPushT); kurPushT = setTimeout(pushBagianCloud, 700);
         }
+        let kurUnit = null;
         function renderKurikulum(keepFocus) {
-            const sel = $('kur-bagian'); if (!sel) return;
-            if (!bagianList.some(b => b.id === kurBagianId)) kurBagianId = bagianList[0]?.id || null;
-            sel.innerHTML = UNITS.map(u => {
-                const items = bagianList.filter(b => b.unit === u); if (!items.length) return '';
-                return `<optgroup label="${esc(u)}">${items.map(b => `<option value="${esc(b.id)}" ${b.id === kurBagianId ? 'selected' : ''}>${esc(b.name)}${kurOf(b).length ? ' · ' + kurOf(b).length : ''}</option>`).join('')}</optgroup>`;
+            if (!$('kur-list')) return;
+            const cur0 = bagianList.find(b => b.id === kurBagianId);
+            if (!kurUnit || !UNITS.includes(kurUnit)) kurUnit = cur0?.unit || UNITS.find(u => bagianList.some(b => b.unit === u)) || UNITS[0];
+            let inUnit = bagianList.filter(b => b.unit === kurUnit);
+            if (!cur0 || cur0.unit !== kurUnit) kurBagianId = inUnit[0]?.id || null;
+            const b = kurCurrent(), arr = kurOf(b);
+            const tn = $('ktab-kurikulum-n'); if (tn) tn.textContent = bagianList.filter(x => kurOf(x).length).length;
+
+            $('kur-units').innerHTML = UNITS.map(u => {
+                const on = u === kurUnit, filled = bagianList.filter(x => x.unit === u && kurOf(x).length).length;
+                return `<button type="button" onclick="kurUnitPick('${esc(u)}')" class="h-9 px-3.5 shrink-0 rounded-full text-xs font-bold inline-flex items-center gap-1.5 transition ${on ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-500 border border-slate-200'}">${unitIcon(u, '!w-4 !h-4')}${esc(u)}${filled ? `<span class="text-[10px] font-black ${on ? 'text-emerald-300' : 'text-emerald-600'}">${filled}</span>` : ''}</button>`;
             }).join('');
-            const tn = $('ktab-kurikulum-n'); if (tn) tn.textContent = bagianList.filter(b => kurOf(b).length).length;
-            const b = kurCurrent(), list = $('kur-list'), arr = kurOf(b);
+
+            $('kur-chips').innerHTML = inUnit.length ? inUnit.map(x => {
+                const on = x.id === kurBagianId, n = kurOf(x).length, [bg, fg] = BAGIAN_COLORS[x.color] || BAGIAN_COLORS.slate;
+                return `<button type="button" data-kid="${esc(x.id)}" onclick="kurPick('${esc(x.id)}')" class="shrink-0 h-11 pl-1.5 pr-3.5 rounded-2xl inline-flex items-center gap-2 text-xs font-extrabold transition-all active:scale-95" style="scroll-snap-align:start;${on ? `background:${bg};color:${fg};box-shadow:0 0 0 2px ${fg},0 8px 18px -10px ${fg}` : 'background:#fff;color:#475569;box-shadow:0 0 0 1px #e2e8f0'}">${bagianLogo(x, 32)}<span class="whitespace-nowrap">${esc(x.name)}</span>${n ? `<span class="min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-black flex items-center justify-center" style="background:${on ? fg : bg};color:${on ? '#fff' : fg}">${n}</span>` : ''}</button>`;
+            }).join('') : '<div class="text-xs text-slate-400 py-2">Belum ada bagian di unit ini.</div>';
+            const act = $('kur-chips').querySelector(`[data-kid="${CSS.escape(kurBagianId || '')}"]`);
+            if (act && !keepFocus) act.scrollIntoView({ block: 'nearest', inline: 'center' });
+
+            const [bg, fg] = BAGIAN_COLORS[b?.color] || BAGIAN_COLORS.slate;
+            $('kur-head').innerHTML = b ? `
+                <div class="rounded-3xl p-4 flex items-center gap-3.5 relative overflow-hidden" style="background:linear-gradient(135deg,${bg},#fff 140%)">
+                    <span class="absolute -right-5 -top-5 w-24 h-24 rounded-full opacity-40" style="background:${bg}"></span>
+                    ${bagianLogo(b, 48)}
+                    <div class="min-w-0 relative">
+                        <div class="font-extrabold text-slate-900 leading-tight truncate">${esc(b.name)}</div>
+                        <div class="text-xs font-semibold mt-0.5" style="color:${fg}">${arr.length ? arr.length + ' fokus pembelajaran' : 'Belum ada kurikulum'}</div>
+                    </div>
+                </div>` : '';
+
             const ae = document.activeElement, keep = keepFocus && ae && ae.id === 'kur-new';
-            list.innerHTML = arr.length ? arr.map((t, i) => `
-                <div class="flex items-center gap-1.5">
-                    <span class="w-5 text-center text-[11px] font-black text-slate-300 shrink-0">${i + 1}</span>
-                    <input type="text" value="${esc(t)}" onchange="kurEdit(${i}, this.value)" onkeydown="if(event.key==='Enter')this.blur()" class="field !py-1 !px-2.5 !rounded-lg h-9 flex-1 min-w-0">
-                    <button type="button" onclick="kurMove(${i}, -1)" ${i === 0 ? 'disabled' : ''} title="Naik" aria-label="Naik" class="h-8 w-7 shrink-0 rounded-lg text-slate-400 hover:bg-slate-100 disabled:opacity-25 flex items-center justify-center"><svg class="ic !w-4 !h-4"><use href="#i-chevron-up"/></svg></button>
-                    <button type="button" onclick="kurMove(${i}, 1)" ${i === arr.length - 1 ? 'disabled' : ''} title="Turun" aria-label="Turun" class="h-8 w-7 shrink-0 rounded-lg text-slate-400 hover:bg-slate-100 disabled:opacity-25 flex items-center justify-center"><svg class="ic !w-4 !h-4"><use href="#i-chevron-down"/></svg></button>
-                    <button type="button" onclick="kurDel(${i})" title="Hapus" aria-label="Hapus" class="h-8 w-7 shrink-0 rounded-lg text-rose-400 hover:bg-rose-50 flex items-center justify-center"><svg class="ic !w-4 !h-4"><use href="#i-trash"/></svg></button>
-                </div>`).join('') : '<div class="text-center text-xs text-slate-400 py-3">Belum ada kurikulum untuk bagian ini.<br>Resume akan memakai daftar bawaan sampai diisi.</div>';
-            const foot = $('kur-foot'); if (foot) foot.textContent = b ? `${arr.length} fokus pembelajaran · ${b.name}` : 'Belum ada bagian';
+            $('kur-list').innerHTML = !b ? '' : arr.length ? arr.map((t, i) => `
+                <div class="group flex items-center gap-2.5 bg-white rounded-2xl pl-2.5 pr-1.5 py-1.5 transition hover:shadow-md" style="box-shadow:0 1px 0 #eef0f3,0 0 0 1px #eef0f3">
+                    <span class="w-7 h-7 shrink-0 rounded-xl text-[11px] font-black flex items-center justify-center" style="background:${bg};color:${fg}">${i + 1}</span>
+                    <input type="text" value="${esc(t)}" onchange="kurEdit(${i}, this.value)" onkeydown="if(event.key==='Enter')this.blur()" class="flex-1 min-w-0 bg-transparent outline-none font-semibold text-slate-800 h-9 rounded-lg px-1 focus:bg-slate-50" style="font-size:16px">
+                    <span class="flex items-center shrink-0 opacity-60 group-hover:opacity-100 group-focus-within:opacity-100 transition">
+                        <button type="button" onclick="kurMove(${i}, -1)" ${i === 0 ? 'disabled' : ''} title="Naik" aria-label="Naik" class="h-8 w-7 rounded-lg text-slate-500 hover:bg-slate-100 disabled:opacity-20 flex items-center justify-center"><svg class="ic !w-4 !h-4"><use href="#i-chevron-up"/></svg></button>
+                        <button type="button" onclick="kurMove(${i}, 1)" ${i === arr.length - 1 ? 'disabled' : ''} title="Turun" aria-label="Turun" class="h-8 w-7 rounded-lg text-slate-500 hover:bg-slate-100 disabled:opacity-20 flex items-center justify-center"><svg class="ic !w-4 !h-4"><use href="#i-chevron-down"/></svg></button>
+                        <button type="button" onclick="kurDel(${i})" title="Hapus" aria-label="Hapus" class="h-8 w-7 rounded-lg text-rose-400 hover:bg-rose-50 flex items-center justify-center"><svg class="ic !w-4 !h-4"><use href="#i-trash"/></svg></button>
+                    </span>
+                </div>`).join('') : `
+                <div class="text-center py-6 px-4 rounded-3xl bg-white/60 border border-dashed border-slate-200">
+                    <div class="mx-auto w-12 h-12 rounded-2xl flex items-center justify-center mb-2" style="background:${bg};color:${fg}"><svg class="ic"><use href="#b-book"/></svg></div>
+                    <div class="text-sm font-extrabold text-slate-700">Kurikulum masih kosong</div>
+                    <div class="text-xs text-slate-400 mt-0.5">Tambahkan fokus pembelajaran di bawah.<br>Bisa tempel banyak baris sekaligus.</div>
+                </div>`;
+            const foot = $('kur-foot');
+            if (foot) foot.textContent = b ? 'Muncul otomatis di resume · A. Pembelajaran Trainee' : '';
             if (keep) $('kur-new').focus();
         }
+        function kurUnitPick(u) { kurUnit = u; kurBagianId = null; renderKurikulum(); }
         function kurPick(id) { kurBagianId = id; renderKurikulum(); }
         function kurClean(t) { return String(t || '').replace(/^\s*(?:[-\u2022*]|\d+[.)])\s*/, '').replace(/\s+/g, ' ').trim(); }
         function kurAddMany(lines) {
