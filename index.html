@@ -615,7 +615,7 @@
                     <div class="flex items-start justify-between gap-3">
                         <div>
                             <h3 class="font-extrabold text-slate-900">Peserta SDP Trainee</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Terisi otomatis di form saat dipilih. Peserta yang lewat 16 bulan sejak batch tidak lagi muncul di form. Ketuk kartu atau nama untuk membuka detail dan tombol Ubah.</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Terisi otomatis di form saat dipilih. Peserta yang lewat 16 bulan sejak batch tidak lagi muncul di form. Ketuk kartu atau nama untuk membuka detail dan tombol Ubah (menutup otomatis setelah 20 detik).</p>
                         </div>
                         <button onclick="openPesertaModal()" class="h-10 px-3.5 shrink-0 bg-yc-600 active:bg-yc-800 text-white font-bold rounded-xl text-sm flex items-center gap-1.5">
                             <svg class="ic !w-4 !h-4"><use href="#i-plus"/></svg>Tambah
@@ -666,7 +666,6 @@
                         <div id="bagian-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
                         <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100">
                             <span id="bagian-sync-status" class="text-[11px] font-semibold text-slate-400"></span>
-                            <button id="bagian-reset-btn" onclick="resetBagianDefault()" class="text-xs font-bold text-slate-500 underline">Kembalikan Yummy Choice ke daftar awal</button>
                         </div>
                     </div>
                 </div>
@@ -2325,7 +2324,6 @@
         function renderBagianList() {
             const c = $('bagian-list'); if (!c) return;
             renderBagianUnitTabs();
-            const rb = $('bagian-reset-btn'); if (rb) rb.classList.toggle('hidden', bagianUnit !== DEFAULT_UNIT);
             const list = bagianList.filter(b => b.unit === bagianUnit);
             $('bagian-count').textContent = list.length;
             const tn = $('ktab-bagian-n'); if (tn) tn.textContent = bagianList.length;
@@ -2357,12 +2355,6 @@
             if (!confirm(`Hapus bagian "${b.name}" (${b.unit}) dari daftar pilihan?${note}`)) return;
             bagianList = bagianList.filter(x => x.id !== id);
             commitBagian('Bagian dihapus');
-        }
-
-        function resetBagianDefault() {
-            if (!confirm('Kembalikan daftar Bagian Yummy Choice ke pengaturan awal? Perubahan pada unit ini akan hilang. Unit lain tidak terpengaruh.')) return;
-            bagianList = DEFAULT_BAGIAN.map(b => ({ ...b })).concat(bagianList.filter(b => b.unit !== DEFAULT_UNIT));
-            commitBagian('Daftar Yummy Choice dikembalikan ke awal');
         }
 
         // ---- Modal tambah / ubah ----
@@ -3168,10 +3160,9 @@
         }
 
         // ---- Tray card aktif: satu per satu; edit hanya tampil saat aktif ----
-        // HP: menutup otomatis saat layar di-scroll. Desktop: menutup otomatis setelah 10 detik atau saat diklik lagi.
-        let ptActiveId = null, ptActiveTimer = null, ptOpenedAt = 0, ptOpenScrollY = 0;
-        const PT_AUTO_CLOSE_MS = 10000;
-        const isMobileView = () => window.matchMedia('(max-width: 767px), (pointer: coarse)').matches;
+        // Menutup saat diklik lagi, atau otomatis setelah 20 detik. Scroll tidak memengaruhi tray.
+        let ptActiveId = null, ptActiveTimer = null;
+        const PT_AUTO_CLOSE_MS = 20000;
         function closeActivePeserta(silent) {
             clearTimeout(ptActiveTimer); ptActiveTimer = null;
             if (ptActiveId === null) return;
@@ -3181,16 +3172,10 @@
         function togglePesertaActive(id) {
             if (ptActiveId === id) { closeActivePeserta(); return; }
             clearTimeout(ptActiveTimer);
-            ptActiveId = id; ptOpenedAt = Date.now(); ptOpenScrollY = window.scrollY || 0;
+            ptActiveId = id;
             renderPesertaCards();
-            setTimeout(() => { if (ptActiveId === id) ptOpenScrollY = window.scrollY || 0; }, 450); // abaikan geser layout akibat tray terbuka
-            if (!isMobileView()) ptActiveTimer = setTimeout(() => closeActivePeserta(), PT_AUTO_CLOSE_MS);
+            ptActiveTimer = setTimeout(() => closeActivePeserta(), PT_AUTO_CLOSE_MS);
         }
-        window.addEventListener('scroll', () => {
-            if (ptActiveId === null || !isMobileView()) return;
-            if (Date.now() - ptOpenedAt < 450) return;
-            if (Math.abs((window.scrollY || 0) - ptOpenScrollY) > 12) closeActivePeserta();
-        }, { passive: true });
 
         function pesertaCardHTML(p, active) {
             const b = findBagian(p.bagian, unitOf(p));
