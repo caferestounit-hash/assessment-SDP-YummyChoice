@@ -700,13 +700,13 @@
                 <div class="flex items-center gap-3">
                     <button onclick="smartBack()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
                     <div>
-                        <h2 class="text-lg font-extrabold text-slate-900 leading-tight">Log Pembaruan</h2>
-                        <p id="log-sub-txt" class="text-xs text-slate-500">Catatan aktivitas portal, disimpan 16 bulan</p>
+                        <h2 class="text-base font-extrabold text-slate-900 leading-tight">Log Pembaruan</h2>
+                        <p id="log-sub-txt" class="text-[11px] text-slate-500">Catatan aktivitas portal, disimpan 16 bulan</p>
                     </div>
                 </div>
-                <input id="log-search" type="search" oninput="renderLogView()" placeholder="Cari aktivitas, nama, unit" class="field !py-2 !rounded-xl h-10 w-full">
-                <div id="log-filters" class="flex gap-1.5 overflow-x-auto pb-0.5" style="scrollbar-width:none"></div>
-                <div id="log-list" class="space-y-1.5"></div>
+                <input id="log-search" type="search" oninput="renderLogView()" placeholder="Cari aktivitas, nama, unit" class="field !py-1.5 !rounded-xl h-9 w-full !text-xs">
+                <div id="log-filters" class="flex gap-1 overflow-x-auto pb-0.5" style="scrollbar-width:none"></div>
+                <div id="log-list"></div>
             </div>
 
             <!-- ========== VIEW: KELOLA DATA (ETD) ========== -->
@@ -1878,12 +1878,13 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
 
         function purgeOldTrash() {
             if (currentUserRole !== 'ETD') return;
-            const now = Date.now();
+            const now = Date.now(); let nPurged = 0;
             trashList = trashList.filter(i => {
                 if (now - (i.deletedTimestamp || now) < THIRTY_DAYS) return true;
                 cloudDelete(COL.hasil, i._fsId || i.id); gasSync({ action: 'purge', id: i.id });
-                return false;
+                nPurged++; return false;
             });
+            if (nPurged) logEvent('purge', 'sistem', `${nPurged} form di Tempat Sampah dihapus otomatis (lewat ${Math.round(THIRTY_DAYS / 86400000)} hari)`, { actor: 'Sistem', unit: '' });
         }
 
         function stopCloudSync() {
@@ -2010,6 +2011,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
                 writeJSON('yc_sdp_unit', acc.unit, 'session');
                 $('login-error').classList.add('hidden');
                 initPortal();
+                logEvent('login', 'akses', (acc.role === 'ETD' ? 'ETD' : 'Penguji ' + acc.unit) + ' masuk ke portal', { unit: acc.unit || '' });
             } else {
                 $('login-error').classList.remove('hidden');
             }
@@ -2023,6 +2025,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         }
 
         function logout() {
+            if (currentUserRole) logEvent('logout', 'akses', (currentUserRole === 'ETD' ? 'ETD' : 'Penguji ' + currentUnit) + ' keluar dari portal', { unit: currentUnit || '' });
             navReset();
             stopCloudSync();
             removeKey('yc_sdp_role', 'session');
@@ -2059,7 +2062,6 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             goToHome();
             renderAll();
             refreshLogUI();
-            if (!isETD && !sessionStorage.getItem('yc_sdp_logged')) { try { sessionStorage.setItem('yc_sdp_logged', '1'); } catch (e) {} logEvent('login', 'akses', 'Penguji ' + currentUnit + ' masuk ke portal', { unit: currentUnit }); }
         }
 
         function renderAll() { 
@@ -2301,6 +2303,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
 
         function exportRekapData() {
             if (!visibleAssessments().length) { toast('Tidak ada data untuk diexport', 'warn'); return; }
+            logEvent('export', 'laporan', `Ekspor rekap CSV (${visibleAssessments().length} penilaian${etdUnit ? ' · ' + etdUnit : ''})`);
             const head = ['ID', 'Waktu Kirim', 'Peserta SDP', 'Unit Bisnis', 'Bagian', 'Cabang', 'Batch', 'Penguji', 'Peran Penguji', 'Skor Rata-Rata']
                 .concat(kriteriaList.map(k => `K${k.id} ${k.title}`));
             const lines = [head.map(csvCell).join(',')];
@@ -2327,7 +2330,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             saveAssessments(); saveTrash(); renderAll();
             cloudSet(COL.hasil, item._fsId || item.id, { deleted: true, deletedTimestamp: item.deletedTimestamp }, true);
             gasSync({ action: 'trash', id: item.id });
-            logEvent('trash', 'penilaian', `Form ${item.namaPeserta} oleh ${item.namaPenguji} dipindahkan ke Tempat Sampah`, { unit: unitOfA(item) });
+            logEvent('trash', 'penilaian', `Form ${item.namaPeserta} oleh ${item.namaPenguji} dipindahkan ke Tempat Sampah`, { unit: unitOfA(item), meta: aMeta(item) });
             toast('Dipindahkan ke Tempat Sampah', 'info');
         }
 
@@ -2341,7 +2344,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             saveAssessments(); saveTrash(); renderAll();
             cloudSet(COL.hasil, item._fsId || item.id, { deleted: false, deletedTimestamp: null }, true);
             gasSync({ ...stripLocal(item), action: 'upsert' });
-            logEvent('recover', 'penilaian', `Form ${item.namaPeserta} oleh ${item.namaPenguji} dipulihkan`, { unit: unitOfA(item), ref: item.id });
+            logEvent('recover', 'penilaian', `Form ${item.namaPeserta} oleh ${item.namaPenguji} dipulihkan`, { unit: unitOfA(item), ref: item.id, meta: aMeta(item) });
             toast('Form dipulihkan', 'success');
         }
 
@@ -2350,7 +2353,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             const item = trashList.find(i => i.id === id);
             trashList = trashList.filter(i => i.id !== id);
             saveTrash(); renderTrashItems();
-            if (item) { cloudDelete(COL.hasil, item._fsId || item.id); gasSync({ action: 'purge', id }); logEvent('purge', 'penilaian', `Form ${item.namaPeserta} oleh ${item.namaPenguji} dihapus permanen`, { unit: unitOfA(item) }); }
+            if (item) { cloudDelete(COL.hasil, item._fsId || item.id); gasSync({ action: 'purge', id }); logEvent('purge', 'penilaian', `Form ${item.namaPeserta} oleh ${item.namaPenguji} dihapus permanen`, { unit: unitOfA(item), meta: aMeta(item) }); }
         }
 
         function renderTrashItems() {
@@ -2537,7 +2540,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         function refreshUnitsUI() {
             try { renderUnitFilters(); renderBagianUnitTabs(); renderBagianList(); renderKurikulum(); renderUnitList(); refreshPesertaUI(); populateBagianSelect(); const s = $('sdp-unit'); if (s && s.tagName === 'SELECT') fillUnitSelect(s, s.value); renderHeaderBrand(); } catch (e) { console.warn(e); }
         }
-        function commitUnits(msg) { rebuildUnits(); saveUnits(); refreshUnitsUI(); pushUnitsCloud(); if (msg) { toast(msg, 'success'); logEvent('unit', 'data', 'ETD: ' + msg + ' (Unit Bisnis)'); } }
+        function commitUnits(msg, what) { rebuildUnits(); saveUnits(); refreshUnitsUI(); pushUnitsCloud(); if (msg) { toast(msg, 'success'); logEvent('unit', 'data', 'Unit Bisnis ' + msg.replace(/^Unit( bisnis)? ?/i, '').replace(/^./, c => c.toLowerCase()) + (what ? ' · ' + what : '')); } }
 
         // ---- Daftar unit (tab Unit di Kelola Data) ----
         let unitReveal = new Set();
@@ -2624,7 +2627,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             if (!/^\S{4,24}$/.test(pass)) return fail('Passkey 4–24 karakter, tanpa spasi.');
             const dup = UNITS.find(n => n !== unitEditName && unitPasskey(n).toLowerCase() === pass.toLowerCase());
             if (dup || pass.toLowerCase() === etdPasskey()) return fail('Passkey sudah dipakai' + (dup ? ' oleh ' + dup : ' ETD') + '. Pilih yang lain.');
-            if (unitDraft.builtin) { unitPassOv[unitEditName] = pass; if (unitDraft.theme) unitThemeOv[unitEditName] = unitDraft.theme; else delete unitThemeOv[unitEditName]; closeUnitModal(); commitUnits('Unit ' + unitEditName + ' diperbarui'); applyThemeVars(); return; }
+            if (unitDraft.builtin) { unitPassOv[unitEditName] = pass; if (unitDraft.theme) unitThemeOv[unitEditName] = unitDraft.theme; else delete unitThemeOv[unitEditName]; closeUnitModal(); commitUnits('Unit diperbarui', unitEditName); applyThemeVars(); return; }
             const name = $('unit-name').value.trim().replace(/\s+/g, ' ');
             if (!name) return fail('Nama unit bisnis wajib diisi.');
             if (!unitEditName && UNITS.some(n => n.toLowerCase() === name.toLowerCase())) return fail('Nama unit sudah ada.');
@@ -2632,13 +2635,13 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             if (unitDraft.img) rec.img = unitDraft.img; if (unitDraft.logo) rec.logo = unitDraft.logo;
             if (unitEditName) unitsCustom = unitsCustom.map(u => u.name === unitEditName ? rec : u); else unitsCustom.push(rec);
             const nm = unitEditName ? 'Unit diperbarui' : 'Unit bisnis ditambahkan';
-            closeUnitModal(); commitUnits(nm);
+            closeUnitModal(); commitUnits(nm, name);
         }
         function deleteUnit(name) {
             const used = bagianList.some(b => b.unit === name) || pesertaList.some(p => (p.unit || DEFAULT_UNIT) === name) || assessmentList.some(a => unitOfA(a) === name);
             if (used) { toast('Unit masih punya bagian / peserta / penilaian. Kosongkan dulu sebelum menghapus.', 'warn'); return; }
             if (!confirm('Hapus unit bisnis "' + name + '"? Passkey-nya tidak berlaku lagi.')) return;
-            unitsCustom = unitsCustom.filter(u => u.name !== name); commitUnits('Unit dihapus');
+            unitsCustom = unitsCustom.filter(u => u.name !== name); commitUnits('Unit dihapus', name);
         }
         loadUnits();
         // =====================================================================
@@ -2696,7 +2699,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             $('theme-modal').classList.remove('hidden'); document.body.style.overflow = 'hidden'; renderThemeModal();
         }
         function closeThemeModal(save) {
-            if (save) { portalCfg = { ...tmDraft }; writeJSON(PORTAL_KEY, portalCfg); pushPortalCloud(); toast('Tema portal disimpan untuk semua pengguna', 'success'); logEvent('tema', 'tampilan', 'ETD memperbarui tema tampilan portal'); }
+            if (save) { const _tc = [['accent', 'warna'], ['uniform', 'warna'], ['bg', 'latar'], ['glow', 'latar'], ['font', 'huruf'], ['scale', 'huruf'], ['radius', 'sudut'], ['headTitle', 'teks'], ['loginTitle', 'teks'], ['loginSub', 'teks'], ['footer', 'teks']].filter(([k]) => !jeq(portalCfg[k], tmDraft[k])).map(x => x[1]).filter((v, i, a) => a.indexOf(v) === i); portalCfg = { ...tmDraft }; writeJSON(PORTAL_KEY, portalCfg); pushPortalCloud(); toast('Tema portal disimpan untuk semua pengguna', 'success'); logEvent('tema', 'tampilan', 'Tema tampilan portal diperbarui', _tc.length ? { detail: 'Diubah: ' + _tc.join(', ') } : {}); }
             applyPortalCfg(portalCfg);
             $('theme-modal').classList.add('hidden'); document.body.style.overflow = '';
         }
@@ -2758,13 +2761,18 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             Object.keys(notifRead).forEach(k => { if (!logSeen.has(k)) delete notifRead[k]; });
             writeJSON(NOTIF_READ_KEY, notifRead);
         }
+        const aMeta = i => ({ peserta: i.namaPeserta, penguji: i.namaPenguji, bagian: i.sdpBagian, skor: Number(i.scoreTotal).toFixed(1) });
+        function pushLogCloud(e, n = 0) { // kirim ke cloud; bila belum tersambung coba ulang beberapa kali
+            if (cloudOK()) { window.fsSetDoc(window.fsDoc(window.db, LOG_COL, e.id), JSON.parse(JSON.stringify(e))).catch(() => {}); }
+            else if (n < 4) setTimeout(() => pushLogCloud(e, n + 1), 2500 * (n + 1));
+        }
         function logEvent(type, cat, text, o = {}) {
             if (sysCfg.noLog && cat !== 'sistem') return;
             try {
-                const e = { id: 'lg-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), t: Date.now(), type, cat, text, unit: o.unit || currentUnit || '', actor: o.actor || (currentUserRole === 'ETD' ? 'ETD' : (currentUnit ? 'Penguji ' + currentUnit : '')), ref: o.ref || '' };
+                const isE = currentUserRole === 'ETD';
+                const e = { id: 'lg-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), t: Date.now(), type, cat, text, unit: o.unit !== undefined ? o.unit : (currentUnit || ''), actor: o.actor || (isE ? 'ETD' : (currentUnit ? 'Penguji ' + currentUnit : '')), ref: o.ref || '' };
                 if (o.meta) e.meta = o.meta; if (o.detail) e.detail = o.detail;
-                addLog(e); pruneLog(); refreshLogUI();
-                if (cloudOK()) window.fsSetDoc(window.fsDoc(window.db, LOG_COL, e.id), JSON.parse(JSON.stringify(e))).catch(() => {});
+                addLog(e); pruneLog(); refreshLogUI(); pushLogCloud(e);
             } catch (er) { console.warn(er); }
         }
         function subscribeLog(C) {
@@ -2841,34 +2849,44 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         document.addEventListener('click', ev => { const p = $('notif-panel'); if (p && !p.classList.contains('hidden') && !ev.target.closest('#notif-panel') && !ev.target.closest('#btn-notif')) toggleNotif(false); });
 
         // ---- Halaman Log Pembaruan ----
-        function setLogFilter(k) { logFilter = k; renderLogView(); }
+        let logLimit = 60;
+        function setLogFilter(k) { logFilter = k; logLimit = 60; renderLogView(); }
+        function moreLog() { logLimit += 60; renderLogView(); }
+        function logHay(e) { const m = e.meta || {}; return [e.text, e.unit, e.actor, e.detail, m.peserta, m.penguji, m.bagian, m.cabang, m.batch].join(' ').toLowerCase(); }
         function renderLogView() {
             const cut = Date.now() - LOG_TTL, q = ($('log-search').value || '').trim().toLowerCase();
             const all = logList.filter(e => e.t > cut);
-            const counts = {}; all.forEach(e => { counts[e.cat] = (counts[e.cat] || 0) + 1; });
-            $('log-filters').innerHTML = [['all', 'Semua', '#334155', '#e2e8f0', null]].concat(Object.entries(LOG_CATS).map(([k, v]) => [k, v.l, v.c, v.bg, v.i])).map(([k, l, c, bg, i]) => {
-                const on = logFilter === k, n = k === 'all' ? all.length : (counts[k] || 0);
-                return `<button type="button" onclick="setLogFilter('${k}')" class="shrink-0 h-9 px-3 rounded-full text-xs font-bold inline-flex items-center gap-1.5 border-[1.5px]" style="${on ? `background:${bg};color:${c};border-color:${c}66` : 'background:#fff;color:#64748b;border-color:#e2e8f0'}">${i ? `<svg class="ic !w-3.5 !h-3.5"><use href="${i}"/></svg>` : ''}${l}<span class="text-[10px] opacity-70">${n}</span></button>`;
+            const base = q ? all.filter(e => logHay(e).includes(q)) : all;
+            const counts = {}; base.forEach(e => { counts[e.cat] = (counts[e.cat] || 0) + 1; });
+            $('log-filters').innerHTML = [['all', 'Semua', '#334155', '#e2e8f0']].concat(Object.entries(LOG_CATS).map(([k, v]) => [k, v.l, v.c, v.bg])).map(([k, l, c, bg]) => {
+                const on = logFilter === k, n = k === 'all' ? base.length : (counts[k] || 0);
+                return `<button type="button" onclick="setLogFilter('${k}')" class="shrink-0 h-7 px-2.5 rounded-full text-[11px] font-bold inline-flex items-center gap-1 border" style="${on ? `background:${bg};color:${c};border-color:${c}55` : 'background:#fff;color:#64748b;border-color:#e2e8f0'}">${l}<span class="text-[10px] opacity-60">${n}</span></button>`;
             }).join('');
-            const rows = all.filter(e => (logFilter === 'all' || e.cat === logFilter) && (!q || (e.text + ' ' + e.unit + ' ' + e.actor).toLowerCase().includes(q))).sort((a, b) => b.t - a.t);
-            if (!rows.length) { $('log-list').innerHTML = '<div class="card p-8 text-center text-sm font-bold text-slate-400">Belum ada catatan</div>'; return; }
-            const day = t => { const d = new Date(t), n = new Date(); const k = x => x.toDateString(); if (k(d) === k(n)) return 'Hari ini'; if (k(d) === k(new Date(n - 86400000))) return 'Kemarin'; return d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); };
-            let last = '', html = '';
-            rows.slice(0, 300).forEach(e => {
-                const g = day(e.t); if (g !== last) { html += `<div class="pt-2 pb-1 text-[11px] font-extrabold text-slate-400 uppercase tracking-wide">${esc(g)}</div>`; last = g; }
-                const c = LOG_CATS[e.cat] || LOG_CATS.data, link = e.ref && assessmentList.some(a => a.id === e.ref);
-                const m = e.meta || {}, chips = [];
-                if (e.type === 'submit') { if (m.skor) chips.push('Skor ' + m.skor); if (m.bagian) chips.push(m.bagian); if (m.peran) chips.push(String(m.peran).replace(/\s*\(.*$/, '')); if (m.cabang) chips.push(m.cabang); if (m.batch) chips.push('Batch ' + m.batch); }
-                const dt = new Date(e.t).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + ' · ' + logClock(e.t);
-                html += `<div ${link ? `onclick="openLogRef(logList.find(x=>x.id==='${e.id}'))" style="cursor:pointer"` : ''} class="card px-2.5 py-2 flex gap-2 items-start ${link ? 'active:bg-slate-50' : ''}" style="border-radius:.8rem">
-                    <span class="w-7 h-7 shrink-0 rounded-lg flex items-center justify-center mt-0.5" style="background:${c.bg};color:${c.c}"><svg class="ic !w-3.5 !h-3.5"><use href="${c.i}"/></svg></span>
-                    <span class="flex-1 min-w-0"><span class="block text-[12px] font-bold text-slate-800 leading-snug">${esc(e.text)}</span>
-                    <span class="block text-[10px] text-slate-400 font-semibold mt-0.5">${esc(dt)}${e.actor ? ' · ' + esc(e.actor) : ''}${e.unit && !String(e.actor || '').includes(e.unit) ? ' · ' + esc(e.unit) : ''}</span>
-                    ${chips.length ? `<span class="flex flex-wrap gap-1 mt-1">${chips.map(x => `<span class="px-1.5 py-px rounded-md bg-slate-100 text-slate-500 text-[10px] font-bold">${esc(x)}</span>`).join('')}</span>` : ''}
-                    ${e.detail ? `<span class="block text-[10.5px] text-slate-500 mt-1 leading-snug">${esc(e.detail)}</span>` : ''}</span>
-                    ${link ? '<svg class="ic !w-3.5 !h-3.5 text-slate-300 mt-1.5"><use href="#i-chevron-right"/></svg>' : ''}
-                </div>`;
+            const rows = base.filter(e => logFilter === 'all' || e.cat === logFilter).sort((a, b) => b.t - a.t);
+            if (!rows.length) { $('log-list').innerHTML = `<div class="card p-6 text-center text-xs font-semibold text-slate-400">${q || logFilter !== 'all' ? 'Tidak ada catatan yang cocok' : 'Belum ada catatan'}</div>`; return; }
+            const day = t => { const d = new Date(t), n = new Date(); const k = x => x.toDateString(); if (k(d) === k(n)) return 'Hari ini'; if (k(d) === k(new Date(n - 86400000))) return 'Kemarin'; return d.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }); };
+            const shown = rows.slice(0, logLimit), groups = [];
+            shown.forEach(e => { const g = day(e.t); if (!groups.length || groups[groups.length - 1][0] !== g) groups.push([g, []]); groups[groups.length - 1][1].push(e); });
+            let html = '';
+            groups.forEach(([g, items]) => {
+                html += `<div class="pt-1.5 pb-1 px-0.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-wide">${esc(g)}</div><div class="card overflow-hidden" style="border-radius:.75rem">`;
+                html += items.map((e, i) => {
+                    const c = LOG_CATS[e.cat] || LOG_CATS.data, link = e.ref && assessmentList.some(a => a.id === e.ref), m = e.meta || {}, bits = [];
+                    if (e.actor) bits.push(e.actor);
+                    if (e.unit && !String(e.actor || '').includes(e.unit)) bits.push(e.unit);
+                    if (m.skor) bits.push('skor ' + m.skor);
+                    if (m.bagian) bits.push(m.bagian);
+                    if (e.type === 'submit') { if (m.peran) bits.push(String(m.peran).replace(/\s*\(.*$/, '')); if (m.cabang) bits.push(m.cabang); if (m.batch) bits.push('Batch ' + m.batch); }
+                    return `<div ${link ? `onclick="openLogRef(logList.find(x=>x.id==='${e.id}'))"` : ''} class="px-2.5 py-1.5 flex gap-2 items-start ${i ? 'border-t border-slate-100' : ''} ${link ? 'cursor-pointer active:bg-slate-50' : ''}">
+                        <span class="w-5 h-5 shrink-0 rounded-md flex items-center justify-center mt-px" style="background:${c.bg};color:${c.c}"><svg class="ic !w-3 !h-3"><use href="${c.i}"/></svg></span>
+                        <span class="flex-1 min-w-0"><span class="block text-[11.5px] font-semibold text-slate-800 leading-snug">${esc(e.text)}</span>
+                        <span class="block text-[10px] text-slate-400 leading-snug">${bits.map(esc).join(' · ')}</span>
+                        ${e.detail ? `<span class="block text-[10px] text-slate-500 leading-snug mt-0.5">${esc(e.detail)}</span>` : ''}</span>
+                        <span class="shrink-0 text-[10px] text-slate-400 font-semibold tabular-nums mt-px">${logClock(e.t)}</span>
+                    </div>`;
+                }).join('') + '</div>';
             });
+            if (rows.length > shown.length) html += `<button type="button" onclick="moreLog()" class="w-full h-8 mt-1 rounded-lg text-[11px] font-bold text-slate-500 bg-white border border-slate-200 active:bg-slate-100">Tampilkan lebih banyak (${rows.length - shown.length})</button>`;
             $('log-list').innerHTML = html;
         }
         loadLog();
@@ -3229,10 +3247,10 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             } catch (e) { console.warn('Ambil bagian dari cloud gagal:', e); }
         }
 
-        function commitBagian(msg) {
+        function commitBagian(msg, what) {
             sortBagian(bagianList);
             saveBagian(); refreshBagianUI(); pushBagianCloud();
-            if (msg) { toast(msg, 'success'); logEvent('bagian', 'data', 'ETD: ' + msg + ' (Bagian SDP)'); }
+            if (msg) { toast(msg, 'success'); logEvent('bagian', 'data', msg + (what ? ' · ' + what : '')); }
         }
 
         // ---- Dropdown di form penilaian ----
@@ -3397,7 +3415,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             const note = (np ? `\n\n${np} peserta masih memakai bagian ini; pilih ulang bagiannya di tab Peserta.` : '') + (used ? `\n\n${used} penilaian lama dengan bagian ini tetap tersimpan.` : '');
             if (!confirm(`Hapus bagian "${b.name}" (${b.unit}) dari daftar pilihan?${note}`)) return;
             bagianList = bagianList.filter(x => x.id !== id);
-            commitBagian('Bagian dihapus');
+            commitBagian('Bagian dihapus', b.name + ' (' + b.unit + ')');
         }
 
         // ---- Modal tambah / ubah ----
@@ -3478,8 +3496,9 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             if (!name) return fail('Nama bagian wajib diisi.');
             if (bagianList.some(b => b.id !== bagianEditId && b.name === name && b.unit === unit)) return fail('Nama bagian sudah ada di ' + unit + '.');
 
+            const wasEditB = !!bagianEditId; let oldBName = '';
             if (bagianEditId) {
-                const b = bagianList.find(x => x.id === bagianEditId);
+                const b = bagianList.find(x => x.id === bagianEditId); oldBName = b.name;
                 if (b.name !== name) renameBagianInPeserta(b.name, b.unit, name);
                 b.name = name; b.icon = bagianDraft.icon; b.color = bagianDraft.color;
                 if (bagianDraft.img) b.img = bagianDraft.img; else delete b.img;
@@ -3490,7 +3509,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
                 bagianUnit = unit; // tampilkan unit tempat bagian baru ditambahkan
             }
             closeBagianModal();
-            commitBagian(bagianEditId ? 'Bagian diperbarui' : 'Bagian ditambahkan');
+            commitBagian(wasEditB ? 'Bagian diperbarui' : 'Bagian ditambahkan', (wasEditB && oldBName !== name ? oldBName + ' → ' : '') + name + ' (' + unit + ')');
         }
 
         // =====================================================================
@@ -3944,6 +3963,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             if (!reportKey || !reportForm) return;
             rsCollect(); reportDirty = true; persistReport();
             await rsSnapshot(packReport(reportForm), reportStoreKey(reportKey, reportPeriode), true, 'manual');
+            { const g = currentGroup(); logEvent('resume', 'laporan', `Versi resume disimpan${g ? ' · ' + g.nama : ''}`, { unit: g ? g.unit : '' }); }
             toast('Versi disimpan ke riwayat', 'success');
             if ($('rs-modal')) openHistory();
         }
@@ -3955,7 +3975,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             let d; try { d = JSON.parse(v.dj); } catch (e) { toast('Versi rusak, tidak dapat dipulihkan', 'warn'); return; }
             reportForm.d = d; if (Array.isArray(v.sel)) reportForm.sel = v.sel; delete reportForm.legacy;
             reportDirty = true; persistReport(); renderResumeForms(); sendResumeCtx('load');
-            closeRsModal(); toast('Dipulihkan ke versi ' + ago(v.t), 'success');
+            closeRsModal(); { const g = currentGroup(); logEvent('resume', 'laporan', `Resume dipulihkan ke versi ${ago(v.t)}${g ? ' · ' + g.nama : ''}`, { unit: g ? g.unit : '' }); } toast('Dipulihkan ke versi ' + ago(v.t), 'success');
         }
 
         // ---------- Panduan unduh PDF ----------
@@ -4018,7 +4038,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             if (!g || !reportForm || !rsFrame || !rsReady) { toast('Resume belum siap dicetak', 'warn'); return; }
             rsCollect(); clearTimeout(reportSaveTimer); persistReport();
             const title = `Resume ${periodeById(reportPeriode).short} - ${g.nama}`;
-            logEvent('resume', 'laporan', `ETD mencetak / mengunduh PDF ${title}`, { unit: g.unit });
+            logEvent('resume', 'laporan', `Cetak / unduh PDF · ${title}`, { unit: g.unit });
             const old = document.title, w = rsFrame.contentWindow;
             document.title = title; try { w.document.title = title; } catch (e) {}
             const restore = () => { document.title = old; };
@@ -4097,9 +4117,9 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             } catch (e) { console.warn('Ambil peserta dari cloud gagal:', e); }
         }
 
-        function commitPeserta(msg) {
+        function commitPeserta(msg, what) {
             savePeserta(); refreshPesertaUI(); renderBagianList(); pushPesertaCloud();
-            if (msg) { toast(msg, 'success'); logEvent('peserta', 'data', 'ETD: ' + msg + ' (Peserta SDP)'); }
+            if (msg) { toast(msg, 'success'); logEvent('peserta', 'data', msg + (what ? ' · ' + what : '')); }
         }
 
         function renameBagianInPeserta(oldName, unit, newName) {
@@ -4296,7 +4316,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             if (!confirm(`Hapus peserta "${p.nama}" dari daftar?\n\nPenilaian lama atas peserta ini tetap tersimpan.`)) return;
             pesertaList = pesertaList.filter(x => x.id !== id);
             closePesertaModal(); closeActivePeserta(true);
-            commitPeserta('Peserta dihapus');
+            commitPeserta('Peserta dihapus', p.nama + ' (' + (p.bagian || '-') + ' · ' + unitOf(p) + ')');
         }
         function deletePesertaFromModal() { if (pesertaEditId) deletePeserta(pesertaEditId); }
         function editPesertaFromCard(id) { closeActivePeserta(true); renderPesertaCards(); openPesertaModal(id); }
@@ -4368,7 +4388,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             }
             const wasEdit = !!pesertaEditId;
             closePesertaModal();
-            commitPeserta(wasEdit ? 'Peserta diperbarui' : 'Peserta ditambahkan');
+            commitPeserta(wasEdit ? 'Peserta diperbarui' : 'Peserta ditambahkan', nama + ' (' + pesertaDraft.bagian + ' · ' + pesertaDraft.unit + ')');
         }
 
         // ---- Dropdown + rincian otomatis di form penilaian ----
