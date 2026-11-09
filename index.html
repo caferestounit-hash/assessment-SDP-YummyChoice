@@ -10,6 +10,7 @@
             try {
                 var r = JSON.parse(sessionStorage.getItem('yc_sdp_role') || 'null'), u = JSON.parse(sessionStorage.getItem('yc_sdp_unit') || 'null');
                 var U = ['Yummy Choice', 'Mister Donut', 'Washoku Sato'], h = document.documentElement;
+                try { var cu = JSON.parse(localStorage.getItem('yc_sdp_units') || 'null'); if (cu && cu.custom) cu.custom.forEach(function (x) { if (x && x.name) U.push(x.name); }); } catch (e) {}
                 if (r === 'ETD' || (r === 'USER' && U.indexOf(u) > -1)) { h.classList.add('s-app'); if (r === 'USER') h.setAttribute('data-unit', u); }
             } catch (e) {}
         })();
@@ -101,6 +102,7 @@
         /* Logo di header: pil putih agar logo merah tetap terbaca di atas latar berwarna */
         .hb-wrap { display: flex; align-items: center; gap: .4rem; background: #fff; border-radius: .6rem; padding: .18rem .45rem; box-shadow: 0 1px 3px rgba(0,0,0,.18); flex-shrink: 0; }
         .hb { display: block; width: auto; object-fit: contain; }
+        .hb-txt { font: 800 11px/1 'Plus Jakarta Sans', sans-serif; color: #334155; max-width: 7.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .hb-in, .hb-yc { height: 18px; } .hb-sato { height: 20px; } .hb-md { height: 22px; }
         .hb-title { display: block; min-width: 0; flex: 1 1 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: 800; letter-spacing: -.005em; text-transform: uppercase; line-height: 1; font-size: clamp(7.5px, 2.15vw, 14px); }
         @media (max-width: 439px) { #user-role-badge { display: none; } .hb-wrap { gap: .3rem; padding: .15rem .35rem; } }
@@ -115,9 +117,9 @@
         #sync-pill { white-space: nowrap; }
 
         /* Logo brand di halaman login (tanpa frame) */
-        .login-brands { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .55rem 1rem; margin: .8rem auto 0; max-width: 11.5rem; }
-        .login-brands .lb { display: flex; align-items: center; justify-content: center; height: 1.45rem; }
-        .login-brands .lb img { height: 100%; width: auto; max-width: 3.2rem; object-fit: contain; }
+        .login-brands { display: flex; flex-direction: column; align-items: center; gap: .6rem; margin: .8rem auto 0; }
+        .lbr { display: flex; align-items: center; justify-content: center; gap: clamp(.55rem, 3.4vw, 1rem); }
+        .lbr img { height: clamp(.8rem, 3.9vw, 1.1rem); width: auto; max-width: clamp(1.9rem, 10.5vw, 2.7rem); object-fit: contain; }
 
         /* Header ETD: logo Indomaret tetap, logo brand berjalan kanan -> kiri (seperti kereta, berulang) */
         .hb-marq { display: flex; position: relative; overflow: hidden; width: 3.6rem; height: 22px; align-items: center;
@@ -315,20 +317,11 @@
             <div class="card p-6 border-t-4 border-t-yc-600 space-y-5">
                 <div class="text-center">
                     <div class="space-y-3.5">
-                        <img data-logo="indomaret" alt="Indomaret Group" class="mx-auto h-9 w-auto">
+                        <img data-logo="indomaret" alt="Indomaret Group" class="mx-auto h-8 w-auto">
                         <div class="h-px bg-slate-200"></div>
-                        <div class="flex items-center justify-center gap-3.5 flex-wrap">
-                            <img data-logo="yc" alt="Yummy Choice" class="h-5 w-auto">
-                            <img data-logo="misdo" alt="Mister Donut" class="h-7 w-auto">
-                            <img data-logo="sato" alt="Washoku Sato" class="h-6 w-auto">
-                        </div>
                         <div class="login-brands">
-                            <span class="lb"><img data-logo="primebread" alt="PrimeBread"></span>
-                            <span class="lb"><img data-logo="mrbread" alt="Mr. Bread"></span>
-                            <span class="lb"><img data-logo="ti" alt="T&I"></span>
-                            <span class="lb"><img data-logo="sayburger" alt="Say Burger"></span>
-                            <span class="lb"><img data-logo="pointcoffee" alt="Point Coffee Gedhe"></span>
-                            <span class="lb"><img data-logo="saybread" alt="Say Bread"></span>
+                        <div class="lbr"><img data-logo="yc" alt="Yummy Choice"><img data-logo="misdo" alt="Mister Donut"><img data-logo="sato" alt="Washoku Sato"><img data-logo="primebread" alt="PrimeBread"><img data-logo="mrbread" alt="Mr. Bread"></div>
+                        <div class="lbr"><img data-logo="ti" alt="T&I"><img data-logo="sayburger" alt="Say Burger"><img data-logo="pointcoffee" alt="Point Coffee Gedhe"><img data-logo="saybread" alt="Say Bread"></div>
                         </div>
                     </div>
                     <h2 class="text-xl font-extrabold text-slate-900 mt-7">Portal Assessment SDP</h2>
@@ -664,15 +657,18 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-1 p-1 bg-slate-200/60 rounded-full">
+                <div class="grid grid-cols-4 gap-1 p-1 bg-slate-200/60 rounded-full" style="grid-template-columns:repeat(4,minmax(0,1fr))">
                     <button id="ktab-peserta" onclick="switchKelolaTab('peserta')" class="seg-btn active h-9 rounded-full text-[13px] font-bold flex items-center justify-center gap-1.5">
-                        <svg class="ic !w-4 !h-4"><use href="#b-users"/></svg><span class="truncate">Peserta</span> <span id="ktab-peserta-n" class="px-1.5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-black">0</span>
+                        <svg class="ic !w-4 !h-4"><use href="#b-users"/></svg><span class="truncate">Peserta</span> <span id="ktab-peserta-n" class="hidden sm:inline px-1.5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-black">0</span>
                     </button>
                     <button id="ktab-bagian" onclick="switchKelolaTab('bagian')" class="seg-btn h-9 rounded-full text-[13px] font-bold flex items-center justify-center gap-1.5">
-                        <svg class="ic !w-4 !h-4"><use href="#b-building"/></svg><span class="truncate">Bagian</span> <span id="ktab-bagian-n" class="px-1.5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-black">0</span>
+                        <svg class="ic !w-4 !h-4"><use href="#b-building"/></svg><span class="truncate">Bagian</span> <span id="ktab-bagian-n" class="hidden sm:inline px-1.5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-black">0</span>
                     </button>
                     <button id="ktab-kurikulum" onclick="switchKelolaTab('kurikulum')" class="seg-btn h-9 rounded-full text-[13px] font-bold flex items-center justify-center gap-1.5">
-                        <svg class="ic !w-4 !h-4"><use href="#b-book"/></svg><span class="truncate">Kurikulum</span> <span id="ktab-kurikulum-n" class="px-1.5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-black">0</span>
+                        <svg class="ic !w-4 !h-4"><use href="#b-book"/></svg><span class="truncate">Kurikulum</span> <span id="ktab-kurikulum-n" class="hidden sm:inline px-1.5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-black">0</span>
+                    </button>
+                    <button id="ktab-unit" onclick="switchKelolaTab('unit')" class="seg-btn h-9 rounded-full text-[13px] font-bold flex items-center justify-center gap-1.5">
+                        <svg class="ic !w-4 !h-4"><use href="#b-store"/></svg><span class="truncate">Unit</span>
                     </button>
                 </div>
 
@@ -726,6 +722,16 @@
                             <span id="bagian-sync-status" class="text-[11px] font-semibold text-slate-400"></span>
                         </div>
                     </div>
+                </div>
+
+                <!-- PANE: UNIT BISNIS -->
+                <div id="kelola-pane-unit" class="hidden space-y-2.5">
+                    <div class="flex items-center gap-2">
+                        <p class="flex-1 text-xs text-slate-500 font-semibold">Atur unit bisnis: ikon, warna tema, logo header, dan passkey penguji.</p>
+                        <button onclick="openUnitModal()" title="Tambah unit bisnis" aria-label="Tambah unit bisnis" class="h-10 w-10 shrink-0 bg-yc-600 active:bg-yc-800 text-white rounded-xl flex items-center justify-center"><svg class="ic"><use href="#i-plus"/></svg></button>
+                    </div>
+                    <div id="unit-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+                    <span id="unit-sync-status" class="text-[11px] font-semibold text-slate-400"></span>
                 </div>
 
                 <!-- PANE: KURIKULUM PER BAGIAN -->
@@ -1077,6 +1083,58 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
     </div>
 
     <!-- MODAL: TAMBAH / UBAH BAGIAN SDP -->
+    <div id="unit-modal" class="no-print fixed inset-0 z-50 hidden bg-black/60 flex items-end sm:items-center justify-center sm:p-4" onclick="if(event.target===this)closeUnitModal()">
+        <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92dvh]">
+            <div class="px-4 py-3 bg-yc-700 text-white rounded-t-3xl flex items-center justify-between gap-3">
+                <h3 id="unit-modal-title" class="font-extrabold text-base">Tambah Unit Bisnis</h3>
+                <button onclick="closeUnitModal()" class="w-10 h-10 shrink-0 rounded-full bg-white/10 active:bg-white/20 flex items-center justify-center" aria-label="Tutup"><svg class="ic"><use href="#i-x"/></svg></button>
+            </div>
+            <div class="p-4 overflow-y-auto space-y-3.5">
+                <div id="unit-builtin-hint" style="display:none" class="text-[11px] text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 font-semibold">Unit bawaan: hanya passkey yang dapat diubah.</div>
+                <div id="unit-custom-box" class="space-y-3.5">
+                    <div class="flex items-center gap-3">
+                        <span id="unit-live"></span>
+                        <div class="flex-1">
+                            <label for="unit-name" class="block text-[11px] font-bold text-slate-600 mb-1">Nama unit bisnis</label>
+                            <input id="unit-name" maxlength="30" placeholder="mis. Point Coffee Gedhe" class="field" autocomplete="off">
+                        </div>
+                    </div>
+                    <div>
+                        <button type="button" onclick="toggleUnitPick('icon')" class="w-full h-11 px-3 rounded-xl border border-slate-200 bg-white flex items-center gap-2 text-sm font-bold text-slate-600"><span id="unit-icon-cur" class="text-slate-700"></span><span>Ikon unit</span><svg id="unit-icon-chev" class="ic !w-4 !h-4 ml-auto text-slate-400 transition-transform"><use href="#i-chevron-down"/></svg></button>
+                        <div id="unit-icon-grid" style="display:none" class="grid grid-cols-7 gap-1.5 mt-2"></div>
+                        <div class="flex items-center gap-2 mt-2">
+                            <label class="h-9 px-3 rounded-xl bg-slate-100 active:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 cursor-pointer"><svg class="ic !w-4 !h-4"><use href="#i-upload"/></svg>Ikon dari gambar<input type="file" accept="image/*" class="hidden" onchange="handleUnitIconFile(event)"></label>
+                            <button id="unit-img-remove" type="button" style="display:none" onclick="unitDraft.img='';renderUnitPicker()" class="h-9 px-3 rounded-xl bg-red-50 text-red-600 text-xs font-bold">Hapus</button>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="button" onclick="toggleUnitPick('theme')" class="w-full h-11 px-3 rounded-xl border border-slate-200 bg-white flex items-center gap-2 text-sm font-bold text-slate-600"><span id="unit-theme-cur" class="inline-flex items-center gap-2"></span><span class="text-slate-400 font-semibold">· warna tema</span><svg id="unit-theme-chev" class="ic !w-4 !h-4 ml-auto text-slate-400 transition-transform"><use href="#i-chevron-down"/></svg></button>
+                        <div id="unit-theme-grid" style="display:none" class="flex flex-wrap gap-2 mt-2"></div>
+                    </div>
+                    <div>
+                        <span class="block text-[11px] font-bold text-slate-600 mb-1.5">Logo header (logo asli)</span>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <div id="unit-logo-prev" class="min-h-[36px] flex items-center px-3 rounded-xl bg-slate-50 border border-dashed border-slate-300 flex-1"></div>
+                            <label class="h-9 px-3 rounded-xl bg-slate-100 active:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 cursor-pointer"><svg class="ic !w-4 !h-4"><use href="#i-upload"/></svg>Unggah<input type="file" accept="image/*" class="hidden" onchange="handleUnitLogoFile(event)"></label>
+                            <button id="unit-logo-remove" type="button" style="display:none" onclick="unitDraft.logo='';renderUnitPicker()" class="h-9 px-3 rounded-xl bg-red-50 text-red-600 text-xs font-bold">Hapus</button>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-1">Tampil di header bersama logo Indomaret. PNG transparan paling rapi.</p>
+                    </div>
+                </div>
+                <div>
+                    <label for="unit-pass" class="block text-[11px] font-bold text-slate-600 mb-1">Passkey penguji unit ini</label>
+                    <input id="unit-pass" maxlength="24" placeholder="mis. pointcoffee" class="field font-mono" autocomplete="off" autocapitalize="off" spellcheck="false">
+                    <p class="text-[11px] text-slate-400 mt-1">Dipakai penguji untuk masuk. Huruf besar/kecil tidak berpengaruh.</p>
+                </div>
+                <p id="unit-err" class="hidden text-xs font-semibold text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"></p>
+            </div>
+            <div class="p-3 border-t border-slate-100 flex gap-2">
+                <button onclick="closeUnitModal()" class="flex-1 h-12 rounded-xl bg-slate-100 text-slate-700 font-bold">Batal</button>
+                <button onclick="saveUnitModal()" class="flex-1 h-12 rounded-xl bg-yc-600 active:bg-yc-800 text-white font-bold">Simpan</button>
+            </div>
+        </div>
+    </div>
+
     <div id="bagian-modal" class="no-print fixed inset-0 z-50 hidden bg-black/60 flex items-end sm:items-center justify-center sm:p-4" onclick="if(event.target===this)closeBagianModal()">
         <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92dvh]">
             <div class="px-4 py-3 bg-yc-700 text-white rounded-t-3xl flex items-center justify-between gap-3">
@@ -1099,12 +1157,12 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
                 <p id="bagian-rename-hint" class="hidden text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 font-semibold">Peserta yang memakai bagian ini ikut diperbarui. Penilaian lama yang sudah terkirim tidak berubah.</p>
 
                 <div>
-                    <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">Ikon</span>
-                    <div id="bagian-icon-grid" class="grid grid-cols-5 sm:grid-cols-7 gap-2"></div>
+                    <button type="button" onclick="togglePick('icon')" class="w-full h-11 px-3 rounded-xl border border-slate-200 bg-white flex items-center gap-2 text-sm font-bold text-slate-600"><span id="bagian-icon-cur" class="text-slate-700"></span><span>Ikon</span><svg id="bagian-icon-chev" class="ic !w-4 !h-4 ml-auto text-slate-400 transition-transform"><use href="#i-chevron-down"/></svg></button>
+                    <div id="bagian-icon-grid" style="display:none" class="grid grid-cols-7 gap-1.5 mt-2"></div>
                 </div>
                 <div>
-                    <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">Warna</span>
-                    <div id="bagian-color-row" class="flex flex-wrap gap-2"></div>
+                    <button type="button" onclick="togglePick('color')" class="w-full h-11 px-3 rounded-xl border border-slate-200 bg-white flex items-center gap-2 text-sm font-bold text-slate-600"><span id="bagian-color-cur" class="inline-flex items-center"></span><span>Warna</span><svg id="bagian-color-chev" class="ic !w-4 !h-4 ml-auto text-slate-400 transition-transform"><use href="#i-chevron-down"/></svg></button>
+                    <div id="bagian-color-row" style="display:none" class="flex flex-wrap gap-2 mt-2"></div>
                 </div>
                 <div>
                     <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">Atau pakai logo sendiri</span>
@@ -1822,6 +1880,11 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             }
 
             // 4. Pengaturan: bagian & peserta
+            sub(D(COL.setting, 'units_sdp'), snap => {
+                if (snap.metadata.hasPendingWrites) return;
+                if (!snap.exists()) { if (!snap.metadata.fromCache && currentUserRole === 'ETD' && (unitsCustom.length || Object.keys(unitPassOv).length)) pushUnitsCloud(); return; }
+                applyUnitsData(snap.data()); saveUnits(); refreshUnitsUI(); setUnitSync('', true);
+            });
             sub(D(COL.setting, 'bagian_sdp'), snap => {
                 if (snap.metadata.hasPendingWrites) return;
                 if (!snap.exists()) { if (!snap.metadata.fromCache && currentUserRole === 'ETD' && bagianList.length) pushBagianCloud(); return; }
@@ -1844,7 +1907,9 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         // ================= AUTH =================
         function handleLogin(e) {
             e.preventDefault();
-            const acc = PASSKEYS[$('passkey-input').value.trim().toLowerCase()];
+            const pk = $('passkey-input').value;
+            let acc = findAccount(pk);
+            if (!acc && window.db && window.fsGetDoc && !handleLogin._tried) { handleLogin._tried = true; pullUnitsCloud().then(() => { handleLogin._tried = false; if (findAccount(pk)) handleLogin(new Event('submit')); else $('login-error').classList.remove('hidden'); }); return; }
             if (acc) {
                 currentUserRole = acc.role;
                 currentUnit = acc.unit;
@@ -1861,7 +1926,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             const role = readJSON('yc_sdp_role', null, 'session');
             const unit = readJSON('yc_sdp_unit', null, 'session');
             if (role === 'ETD') { currentUserRole = role; currentUnit = null; initPortal(); }
-            else if (role === 'USER' && UNITS.includes(unit)) { currentUserRole = role; currentUnit = unit; initPortal(); }
+            else if (role === 'USER' && (UNITS.includes(unit))) { currentUserRole = role; currentUnit = unit; initPortal(); }
         }
 
         function logout() {
@@ -2287,15 +2352,190 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         }
         let bagianUnit = DEFAULT_UNIT;
         const UNIT_ICON = { 'Yummy Choice': '#u-yc', 'Mister Donut': '#u-md', 'Washoku Sato': '#u-ws' };
-        const unitIcon = (unit, cls = '') => `<svg class="ic ${cls}" aria-hidden="true"><use href="${UNIT_ICON[unit] || '#b-building'}"/></svg>`;
         const UNIT_LOGO = { 'Yummy Choice': '#logo-yc', 'Mister Donut': '#logo-md', 'Washoku Sato': '#logo-ws' };
+        // Tampilan nama bagian: tidak kapital semua (singkatan <=3 huruf tetap kapital)
+        const nice = s => String(s || '').toLowerCase().replace(/[a-z0-9]+/g, w => w.length <= 3 && /[a-z]/.test(w) && !['dan', 'new'].includes(w) ? w.toUpperCase() : w[0].toUpperCase() + w.slice(1)).replace(/\s-\s/g, ' – ');
         const UNIT_THEME = { 'Yummy Choice': { p: '#b91c1c', d: '#7f1d1d' }, 'Mister Donut': { p: '#be185d', d: '#831843' }, 'Washoku Sato': { p: '#0f766e', d: '#134e4a' } };
+        // ---- Unit Bisnis dinamis: ETD dapat menambah unit, ikon, tema, logo header, dan passkey ----
+        const UNITS_KEY = 'yc_sdp_units';
+        const BUILTIN_UNITS = [{ name: 'Yummy Choice', passkey: 'yummychoice' }, { name: 'Mister Donut', passkey: 'misdo' }, { name: 'Washoku Sato', passkey: 'sato' }];
+        const SHADES = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900'];
+        const THEMES = { // [50..900]
+            merah: { l: 'Merah', s: ['#fff1f2', '#ffe4e6', '#fecdd3', '#fda4af', '#fb7185', '#f43f5e', '#dc2626', '#b91c1c', '#991b1b', '#7f1d1d'] },
+            pink: { l: 'Pink', s: ['#fdf2f8', '#fce7f3', '#fbcfe8', '#f9a8d4', '#f472b6', '#ec4899', '#db2777', '#be185d', '#9d174d', '#831843'] },
+            oranye: { l: 'Oranye', s: ['#fff7ed', '#ffedd5', '#fed7aa', '#fdba74', '#fb923c', '#f97316', '#ea580c', '#c2410c', '#9a3412', '#7c2d12'] },
+            kuning: { l: 'Kuning', s: ['#fffbeb', '#fef3c7', '#fde68a', '#fcd34d', '#fbbf24', '#f59e0b', '#d97706', '#b45309', '#92400e', '#78350f'] },
+            hijau: { l: 'Hijau', s: ['#ecfdf5', '#d1fae5', '#a7f3d0', '#6ee7b7', '#34d399', '#10b981', '#059669', '#047857', '#065f46', '#064e3b'] },
+            teal: { l: 'Teal', s: ['#f0fdfa', '#ccfbf1', '#99f6e4', '#5eead4', '#2dd4bf', '#14b8a6', '#0d9488', '#0f766e', '#115e59', '#134e4a'] },
+            langit: { l: 'Langit', s: ['#f0f9ff', '#e0f2fe', '#bae6fd', '#7dd3fc', '#38bdf8', '#0ea5e9', '#0284c7', '#0369a1', '#075985', '#0c4a6e'] },
+            biru: { l: 'Biru', s: ['#eff6ff', '#dbeafe', '#bfdbfe', '#93c5fd', '#60a5fa', '#3b82f6', '#2563eb', '#1d4ed8', '#1e40af', '#1e3a8a'] },
+            ungu: { l: 'Ungu', s: ['#f5f3ff', '#ede9fe', '#ddd6fe', '#c4b5fd', '#a78bfa', '#8b5cf6', '#7c3aed', '#6d28d9', '#5b21b6', '#4c1d95'] },
+            abu: { l: 'Abu', s: ['#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155', '#1e293b', '#0f172a'] }
+        };
+        let unitsCustom = [], unitPassOv = {}, unitEditName = null, unitDraft = null, unitPickOpen = { icon: false, theme: false };
+        function rebuildUnits() { UNITS.length = 0; BUILTIN_UNITS.forEach(b => UNITS.push(b.name)); unitsCustom.forEach(u => UNITS.push(u.name)); }
+        function applyUnitsData(d) {
+            unitsCustom = Array.isArray(d && d.custom) ? d.custom.filter(u => u && u.name) : [];
+            unitPassOv = (d && d.pass && typeof d.pass === 'object') ? d.pass : {};
+            rebuildUnits();
+        }
+        function loadUnits() { applyUnitsData(readJSON(UNITS_KEY, null)); }
+        function saveUnits() { writeJSON(UNITS_KEY, { custom: unitsCustom, pass: unitPassOv }); }
+        const unitRec = n => unitsCustom.find(u => u.name === n) || null;
+        const unitPasskey = n => { const r = unitRec(n); if (r) return r.passkey || ''; return unitPassOv[n] || (BUILTIN_UNITS.find(b => b.name === n) || {}).passkey || ''; };
+        function findAccount(key) {
+            key = String(key || '').trim().toLowerCase(); if (!key) return null;
+            if (key === 'kitakeren') return PASSKEYS.kitakeren;
+            const u = UNITS.find(n => unitPasskey(n).toLowerCase() === key);
+            return u ? { role: 'USER', unit: u } : null;
+        }
+        const unitIcon = (unit, cls = '') => {
+            const r = unitRec(unit);
+            if (r) return r.img ? `<img src="${esc(r.img)}" alt="" class="ic ${cls}" style="border-radius:5px;object-fit:cover">` : `<svg class="ic ${cls}" aria-hidden="true"><use href="#b-${esc(r.icon || 'building')}"/></svg>`;
+            return `<svg class="ic ${cls}" aria-hidden="true"><use href="${UNIT_ICON[unit] || '#b-building'}"/></svg>`;
+        };
+        function applyThemeVars() {
+            const st = document.documentElement.style;
+            SHADES.forEach(s => st.removeProperty('--yc-' + s)); st.removeProperty('--bg-a'); st.removeProperty('--bg-b');
+            const r = currentUnit && unitRec(currentUnit), t = r && THEMES[r.theme];
+            if (!t) return;
+            SHADES.forEach((s, i) => st.setProperty('--yc-' + s, t.s[i]));
+            const rgba = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
+            st.setProperty('--bg-a', rgba(t.s[4], .16)); st.setProperty('--bg-b', rgba(t.s[2], .14));
+        }
+        function unitThemeColors(unit) { const r = unitRec(unit), t = r && THEMES[r.theme]; return t ? { p: t.s[7], d: t.s[9], bg: t.s[1], fg: t.s[7] } : (UNIT_THEME[unit] ? { p: UNIT_THEME[unit].p, d: UNIT_THEME[unit].d, bg: '#f1f5f9', fg: UNIT_THEME[unit].p } : { p: '#b91c1c', d: '#7f1d1d', bg: '#ffe4e6', fg: '#b91c1c' }); }
+
+        // Sinkron cloud (pengaturan/units_sdp) agar penguji di perangkat lain bisa masuk dengan passkey unit baru
+        async function pushUnitsCloud() {
+            if (!(window.db && window.fsSetDoc && window.fsDoc)) { setUnitSync('Hanya tersimpan di perangkat ini (cloud belum terhubung)', false); return false; }
+            try {
+                await window.fsSetDoc(window.fsDoc(window.db, 'pengaturan', 'units_sdp'), JSON.parse(JSON.stringify({ custom: unitsCustom, pass: unitPassOv, updatedAt: Date.now() })));
+                setUnitSync('Tersinkron ke cloud · ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }), true); return true;
+            } catch (e) { console.error(e); setUnitSync('Gagal sinkron ke cloud. Data tetap tersimpan di perangkat ini.', false); toast('Tersimpan lokal, tapi gagal sinkron ke cloud', 'warn'); return false; }
+        }
+        async function pullUnitsCloud() {
+            try {
+                if (!(window.db && window.fsGetDoc && window.fsDoc)) return false;
+                const snap = await window.fsGetDoc(window.fsDoc(window.db, 'pengaturan', 'units_sdp'));
+                if (snap.exists()) { applyUnitsData(snap.data()); saveUnits(); refreshUnitsUI(); return true; }
+            } catch (e) { console.warn('Ambil unit dari cloud gagal:', e); }
+            return false;
+        }
+        window.addEventListener('fs-ready', () => { pullUnitsCloud(); });
+        function setUnitSync(t, ok) { const el = $('unit-sync-status'); if (!el) return; el.textContent = t; el.className = 'text-[11px] font-semibold ' + (ok ? 'text-emerald-600' : 'text-slate-400'); }
+        function refreshUnitsUI() {
+            try { renderUnitFilters(); renderBagianUnitTabs(); renderBagianList(); renderKurikulum(); renderUnitList(); refreshPesertaUI(); populateBagianSelect(); const s = $('sdp-unit'); if (s && s.tagName === 'SELECT') fillUnitSelect(s, s.value); renderHeaderBrand(); } catch (e) { console.warn(e); }
+        }
+        function commitUnits(msg) { rebuildUnits(); saveUnits(); refreshUnitsUI(); pushUnitsCloud(); if (msg) toast(msg, 'success'); }
+
+        // ---- Daftar unit (tab Unit di Kelola Data) ----
+        let unitReveal = new Set();
+        function renderUnitList() {
+            const c = $('unit-list'); if (!c) return;
+            c.innerHTML = UNITS.map(u => {
+                const r = unitRec(u), tc = unitThemeColors(u), key = unitPasskey(u), shown = unitReveal.has(u);
+                const logo = r && r.logo ? `<img src="${esc(r.logo)}" alt="" class="hidden sm:block" style="height:20px;max-width:64px;object-fit:contain">` : '';
+                const n = bagianList.filter(b => b.unit === u).length;
+                return `<div class="rounded-2xl bg-white border border-slate-200 p-2.5 flex items-center gap-2.5">
+                    <span class="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center" style="background:${tc.bg};color:${tc.fg}">${unitIcon(u, '!w-5 !h-5')}</span>
+                    <div class="flex-1 min-w-0 leading-tight">
+                        <div class="font-extrabold text-[13px] text-slate-800 truncate">${esc(u)}${r ? '' : ' <span class="text-[9px] font-bold text-slate-400">bawaan</span>'}</div>
+                        <div class="flex items-center gap-1 mt-0.5 text-[11px] text-slate-400 font-semibold"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2L20 3M17 6l3 3"/></svg><span class="font-mono">${shown ? esc(key) : '••••••'}</span><button type="button" onclick="toggleUnitReveal('${esc(u)}')" class="w-5 h-5 inline-flex items-center justify-center text-slate-400" aria-label="Lihat passkey"><svg class="ic !w-3.5 !h-3.5"><use href="#i-eye"/></svg></button><span class="ml-1 whitespace-nowrap">· ${n}</span></div>
+                    </div>
+                    ${logo}
+                    <button type="button" onclick="openUnitModal('${esc(u)}')" title="Ubah" aria-label="Ubah" class="w-9 h-9 shrink-0 rounded-xl bg-slate-100 active:bg-slate-200 text-slate-600 flex items-center justify-center"><svg class="ic !w-4 !h-4"><use href="#i-edit"/></svg></button>
+                    ${r ? `<button type="button" onclick="deleteUnit('${esc(u)}')" title="Hapus" aria-label="Hapus" class="w-9 h-9 shrink-0 rounded-xl bg-red-50 active:bg-red-100 text-red-600 flex items-center justify-center"><svg class="ic !w-4 !h-4"><use href="#i-trash"/></svg></button>` : ''}
+                </div>`;
+            }).join('');
+        }
+        function toggleUnitReveal(u) { unitReveal.has(u) ? unitReveal.delete(u) : unitReveal.add(u); renderUnitList(); }
+
+        // ---- Modal tambah / ubah unit ----
+        function openUnitModal(name) {
+            const r = name ? unitRec(name) : null, builtin = name && !r;
+            unitEditName = name || null;
+            unitDraft = r ? { name: r.name, passkey: r.passkey || '', icon: r.icon || 'building', img: r.img || '', theme: r.theme || 'biru', logo: r.logo || '', builtin: false }
+                : builtin ? { name, passkey: unitPasskey(name), icon: '', img: '', theme: '', logo: '', builtin: true }
+                : { name: '', passkey: '', icon: 'store', img: '', theme: 'biru', logo: '', builtin: false };
+            unitPickOpen = { icon: false, theme: false };
+            $('unit-modal-title').textContent = name ? 'Ubah Unit Bisnis' : 'Tambah Unit Bisnis';
+            $('unit-name').value = unitDraft.name; $('unit-name').disabled = !!name;
+            $('unit-pass').value = unitDraft.passkey;
+            $('unit-custom-box').style.display = builtin ? 'none' : '';
+            $('unit-builtin-hint').style.display = builtin ? '' : 'none';
+            $('unit-err').classList.add('hidden');
+            renderUnitPicker();
+            $('unit-modal').classList.remove('hidden'); document.body.style.overflow = 'hidden';
+            if (!name) setTimeout(() => $('unit-name').focus(), 60);
+        }
+        function closeUnitModal() { $('unit-modal').classList.add('hidden'); document.body.style.overflow = ''; }
+        function renderUnitPicker() {
+            const d = unitDraft; if (d.builtin) return;
+            const tc = THEMES[d.theme] || THEMES.biru;
+            $('unit-live').innerHTML = `<span class="inline-flex items-center justify-center rounded-2xl" style="width:56px;height:56px;background:${tc.s[1]};color:${tc.s[7]}">${d.img ? `<img src="${esc(d.img)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:16px">` : `<svg style="width:28px;height:28px"><use href="#b-${esc(d.icon)}"/></svg>`}</span>`;
+            $('unit-icon-cur').innerHTML = `<svg style="width:18px;height:18px"><use href="#b-${esc(d.icon)}"/></svg>`;
+            $('unit-theme-cur').innerHTML = `<span style="width:18px;height:18px;border-radius:50%;background:${tc.s[6]};display:inline-block"></span><span class="text-slate-700">${tc.l}</span>`;
+            $('unit-icon-grid').style.display = unitPickOpen.icon ? 'grid' : 'none';
+            $('unit-theme-grid').style.display = unitPickOpen.theme ? 'flex' : 'none';
+            $('unit-icon-chev').style.transform = unitPickOpen.icon ? 'rotate(180deg)' : '';
+            $('unit-theme-chev').style.transform = unitPickOpen.theme ? 'rotate(180deg)' : '';
+            if (unitPickOpen.icon) $('unit-icon-grid').innerHTML = BAGIAN_ICONS.map(n => `<button type="button" onclick="pickUnitIcon('${n}')" class="aspect-square rounded-lg border flex items-center justify-center ${!d.img && d.icon === n ? 'border-amber-500 bg-amber-50 text-amber-700' : 'border-slate-200 bg-white text-slate-500'}" aria-label="${n}"><svg style="width:18px;height:18px"><use href="#b-${n}"/></svg></button>`).join('');
+            if (unitPickOpen.theme) $('unit-theme-grid').innerHTML = Object.entries(THEMES).map(([k, t]) => `<button type="button" onclick="pickUnitTheme('${k}')" title="${t.l}" aria-label="${t.l}" class="w-8 h-8 rounded-full border-2 ${d.theme === k ? 'border-slate-900' : 'border-white shadow'}" style="background:${t.s[6]}"></button>`).join('');
+            $('unit-logo-prev').innerHTML = d.logo ? `<img src="${esc(d.logo)}" alt="" style="height:26px;max-width:120px;object-fit:contain">` : '<span class="text-[11px] text-slate-400 font-semibold">Belum ada logo — nama unit dipakai sebagai teks</span>';
+            $('unit-logo-remove').style.display = d.logo ? '' : 'none';
+            $('unit-img-remove').style.display = d.img ? '' : 'none';
+        }
+        function toggleUnitPick(k) { unitPickOpen[k] = !unitPickOpen[k]; renderUnitPicker(); }
+        function pickUnitIcon(n) { unitDraft.icon = n; unitDraft.img = ''; unitPickOpen.icon = false; renderUnitPicker(); }
+        function pickUnitTheme(k) { unitDraft.theme = k; unitPickOpen.theme = false; renderUnitPicker(); }
+        function readImgFile(ev, cb, maxW, maxH, square) {
+            const f = ev.target.files[0]; ev.target.value = ''; if (!f) return;
+            if (!f.type.startsWith('image/')) { toast('File harus berupa gambar', 'warn'); return; }
+            const r = new FileReader();
+            r.onload = () => {
+                const im = new Image();
+                im.onload = () => {
+                    const cv = document.createElement('canvas'), cx = cv.getContext('2d');
+                    if (square) { const m = Math.min(im.width, im.height) || 1; cv.width = cv.height = maxW; cx.drawImage(im, (im.width - m) / 2, (im.height - m) / 2, m, m, 0, 0, maxW, maxH); }
+                    else { const k = Math.min(1, maxW / im.width, maxH / im.height); cv.width = Math.max(1, Math.round(im.width * k)); cv.height = Math.max(1, Math.round(im.height * k)); cx.drawImage(im, 0, 0, cv.width, cv.height); }
+                    cb(cv.toDataURL('image/png'));
+                };
+                im.onerror = () => toast('Gambar tidak bisa dibaca', 'warn'); im.src = r.result;
+            };
+            r.readAsDataURL(f);
+        }
+        function handleUnitIconFile(ev) { readImgFile(ev, u => { unitDraft.img = u; renderUnitPicker(); }, 96, 96, true); }
+        function handleUnitLogoFile(ev) { readImgFile(ev, u => { unitDraft.logo = u; renderUnitPicker(); }, 320, 96, false); }
+        function saveUnitModal() {
+            const err = $('unit-err'), fail = m => { err.textContent = m; err.classList.remove('hidden'); };
+            const pass = $('unit-pass').value.trim();
+            if (!/^\S{4,24}$/.test(pass)) return fail('Passkey 4–24 karakter, tanpa spasi.');
+            const dup = UNITS.find(n => n !== unitEditName && unitPasskey(n).toLowerCase() === pass.toLowerCase());
+            if (dup || pass.toLowerCase() === 'kitakeren') return fail('Passkey sudah dipakai' + (dup ? ' oleh ' + dup : ' ETD') + '. Pilih yang lain.');
+            if (unitDraft.builtin) { unitPassOv[unitEditName] = pass; closeUnitModal(); commitUnits('Passkey ' + unitEditName + ' diperbarui'); return; }
+            const name = $('unit-name').value.trim().replace(/\s+/g, ' ');
+            if (!name) return fail('Nama unit bisnis wajib diisi.');
+            if (!unitEditName && UNITS.some(n => n.toLowerCase() === name.toLowerCase())) return fail('Nama unit sudah ada.');
+            const rec = { name, passkey: pass, icon: unitDraft.icon, theme: unitDraft.theme };
+            if (unitDraft.img) rec.img = unitDraft.img; if (unitDraft.logo) rec.logo = unitDraft.logo;
+            if (unitEditName) unitsCustom = unitsCustom.map(u => u.name === unitEditName ? rec : u); else unitsCustom.push(rec);
+            const nm = unitEditName ? 'Unit diperbarui' : 'Unit bisnis ditambahkan';
+            closeUnitModal(); commitUnits(nm);
+        }
+        function deleteUnit(name) {
+            const used = bagianList.some(b => b.unit === name) || pesertaList.some(p => (p.unit || DEFAULT_UNIT) === name) || assessmentList.some(a => unitOfA(a) === name);
+            if (used) { toast('Unit masih punya bagian / peserta / penilaian. Kosongkan dulu sebelum menghapus.', 'warn'); return; }
+            if (!confirm('Hapus unit bisnis "' + name + '"? Passkey-nya tidak berlaku lagi.')) return;
+            unitsCustom = unitsCustom.filter(u => u.name !== name); commitUnits('Unit dihapus');
+        }
+        loadUnits();
 
         function applyUnitTheme() {
             const h = document.documentElement;
             h.classList.add('s-app');
             if (currentUnit) h.setAttribute('data-unit', currentUnit); else h.removeAttribute('data-unit');
-            const th = UNIT_THEME[currentUnit] || UNIT_THEME[DEFAULT_UNIT];
+            applyThemeVars();
+            const th = unitThemeColors(currentUnit || DEFAULT_UNIT);
             document.querySelector('meta[name="theme-color"]')?.setAttribute('content', th.p);
             renderHeaderBrand();
         }
@@ -2327,20 +2567,23 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             const img = (k, c, alt) => `<img data-logo="${k}" alt="${alt}" class="hb ${c}">`;
             const sep = '<span class="hb-sep"></span>';
             let h = img('indomaret', 'hb-in', 'Indomaret Group');
-            if (currentUnit && UNIT_LOGO_KEY[currentUnit]) {
+            const cr = currentUnit && unitRec(currentUnit);
+            if (cr) {
+                h += sep + (cr.logo ? `<img src="${esc(cr.logo)}" alt="${esc(currentUnit)}" class="hb hb-yc" style="max-width:7rem">` : `<span class="hb-txt">${esc(currentUnit)}</span>`);
+            } else if (currentUnit && UNIT_LOGO_KEY[currentUnit]) {
                 const [k, c] = UNIT_LOGO_KEY[currentUnit];
                 h += sep + img(k, c, currentUnit);
             } else if (currentUserRole === 'ETD') {
                 // ETD lintas unit: tiga logo unit (disembunyikan di layar sempit)
                 const MQ = [['yc', 'Yummy Choice'], ['misdoH', 'Mister Donut'], ['sato', 'Washoku Sato'], ['primebread', 'PrimeBread'], ['mrbread', 'Mr. Bread'], ['ti', 'T&I'], ['sayburger', 'Say Burger'], ['pointcoffee', 'Point Coffee Gedhe'], ['saybread', 'Say Bread']];
-                const set = hid => MQ.map(([k, a]) => `<img data-logo="${k}" alt="${hid ? '' : a}" draggable="false">`).join('');
+                const set = hid => MQ.map(([k, a]) => `<img data-logo="${k}" alt="${hid ? '' : a}" draggable="false">`).join('') + unitsCustom.filter(u => u.logo).map(u => `<img src="${esc(u.logo)}" alt="${hid ? '' : esc(u.name)}" draggable="false">`).join('');
                 h += sep + `<span class="hb-marq" aria-label="Brand dalam program SDP"><span class="hb-marq-track">${set(false)}<span style="display:contents" aria-hidden="true">${set(true)}</span></span></span>`;
             }
             el.innerHTML = h; fillLogos(el);
         }
         function resetUnitTheme() {
             const h = document.documentElement;
-            h.classList.remove('s-app'); h.removeAttribute('data-unit');
+            h.classList.remove('s-app'); h.removeAttribute('data-unit'); SHADES.forEach(s => h.style.removeProperty('--yc-' + s)); h.style.removeProperty('--bg-a'); h.style.removeProperty('--bg-b');
             document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#b91c1c');
             renderHeaderBrand();
         }
@@ -2518,7 +2761,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
                 const on = x.id === kurBagianId, n = kurOf(x).length, [bg, fg] = BAGIAN_COLORS[x.color] || BAGIAN_COLORS.slate;
                 const hasImg = x.img && /^data:image\//.test(x.img);
                 const mini = `<span class="inline-flex items-center justify-center shrink-0 overflow-hidden" style="width:22px;height:22px;border-radius:7px;background:${on ? 'rgba(255,255,255,.7)' : bg};color:${fg}">${hasImg ? `<img src="${esc(x.img)}" alt="" style="width:100%;height:100%;object-fit:cover">` : `<svg style="width:13px;height:13px" aria-hidden="true"><use href="#b-${esc(x.icon || 'building')}"/></svg>`}</span>`;
-                return `<button type="button" data-kid="${esc(x.id)}" onclick="kurPick('${esc(x.id)}')" class="shrink-0 h-9 pl-1.5 pr-3 rounded-full inline-flex items-center gap-1.5 text-xs font-bold transition active:scale-95" style="scroll-snap-align:start;${on ? `background:${bg};color:${fg};border:1.5px solid ${fg}55` : 'background:#fff;color:#64748b;border:1.5px solid #e2e8f0'}">${mini}<span class="whitespace-nowrap">${esc(x.name)}</span>${n ? `<span class="text-[10px] font-black" style="color:${on ? fg : '#94a3b8'};opacity:${on ? .8 : 1}">${n}</span>` : ''}</button>`;
+                return `<button type="button" data-kid="${esc(x.id)}" onclick="kurPick('${esc(x.id)}')" class="shrink-0 h-9 pl-1.5 pr-3 rounded-full inline-flex items-center gap-1.5 text-xs font-bold transition active:scale-95" style="scroll-snap-align:start;${on ? `background:${bg};color:${fg};border:1.5px solid ${fg}55` : 'background:#fff;color:#64748b;border:1.5px solid #e2e8f0'}">${mini}<span class="whitespace-nowrap">${esc(nice(x.name))}</span>${n ? `<span class="text-[10px] font-black" style="color:${on ? fg : '#94a3b8'};opacity:${on ? .8 : 1}">${n}</span>` : ''}</button>`;
             }).join('') : '<div class="text-xs text-slate-400 py-2">Belum ada bagian di unit ini.</div>';
             const act = $('kur-chips').querySelector(`[data-kid="${CSS.escape(kurBagianId || '')}"]`);
             if (act && !keepFocus) act.scrollIntoView({ block: 'nearest', inline: 'center' });
@@ -2639,7 +2882,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         // ---- Modal tambah / ubah ----
         function openBagianModal(id) {
             const b = id ? bagianList.find(x => x.id === id) : null;
-            bagianEditId = b ? b.id : null;
+            bagianEditId = b ? b.id : null; bagianPickOpen = { icon: false, color: false };
             bagianDraft = b
                 ? { name: b.name, icon: b.icon || 'building', color: b.color || 'slate', img: b.img || '', unit: b.unit }
                 : { name: '', icon: 'building', color: 'teal', img: '', unit: bagianUnit };
@@ -2660,19 +2903,28 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             document.body.style.overflow = '';
         }
 
+        let bagianPickOpen = { icon: false, color: false };
+        function togglePick(k) { bagianPickOpen[k] = !bagianPickOpen[k]; renderBagianPicker(); }
         function renderBagianPicker() {
             $('bagian-live').innerHTML = bagianLogo(bagianDraft, 56);
-            $('bagian-icon-grid').innerHTML = BAGIAN_ICONS.map(n => {
+            const [cbg, cfg] = BAGIAN_COLORS[bagianDraft.color] || BAGIAN_COLORS.slate;
+            $('bagian-icon-cur').innerHTML = `<svg style="width:18px;height:18px"><use href="#b-${esc(bagianDraft.icon)}"/></svg>`;
+            $('bagian-color-cur').innerHTML = `<span style="width:20px;height:20px;border-radius:50%;background:${cbg};box-shadow:0 0 0 2px ${cfg}55 inset"></span>`;
+            $('bagian-icon-grid').style.display = bagianPickOpen.icon ? 'grid' : 'none';
+            $('bagian-color-row').style.display = bagianPickOpen.color ? 'flex' : 'none';
+            $('bagian-icon-chev').style.transform = bagianPickOpen.icon ? 'rotate(180deg)' : '';
+            $('bagian-color-chev').style.transform = bagianPickOpen.color ? 'rotate(180deg)' : '';
+            if (bagianPickOpen.icon) $('bagian-icon-grid').innerHTML = BAGIAN_ICONS.map(n => {
                 const on = !bagianDraft.img && bagianDraft.icon === n;
-                return `<button type="button" onclick="pickBagianIcon('${n}')" class="aspect-square rounded-xl border-2 flex items-center justify-center ${on ? 'border-amber-500 bg-amber-50 text-amber-700' : 'border-slate-200 bg-white text-slate-500'}" aria-label="${n}"><svg class="ic"><use href="#b-${n}"/></svg></button>`;
+                return `<button type="button" onclick="pickBagianIcon('${n}')" class="aspect-square rounded-lg border flex items-center justify-center ${on ? 'border-amber-500 bg-amber-50 text-amber-700' : 'border-slate-200 bg-white text-slate-500'}" aria-label="${n}"><svg style="width:18px;height:18px"><use href="#b-${n}"/></svg></button>`;
             }).join('');
-            $('bagian-color-row').innerHTML = Object.entries(BAGIAN_COLORS).map(([k, [bg, fg]]) =>
-                `<button type="button" onclick="pickBagianColor('${k}')" class="w-9 h-9 rounded-full border-2 flex items-center justify-center ${bagianDraft.color === k ? 'border-slate-900' : 'border-white shadow'}" style="background:${bg}" aria-label="${k}"><span style="width:14px;height:14px;border-radius:50%;background:${fg}"></span></button>`).join('');
+            if (bagianPickOpen.color) $('bagian-color-row').innerHTML = Object.entries(BAGIAN_COLORS).map(([k, [bg, fg]]) =>
+                `<button type="button" onclick="pickBagianColor('${k}')" class="w-8 h-8 rounded-full border-2 flex items-center justify-center ${bagianDraft.color === k ? 'border-slate-900' : 'border-white shadow'}" style="background:${bg}" aria-label="${k}"><span style="width:12px;height:12px;border-radius:50%;background:${fg}"></span></button>`).join('');
             $('bagian-img-remove').classList.toggle('hidden', !bagianDraft.img);
         }
 
-        function pickBagianIcon(n) { bagianDraft.icon = n; bagianDraft.img = ''; renderBagianPicker(); }
-        function pickBagianColor(k) { bagianDraft.color = k; renderBagianPicker(); }
+        function pickBagianIcon(n) { bagianDraft.icon = n; bagianDraft.img = ''; bagianPickOpen.icon = false; renderBagianPicker(); }
+        function pickBagianColor(k) { bagianDraft.color = k; bagianPickOpen.color = false; renderBagianPicker(); }
         function removeBagianImage() { bagianDraft.img = ''; renderBagianPicker(); }
 
         function handleBagianImage(ev) {
@@ -3336,11 +3588,12 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         // ---- Tab Kelola Data ----
         function switchKelolaTab(tab) {
             kelolaTab = tab; closeActivePeserta(true);
-            ['peserta', 'bagian', 'kurikulum'].forEach(k => {
+            ['peserta', 'bagian', 'kurikulum', 'unit'].forEach(k => {
                 $('kelola-pane-' + k).classList.toggle('hidden', tab !== k);
                 $('ktab-' + k).classList.toggle('active', tab === k);
             });
             if (tab === 'kurikulum') renderKurikulum();
+            if (tab === 'unit') renderUnitList();
         }
 
         function openKelola() {
