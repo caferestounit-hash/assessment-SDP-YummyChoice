@@ -221,6 +221,8 @@
         <symbol id="i-file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
         <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
         <symbol id="i-map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+        <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
+        <symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></symbol>
         <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
     </svg>
 
@@ -322,7 +324,7 @@
                     <button onclick="openView('view-rekap')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-slate-50">
                         <span class="w-12 h-12 shrink-0 rounded-xl bg-slate-900 text-white flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-table"/></svg></span>
                         <span class="flex-1 min-w-0">
-                            <span class="block font-extrabold text-slate-900">Rekap & Laporan <span class="ml-1 px-1.5 py-0.5 bg-slate-900 text-white rounded text-[9px] font-black align-middle">ETD</span></span>
+                            <span class="block font-extrabold text-slate-900">Rekap Penilaian <span class="ml-1 px-1.5 py-0.5 bg-slate-900 text-white rounded text-[9px] font-black align-middle">ETD</span></span>
                             <span class="block text-xs text-slate-500">Tabel rekap, statistik, export CSV</span>
                         </span>
                         <svg class="ic text-slate-300"><use href="#i-chevron-right"/></svg>
@@ -529,7 +531,7 @@
             <div id="view-rekap" class="sub-pane hidden space-y-3">
                 <div class="flex items-center gap-3">
                     <button onclick="smartBack()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
-                    <h2 class="text-lg font-extrabold text-slate-900">Rekap & Laporan</h2>
+                    <h2 class="text-lg font-extrabold text-slate-900">Rekap Penilaian</h2>
                 </div>
 
                 <div class="grid grid-cols-3 gap-2">
@@ -634,6 +636,13 @@
                         <select id="pt-f-status" onchange="renderPesertaCards()" class="field !py-2.5 col-span-2 sm:col-span-1"><option value="">Semua status</option><option value="aktif">Aktif (&le; 16 bln)</option><option value="selesai">Selesai SDP (karyawan tetap)</option></select>
                     </div>
 
+                    <div class="flex items-center justify-between gap-2">
+                        <span id="pt-count" class="text-[11px] font-bold text-slate-500"></span>
+                        <div class="grid grid-cols-2 gap-1 p-1 bg-slate-200/70 rounded-xl w-[188px] shrink-0">
+                            <button type="button" id="pv-card" onclick="setPesertaView('card')" class="seg-btn active h-9 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5"><svg class="ic !w-4 !h-4"><use href="#i-grid"/></svg>Card</button>
+                            <button type="button" id="pv-list" onclick="setPesertaView('list')" class="seg-btn h-9 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5"><svg class="ic !w-4 !h-4"><use href="#i-list"/></svg>List</button>
+                        </div>
+                    </div>
                     <div id="peserta-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
                     <div id="peserta-sync-status" class="text-[11px] font-semibold text-slate-400 text-center"></div>
                 </div>
@@ -836,8 +845,9 @@
     </main>
 
     <footer class="text-center text-[11px] text-slate-400 font-medium py-4">
-        © 2026 Education & Training Department (ETD) - Food Beverage Industry
+        © <span id="footer-year">2026</span> ETD - Food Beverage Industry
     </footer>
+    <script>document.getElementById("footer-year").textContent = new Date().getFullYear();</script>
 
     <!-- MODAL DETAIL -->
     <div id="detail-modal" class="no-print fixed inset-0 z-50 hidden bg-black/60 flex items-end sm:items-center justify-center sm:p-4" onclick="if(event.target===this)closeModal()">
@@ -1661,7 +1671,7 @@
                 if (snap.metadata.hasPendingWrites) return;
                 if (!snap.exists()) { if (!snap.metadata.fromCache && currentUserRole === 'ETD' && bagianList.length) pushBagianCloud(); return; }
                 const d = snap.data();
-                if (Array.isArray(d.list)) { bagianList = withUnit(d.list); saveBagian(); refreshBagianUI(); setBagianSync('Live · tersinkron dengan cloud', true); }
+                if (Array.isArray(d.list)) { bagianList = withUnit(d.list); saveBagian(); refreshBagianUI(); setBagianSync('', true); }
             });
             sub(D(COL.setting, 'peserta_sdp'), snap => {
                 if (snap.metadata.hasPendingWrites) return;
@@ -1669,7 +1679,7 @@
                 const d = snap.data();
                 if (Array.isArray(d.list)) {
                     pesertaList = withUnit(d.list); writeJSON(PESERTA_KEY, pesertaList); writeJSON(PESERTA_TS_KEY, d.updatedAt || Date.now());
-                    refreshPesertaUI(); setPesertaSync('Live · tersinkron dengan cloud', true);
+                    refreshPesertaUI(); setPesertaSync('', true);
                 }
             });
         }
@@ -2302,7 +2312,7 @@
             const c = $('bagian-unit-tabs'); if (!c) return;
             c.innerHTML = UNITS.map(u => {
                 const n = bagianList.filter(b => b.unit === u).length, on = u === bagianUnit;
-                return `<button type="button" onclick="switchBagianUnit('${esc(u)}')" class="h-9 px-3 rounded-full text-xs font-bold border-2 ${on ? 'border-amber-500 bg-amber-50 text-amber-800' : 'border-slate-200 bg-white text-slate-600'}">${esc(u)} <span class="ml-1 text-[10px] font-black opacity-70">${n}</span></button>`;
+                return `<button type="button" onclick="switchBagianUnit('${esc(u)}')" class="h-9 px-3 rounded-full text-xs font-bold border-2 inline-flex items-center gap-1.5 ${on ? 'border-amber-500 bg-amber-50 text-amber-800' : 'border-slate-200 bg-white text-slate-600'}">${unitIcon(u, '!w-4 !h-4')}${esc(u)} <span class="ml-1 text-[10px] font-black opacity-70">${n}</span></button>`;
             }).join('');
         }
         function switchBagianUnit(u) { bagianUnit = u; renderBagianList(); }
@@ -3105,6 +3115,65 @@
             sel.value = values.includes(cur) ? cur : '';
         }
 
+        // ---- Mode tampilan (card / list), diingat per perangkat ----
+        let pesertaView = readJSON('yc_sdp_pt_view', 'card') === 'list' ? 'list' : 'card';
+        function setPesertaView(v) {
+            pesertaView = v === 'list' ? 'list' : 'card';
+            writeJSON('yc_sdp_pt_view', pesertaView);
+            renderPesertaCards();
+        }
+
+        // ---- Smart status Assessment I / II / III ----
+        // Bulan ke-N dihitung sejak bulan batch (bulan batch = bulan ke-0). Ubah angka 'bulan' di sini bila aturan berubah.
+        const ASSESS_PERIODS = [{ roman: 'I', bulan: 3 }, { roman: 'II', bulan: 6 }, { roman: 'III', bulan: 11 }];
+        const normNama = n => String(n || '').trim().toLowerCase();
+        const monthIndexOf = d => d.getFullYear() * 12 + d.getMonth();
+        // Penilaian masuk dipetakan ke periode terdekat: bulan 0-4 = I, 5-8 = II, 9 dst = III
+        const periodIdxForMonth = e => (e <= 4 ? 0 : e <= 8 ? 1 : 2);
+        const fmtMonthIdx = i => `${BULAN[((i % 12) + 12) % 12]} ${Math.floor(i / 12)}`;
+
+        function assessmentStatus(p, now = new Date()) {
+            const b = parseBatch(p.batch); if (!b) return null;
+            const base = b.y * 12 + (b.m - 1);
+            const e = monthIndexOf(now) - base; // bulan berjalan sejak batch
+            const per = ASSESS_PERIODS.map(x => ({ ...x, n: 0, last: 0, due: fmtMonthIdx(base + x.bulan) }));
+            assessmentList.forEach(a => {
+                if (normNama(a.namaPeserta) !== normNama(p.nama)) return;
+                const t = a.createdDate || now.getTime();
+                const x = per[periodIdxForMonth(monthIndexOf(new Date(t)) - base)];
+                x.n++; x.last = Math.max(x.last, t);
+            });
+            per.forEach(x => { x.state = x.n ? 'done' : e > x.bulan ? 'late' : e === x.bulan ? 'due' : 'soon'; });
+            const focus = per.find(x => x.state === 'late' || x.state === 'due') || per.find(x => x.state === 'soon') || null;
+            const lastDone = per.filter(x => x.n).sort((a, c) => c.last - a.last)[0] || null;
+            return { e, per, focus, lastDone };
+        }
+
+        const AS_TONE = {
+            done: 'bg-emerald-100 text-emerald-800 border-emerald-200', late: 'bg-red-100 text-red-700 border-red-200',
+            due: 'bg-amber-100 text-amber-800 border-amber-200', soon: 'bg-slate-100 text-slate-500 border-slate-200'
+        };
+        const AS_MSG_TONE = { late: 'bg-red-50 text-red-700', due: 'bg-amber-50 text-amber-800', soon: 'bg-sky-50 text-sky-700', done: 'bg-emerald-50 text-emerald-700' };
+
+        function assessmentStatusHTML(p, exp) {
+            const s = assessmentStatus(p);
+            const wrap = inner => `<div class="px-4 pb-3 space-y-1.5">${inner}</div>`;
+            if (!s) return wrap('<div class="text-[11px] font-bold text-amber-600 border-t border-slate-100 pt-2.5">Status assessment belum bisa dihitung (batch belum terbaca)</div>');
+            const chips = s.per.map(x => `<span title="Assessment ${x.roman} · bulan ke-${x.bulan} (${x.due})" class="px-2 py-1 rounded-lg border text-[10px] font-black inline-flex items-center gap-1 ${AS_TONE[x.state]}">${x.state === 'done' ? ic('check-circle', '!w-3 !h-3') : ''}${x.roman}<span class="font-bold opacity-70">· bln ${x.bulan}</span></span>`).join('');
+            let msg, tone;
+            if (exp) { msg = 'Masa SDP selesai'; tone = 'bg-slate-100 text-slate-600'; }
+            else if (!s.focus) { msg = 'Assessment I–III lengkap'; tone = AS_MSG_TONE.done; }
+            else {
+                const f = s.focus;
+                tone = AS_MSG_TONE[f.state];
+                msg = f.state === 'due' ? `Assessment ${f.roman} jatuh tempo bulan ini (${f.due}), belum ada penilaian`
+                    : f.state === 'late' ? `Assessment ${f.roman} belum masuk, terlambat ${s.e - f.bulan} bulan (seharusnya ${f.due})`
+                    : `Assessment ${f.roman} dijadwalkan ${f.due} (bulan ke-${f.bulan}) · ${f.bulan - s.e} bulan lagi`;
+            }
+            const last = s.lastDone ? `<div class="text-[10px] font-semibold text-slate-400">Terakhir masuk: Assessment ${s.lastDone.roman} · ${s.lastDone.n} penilai · ${new Date(s.lastDone.last).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</div>` : '';
+            return wrap(`<div class="border-t border-slate-100 pt-2.5 flex gap-1.5 flex-wrap">${chips}</div><div class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold leading-snug ${tone}">${esc(msg)}</div>${last}`);
+        }
+
         function renderPesertaCards() {
             const c = $('peserta-cards'); if (!c) return;
             $('pt-stat-total').textContent = pesertaList.length;
@@ -3125,6 +3194,10 @@
                 (!fs || (fs === 'aktif') === !isPesertaExpired(p)))
                 .sort((a, b) => a.nama.localeCompare(b.nama, 'id'));
 
+            const ptc = $('pt-count'); if (ptc) ptc.textContent = `${rows.length} dari ${pesertaList.length} peserta`;
+            $('pv-card').classList.toggle('active', pesertaView === 'card');
+            $('pv-list').classList.toggle('active', pesertaView === 'list');
+
             if (!pesertaList.length) {
                 c.innerHTML = `<div class="col-span-full card p-8 text-center space-y-2">${ic('user', '!w-9 !h-9 text-slate-300')}
                     <p class="text-sm font-bold text-slate-800">Belum ada peserta SDP</p>
@@ -3133,6 +3206,17 @@
                 return;
             }
             if (!rows.length) { c.innerHTML = '<div class="col-span-full p-8 text-center text-sm text-slate-400">Tidak ada peserta yang cocok.</div>'; return; }
+
+            if (pesertaView === 'list') {
+                // Mode list: hanya nama (simple view) + tombol ubah / hapus
+                c.innerHTML = rows.map(p => `
+                <div class="card px-3 py-2 flex items-center gap-2 ${isPesertaExpired(p) ? 'opacity-60' : ''}">
+                    <span class="flex-1 min-w-0 font-bold text-sm text-slate-900 break-words">${esc(p.nama)}</span>
+                    <button onclick="openPesertaModal('${esc(p.id)}')" class="w-8 h-8 shrink-0 rounded-lg bg-white border border-slate-200 text-slate-700 active:bg-slate-100 flex items-center justify-center" aria-label="Ubah">${ic('edit', '!w-4 !h-4')}</button>
+                    <button onclick="deletePeserta('${esc(p.id)}')" class="w-8 h-8 shrink-0 rounded-lg bg-red-50 text-red-600 active:bg-red-100 flex items-center justify-center" aria-label="Hapus">${ic('trash', '!w-4 !h-4')}</button>
+                </div>`).join('');
+                return;
+            }
 
             c.innerHTML = rows.map(p => {
                 const b = findBagian(p.bagian, unitOf(p));
@@ -3157,6 +3241,7 @@
                             <div class="flex items-center gap-2"><span class="w-[22px] flex justify-center text-slate-400">${ic('calendar', '!w-4 !h-4')}</span><span class="${exp ? 'text-slate-500' : endL ? '' : 'text-amber-600 font-bold'}">${endL ? (exp ? 'Masa SDP selesai ' : 'Masa SDP s.d. ') + endL : 'Batch belum terbaca'}</span></div>
                         </div>
                     </div>
+                    ${assessmentStatusHTML(p, exp)}
                     <div class="px-3 py-2 border-t border-slate-100 flex items-center justify-between gap-2 bg-slate-50/60">
                         <span class="text-[11px] font-bold ${done ? 'text-emerald-700' : 'text-slate-400'}">${done ? 'Dinilai ' + done + ' penguji' : 'Belum dinilai'}</span>
                         <div class="flex gap-1.5">
@@ -3335,7 +3420,7 @@
         // =====================================================================
         const NAV_TITLES = {
             home: 'Beranda', 'view-draft': 'Draft Tersimpan', 'view-form': 'Form Penilaian', 'view-riwayat': 'Riwayat',
-            'view-rekap': 'Rekap & Laporan', 'view-trash': 'Tempat Sampah', 'view-kelola': 'Kelola Data', 'view-laporan': 'Buat Laporan'
+            'view-rekap': 'Rekap Penilaian', 'view-trash': 'Tempat Sampah', 'view-kelola': 'Kelola Data', 'view-laporan': 'Buat Laporan'
         };
         const NAV_ETD_ONLY = ['view-rekap', 'view-trash', 'view-kelola', 'view-laporan'];
         const NAV_MAX = 30;
