@@ -240,7 +240,7 @@
     <header id="app-header" class="no-print sticky top-0 z-40 bg-yc-700 text-white shadow hidden">
         <div class="max-w-5xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between">
             <div class="flex items-center gap-2 min-w-0">
-                        <button onclick="goToHome()" class="flex items-center gap-2.5 text-left">
+                        <button onclick="guardedHome()" class="flex items-center gap-2.5 text-left">
                 <span id="header-brand" class="hb-wrap"><img data-logo="indomaret" alt="Indomaret Group" class="hb hb-in"></span>
                 <span class="leading-tight hb-title">
                     <span id="header-title" class="block text-sm font-extrabold tracking-tight">YUMMY CHOICE</span>
@@ -385,7 +385,7 @@
                 <!-- Strip progres -->
                 <div class="no-print sticky top-14 z-30 bg-[#fcf9f2]/95 backdrop-blur px-3 sm:px-0 pt-2 pb-2 border-b border-amber-100">
                     <div class="flex items-center justify-between gap-3">
-                        <button type="button" onclick="goToHome()" class="w-9 h-9 shrink-0 rounded-lg bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali ke menu">
+                        <button type="button" onclick="guardedHome()" class="w-9 h-9 shrink-0 rounded-lg bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali ke menu">
                             <svg class="ic !w-4 !h-4"><use href="#i-home"/></svg>
                         </button>
                         <div class="flex-1 min-w-0">
@@ -1122,11 +1122,10 @@
             }
             if (currentStep === SUMMARY_STEP) renderSummary();
             showStep(currentStep);
-            scheduleAutosave();
         }
 
         function prevStep() {
-            if (currentStep > 0) { fromSummary = false; currentStep--; showStep(currentStep); scheduleAutosave(); }
+            if (currentStep > 0) { fromSummary = false; currentStep--; showStep(currentStep); }
         }
 
         function goToStep(n) {
@@ -1275,7 +1274,18 @@
                 Object.values(d.scores).every(v => v === null) && Object.values(d.komentars).every(v => !v);
         }
 
-        function scheduleAutosave() { clearTimeout(autosaveTimer); autosaveTimer = setTimeout(() => saveDraft(true), 500); }
+        // Draft tidak lagi tersimpan otomatis: hanya lewat tombol "Simpan Draft". Di sini hanya menandai ada perubahan.
+        let formDirty = false;
+        function scheduleAutosave() { formDirty = true; }
+        const LEAVE_MSG = 'Pastikan Anda sudah menekan tombol "Simpan Draft" jika ada perubahan yang belum disimpan.\n\nYakin ingin keluar?';
+        function guardLeaveForm() {
+            if (currentNav !== 'view-form' || !formDirty) return true;
+            if (!confirm(LEAVE_MSG)) return false;
+            formDirty = false; resetForm(false); navPurgeForm();
+            return true;
+        }
+        function guardedHome() { if (guardLeaveForm()) goToHome(); }
+        window.addEventListener('beforeunload', e => { if (formDirty && currentNav === 'view-form') { e.preventDefault(); e.returnValue = ''; } });
 
         function saveDraft(silent) {
             clearTimeout(autosaveTimer);
@@ -1290,6 +1300,7 @@
             writeJSON('yc_sdp_drafts', draftList);
             cloudSet(COL.draft, d.id, d);
             $('draft-indicator').classList.remove('hidden');
+            formDirty = false;
             renderDraftCards();
             if (silent !== true) toast('Draft berhasil disimpan', 'success');
         }
@@ -1772,6 +1783,7 @@
 
         function resetForm(keepCurrentDraftId = false) {
             clearTimeout(autosaveTimer);
+            formDirty = false;
             $('assessment-form').reset();
             renderPeranOptions();
             $('realtime-score').textContent = '0.0';
@@ -3300,6 +3312,7 @@
         }
 
         function smartBack() {
+            if (!guardLeaveForm()) return;
             // Lewati entri yang sudah tidak valid (mis. halaman ETD saat peran bukan ETD)
             let e = null;
             while (navStack.length) {
