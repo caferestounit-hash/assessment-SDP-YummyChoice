@@ -330,16 +330,6 @@
                         <svg class="ic text-slate-300"><use href="#i-chevron-right"/></svg>
                     </button>
 
-                    <!-- Tempat Sampah -->
-                    <button onclick="openView('view-trash')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-red-50">
-                        <span class="w-12 h-12 shrink-0 rounded-xl bg-red-100 text-red-600 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-trash"/></svg></span>
-                        <span class="flex-1 min-w-0">
-                            <span class="block font-extrabold text-slate-900">Tempat Sampah</span>
-                            <span class="block text-xs text-slate-500">Pulihkan form, auto-hapus 30 hari</span>
-                        </span>
-                        <span id="badge-count-trash" class="px-2.5 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-black">0</span>
-                    </button>
-
                     <!-- Kelola Data (ETD) -->
                     <button onclick="openView('view-kelola')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-teal-50">
                         <span class="w-12 h-12 shrink-0 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-settings"/></svg></span>
@@ -351,13 +341,23 @@
                     </button>
 
                     <!-- Buat Laporan Assessment (ETD) -->
-                    <button onclick="openView('view-laporan')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-violet-50 sm:col-span-2 !border-violet-200 bg-gradient-to-r from-violet-50 to-white">
-                        <span class="w-12 h-12 shrink-0 rounded-xl bg-violet-600 text-white flex items-center justify-center shadow"><svg class="ic !w-6 !h-6"><use href="#i-file-text"/></svg></span>
+                    <button onclick="openView('view-laporan')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-violet-50">
+                        <span class="w-12 h-12 shrink-0 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-file-text"/></svg></span>
                         <span class="flex-1 min-w-0">
                             <span class="block font-extrabold text-slate-900">Buat Laporan Assessment</span>
-                            <span class="block text-xs text-slate-500">Susun Resume Assessment SDP per periode (I, II, III), output PDF</span>
+                            <span class="block text-xs text-slate-500">Resume Assessment SDP per periode, output PDF</span>
                         </span>
                         <svg class="ic text-slate-300"><use href="#i-chevron-right"/></svg>
+                    </button>
+
+                    <!-- Tempat Sampah -->
+                    <button onclick="openView('view-trash')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-red-50">
+                        <span class="w-12 h-12 shrink-0 rounded-xl bg-red-100 text-red-600 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-trash"/></svg></span>
+                        <span class="flex-1 min-w-0">
+                            <span class="block font-extrabold text-slate-900">Tempat Sampah</span>
+                            <span class="block text-xs text-slate-500">Pulihkan form, auto-hapus 30 hari</span>
+                        </span>
+                        <span id="badge-count-trash" class="px-2.5 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-black">0</span>
                     </button>
                 </div>
             </div>
@@ -615,7 +615,7 @@
                     <div class="flex items-start justify-between gap-3">
                         <div>
                             <h3 class="font-extrabold text-slate-900">Peserta SDP Trainee</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Terisi otomatis di form saat dipilih. Peserta yang lewat 16 bulan sejak batch tidak lagi muncul di form.</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Terisi otomatis di form saat dipilih. Peserta yang lewat 16 bulan sejak batch tidak lagi muncul di form. Ketuk kartu atau nama untuk membuka detail dan tombol Ubah.</p>
                         </div>
                         <button onclick="openPesertaModal()" class="h-10 px-3.5 shrink-0 bg-yc-600 active:bg-yc-800 text-white font-bold rounded-xl text-sm flex items-center gap-1.5">
                             <svg class="ic !w-4 !h-4"><use href="#i-plus"/></svg>Tambah
@@ -924,6 +924,7 @@
                     <p id="ps-batch-hint" class="mt-1.5 text-[11px] font-semibold text-slate-500"></p>
                 </div>
                 <div id="ps-err" class="hidden p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm font-bold"></div>
+                <button type="button" id="ps-delete" onclick="deletePesertaFromModal()" class="hidden w-full h-11 rounded-xl border border-red-200 bg-red-50 active:bg-red-100 text-red-600 font-bold text-sm flex items-center justify-center gap-2"><svg class="ic !w-4 !h-4"><use href="#i-trash"/></svg>Hapus peserta ini</button>
             </div>
             <div class="px-4 py-3 border-t border-slate-100 safe-bottom grid grid-cols-2 gap-2">
                 <button onclick="closePesertaModal()" class="h-12 bg-slate-100 active:bg-slate-200 text-slate-800 font-bold rounded-xl text-sm">Batal</button>
@@ -1671,7 +1672,7 @@
                 if (snap.metadata.hasPendingWrites) return;
                 if (!snap.exists()) { if (!snap.metadata.fromCache && currentUserRole === 'ETD' && bagianList.length) pushBagianCloud(); return; }
                 const d = snap.data();
-                if (Array.isArray(d.list)) { bagianList = withUnit(d.list); saveBagian(); refreshBagianUI(); setBagianSync('', true); }
+                if (Array.isArray(d.list)) { bagianList = sortBagian(withUnit(d.list)); saveBagian(); refreshBagianUI(); setBagianSync('', true); }
             });
             sub(D(COL.setting, 'peserta_sdp'), snap => {
                 if (snap.metadata.hasPendingWrites) return;
@@ -2220,10 +2221,13 @@
         let bagianList = [];
         let bagianEditId = null, bagianDraft = null;
 
+        // Urutan Bagian selalu abjad A-Z per Unit Bisnis (termasuk bagian baru & hasil sinkron cloud)
+        const sortBagian = l => l.sort((a, b) => (UNITS.indexOf(a.unit) - UNITS.indexOf(b.unit)) || String(a.name).localeCompare(String(b.name), 'id', { numeric: true, sensitivity: 'base' }));
+
         function loadBagian() {
             let l = readJSON(BAGIAN_KEY, null);
             if (!Array.isArray(l) || !l.length) { l = DEFAULT_BAGIAN.map(b => ({ ...b })); writeJSON(BAGIAN_KEY, l); }
-            bagianList = withUnit(l);
+            bagianList = sortBagian(withUnit(l));
         }
         const saveBagian = () => writeJSON(BAGIAN_KEY, bagianList);
 
@@ -2273,7 +2277,7 @@
                 if (snap.exists()) {
                     const d = snap.data();
                     if (Array.isArray(d.list) && d.list.length) {
-                        bagianList = withUnit(d.list); saveBagian(); refreshBagianUI();
+                        bagianList = sortBagian(withUnit(d.list)); saveBagian(); refreshBagianUI();
                         setBagianSync('Tersinkron dari cloud', true);
                     }
                 }
@@ -2281,6 +2285,7 @@
         }
 
         function commitBagian(msg) {
+            sortBagian(bagianList);
             saveBagian(); refreshBagianUI(); pushBagianCloud();
             if (msg) toast(msg, 'success');
         }
@@ -2299,7 +2304,7 @@
         function populateBagianSelect() {
             const sel = $('sdp-bagian'); if (!sel) return;
             const cur = sel.value;
-            sel.innerHTML = '<option value="">Pilih bagian SDP</option>' + [...new Set(bagianList.map(b => b.name))].map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('');
+            sel.innerHTML = '<option value="">Pilih bagian SDP</option>' + [...new Set(bagianList.map(b => b.name))].sort((x, y) => x.localeCompare(y, 'id', { numeric: true, sensitivity: 'base' })).map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('');
             if (cur) ensureBagianOption(cur);
             sel.value = cur;
             updateBagianPreview();
@@ -2326,7 +2331,7 @@
             const tn = $('ktab-bagian-n'); if (tn) tn.textContent = bagianList.length;
             if (!list.length) { c.innerHTML = `<div class="col-span-full p-6 text-center text-sm text-slate-400">Belum ada bagian untuk ${esc(bagianUnit)}. Tekan Tambah.</div>`; return; }
             const btn = 'w-9 h-9 rounded-lg flex items-center justify-center ';
-            c.innerHTML = list.map((b, i) => {
+            c.innerHTML = list.map(b => {
                 const used = assessmentList.filter(a => a.sdpBagian === b.name && unitOfA(a) === b.unit).length;
                 const np = pesertaList.filter(x => x.bagian === b.name && unitOf(x) === b.unit).length;
                 return `
@@ -2337,24 +2342,11 @@
                         <div class="text-[11px] text-slate-500 mt-0.5">${[np ? np + ' peserta' : '', used ? used + ' penilaian' : ''].filter(Boolean).join(' · ') || 'Belum dipakai'}</div>
                     </div>
                     <div class="flex items-center gap-1 shrink-0">
-                        <div class="flex flex-col gap-0.5">
-                            <button onclick="moveBagian('${esc(b.id)}',-1)" ${i === 0 ? 'disabled' : ''} class="w-7 h-4 rounded bg-white border border-slate-200 text-slate-500 flex items-center justify-center disabled:opacity-30" aria-label="Naikkan"><svg class="ic !w-3 !h-3"><use href="#i-chevron-up"/></svg></button>
-                            <button onclick="moveBagian('${esc(b.id)}',1)" ${i === list.length - 1 ? 'disabled' : ''} class="w-7 h-4 rounded bg-white border border-slate-200 text-slate-500 flex items-center justify-center disabled:opacity-30" aria-label="Turunkan"><svg class="ic !w-3 !h-3"><use href="#i-chevron-down"/></svg></button>
-                        </div>
                         <button onclick="openBagianModal('${esc(b.id)}')" class="${btn}bg-white border border-slate-200 text-slate-700 active:bg-slate-100" aria-label="Ubah">${ic('edit', '!w-4 !h-4')}</button>
                         <button onclick="deleteBagian('${esc(b.id)}')" class="${btn}bg-red-50 text-red-600 active:bg-red-100" aria-label="Hapus">${ic('trash', '!w-4 !h-4')}</button>
                     </div>
                 </div>`;
             }).join('');
-        }
-
-        function moveBagian(id, dir) {
-            const b = bagianList.find(x => x.id === id); if (!b) return;
-            const same = bagianList.filter(x => x.unit === b.unit);
-            const nb = same[same.indexOf(b) + dir]; if (!nb) return;
-            const i = bagianList.indexOf(b), j = bagianList.indexOf(nb);
-            [bagianList[i], bagianList[j]] = [bagianList[j], bagianList[i]];
-            commitBagian();
         }
 
         function deleteBagian(id) {
@@ -3096,7 +3088,7 @@
 
         // ---- Tab Kelola Data ----
         function switchKelolaTab(tab) {
-            kelolaTab = tab;
+            kelolaTab = tab; closeActivePeserta(true);
             $('kelola-pane-peserta').classList.toggle('hidden', tab !== 'peserta');
             $('kelola-pane-bagian').classList.toggle('hidden', tab !== 'bagian');
             $('ktab-peserta').classList.toggle('active', tab === 'peserta');
@@ -3104,6 +3096,7 @@
         }
 
         function openKelola() {
+            closeActivePeserta(true);
             switchKelolaTab(kelolaTab);
             renderBagianList(); refreshPesertaUI();
         }
@@ -3174,6 +3167,62 @@
             return wrap(`<div class="border-t border-slate-100 pt-2.5 flex gap-1.5 flex-wrap">${chips}</div><div class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold leading-snug ${tone}">${esc(msg)}</div>${last}`);
         }
 
+        // ---- Tray card aktif: satu per satu; edit hanya tampil saat aktif ----
+        // HP: menutup otomatis saat layar di-scroll. Desktop: menutup otomatis setelah 10 detik atau saat diklik lagi.
+        let ptActiveId = null, ptActiveTimer = null, ptOpenedAt = 0, ptOpenScrollY = 0;
+        const PT_AUTO_CLOSE_MS = 10000;
+        const isMobileView = () => window.matchMedia('(max-width: 767px), (pointer: coarse)').matches;
+        function closeActivePeserta(silent) {
+            clearTimeout(ptActiveTimer); ptActiveTimer = null;
+            if (ptActiveId === null) return;
+            ptActiveId = null;
+            if (silent !== true) renderPesertaCards();
+        }
+        function togglePesertaActive(id) {
+            if (ptActiveId === id) { closeActivePeserta(); return; }
+            clearTimeout(ptActiveTimer);
+            ptActiveId = id; ptOpenedAt = Date.now(); ptOpenScrollY = window.scrollY || 0;
+            renderPesertaCards();
+            setTimeout(() => { if (ptActiveId === id) ptOpenScrollY = window.scrollY || 0; }, 450); // abaikan geser layout akibat tray terbuka
+            if (!isMobileView()) ptActiveTimer = setTimeout(() => closeActivePeserta(), PT_AUTO_CLOSE_MS);
+        }
+        window.addEventListener('scroll', () => {
+            if (ptActiveId === null || !isMobileView()) return;
+            if (Date.now() - ptOpenedAt < 450) return;
+            if (Math.abs((window.scrollY || 0) - ptOpenScrollY) > 12) closeActivePeserta();
+        }, { passive: true });
+
+        function pesertaCardHTML(p, active) {
+            const b = findBagian(p.bagian, unitOf(p));
+            const [cbg, cfg] = BAGIAN_COLORS[b.color] || BAGIAN_COLORS.slate;
+            const done = assessmentList.filter(a => String(a.namaPeserta || '').trim().toLowerCase() === p.nama.trim().toLowerCase()).length;
+            const exp = isPesertaExpired(p), endL = pesertaEndLabel(p);
+            const glyph = b.img ? '' : `<svg style="position:absolute;right:10px;top:-8px;width:88px;height:88px;opacity:.16;color:${cfg}" aria-hidden="true"><use href="#b-${esc(b.icon || 'building')}"/></svg>`;
+            return `
+            <div onclick="togglePesertaActive('${esc(p.id)}')" class="card overflow-hidden flex flex-col cursor-pointer ${exp ? 'opacity-70' : ''} ${active ? 'ring-2 ring-amber-400' : ''}">
+                <div class="relative h-[68px]" style="background:${cbg}">
+                    ${glyph}
+                    ${exp ? '<span class="absolute left-3 top-3 px-2 py-0.5 rounded-full bg-slate-800 text-white text-[10px] font-black">Karyawan tetap</span>' : ''}
+                    ${p.batch ? `<span class="absolute right-3 top-3 px-2.5 py-1 rounded-full bg-white/85 text-[10px] font-black uppercase tracking-wide" style="color:${cfg}">${esc(p.batch)}</span>` : ''}
+                    <span class="absolute left-4 -bottom-6 w-14 h-14 rounded-full border-4 border-white flex items-center justify-center text-lg font-black text-white shadow" style="background:${cfg}">${esc(initialsOf(p.nama))}</span>
+                </div>
+                <div class="px-4 pt-8 pb-3 flex-1 space-y-2.5">
+                    <h4 class="font-extrabold text-slate-900 leading-tight break-words">${esc(p.nama)}</h4>
+                    <div class="space-y-1.5 text-xs text-slate-600">
+                        <div class="flex items-center gap-2"><span class="w-[22px] flex justify-center text-slate-400">${unitIcon(unitOf(p), '!w-4 !h-4')}</span><span class="font-bold text-slate-800 break-words">${esc(unitOf(p))}</span></div>
+                        <div class="flex items-center gap-2">${bagianLogo(b, 22)}<span class="font-bold text-slate-800 break-words">${esc(p.bagian)}</span></div>
+                        <div class="flex items-center gap-2"><span class="w-[22px] flex justify-center text-slate-400">${ic('map-pin', '!w-4 !h-4')}</span><span class="break-words">${esc(p.lokasi) || '-'}</span></div>
+                        <div class="flex items-center gap-2"><span class="w-[22px] flex justify-center text-slate-400">${ic('calendar', '!w-4 !h-4')}</span><span class="${exp ? 'text-slate-500' : endL ? '' : 'text-amber-600 font-bold'}">${endL ? (exp ? 'Masa SDP selesai ' : 'Masa SDP s.d. ') + endL : 'Batch belum terbaca'}</span></div>
+                    </div>
+                </div>
+                ${assessmentStatusHTML(p, exp)}
+                <div class="px-3 py-2 border-t border-slate-100 flex items-center justify-between gap-2 bg-slate-50/60 min-h-[52px]">
+                    <span class="text-[11px] font-bold ${done ? 'text-emerald-700' : 'text-slate-400'}">${done ? 'Dinilai ' + done + ' penguji' : 'Belum dinilai'}</span>
+                    ${active ? `<button onclick="event.stopPropagation();editPesertaFromCard('${esc(p.id)}')" class="h-9 px-3.5 rounded-lg bg-white border border-amber-300 text-amber-800 font-bold text-xs flex items-center gap-1.5 active:bg-amber-50">${ic('edit', '!w-4 !h-4')}Ubah</button>` : ''}
+                </div>
+            </div>`;
+        }
+
         function renderPesertaCards() {
             const c = $('peserta-cards'); if (!c) return;
             $('pt-stat-total').textContent = pesertaList.length;
@@ -3194,9 +3243,12 @@
                 (!fs || (fs === 'aktif') === !isPesertaExpired(p)))
                 .sort((a, b) => a.nama.localeCompare(b.nama, 'id'));
 
+            if (ptActiveId !== null && !rows.some(p => p.id === ptActiveId)) closeActivePeserta(true);
+
             const ptc = $('pt-count'); if (ptc) ptc.textContent = `${rows.length} dari ${pesertaList.length} peserta`;
             $('pv-card').classList.toggle('active', pesertaView === 'card');
             $('pv-list').classList.toggle('active', pesertaView === 'list');
+            c.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3' + (pesertaView === 'list' ? ' items-start' : '');
 
             if (!pesertaList.length) {
                 c.innerHTML = `<div class="col-span-full card p-8 text-center space-y-2">${ic('user', '!w-9 !h-9 text-slate-300')}
@@ -3208,57 +3260,29 @@
             if (!rows.length) { c.innerHTML = '<div class="col-span-full p-8 text-center text-sm text-slate-400">Tidak ada peserta yang cocok.</div>'; return; }
 
             if (pesertaView === 'list') {
-                // Mode list: hanya nama (simple view) + tombol ubah / hapus
-                c.innerHTML = rows.map(p => `
-                <div class="card px-3 py-2 flex items-center gap-2 ${isPesertaExpired(p) ? 'opacity-60' : ''}">
-                    <span class="flex-1 min-w-0 font-bold text-sm text-slate-900 break-words">${esc(p.nama)}</span>
-                    <button onclick="openPesertaModal('${esc(p.id)}')" class="w-8 h-8 shrink-0 rounded-lg bg-white border border-slate-200 text-slate-700 active:bg-slate-100 flex items-center justify-center" aria-label="Ubah">${ic('edit', '!w-4 !h-4')}</button>
-                    <button onclick="deletePeserta('${esc(p.id)}')" class="w-8 h-8 shrink-0 rounded-lg bg-red-50 text-red-600 active:bg-red-100 flex items-center justify-center" aria-label="Hapus">${ic('trash', '!w-4 !h-4')}</button>
-                </div>`).join('');
+                // List: hanya nama. Ketuk nama = buka tray card (berisi tombol Ubah); hapus ada di dalam form Ubah.
+                c.innerHTML = rows.map(p => {
+                    const on = ptActiveId === p.id;
+                    return `<div class="space-y-2">
+                        <button type="button" onclick="togglePesertaActive('${esc(p.id)}')" class="w-full card px-3 py-2.5 text-left font-bold text-sm text-slate-900 break-words ${on ? 'ring-2 ring-amber-400' : ''} ${isPesertaExpired(p) ? 'opacity-60' : ''}" aria-expanded="${on}">${esc(p.nama)}</button>
+                        ${on ? pesertaCardHTML(p, true) : ''}
+                    </div>`;
+                }).join('');
                 return;
             }
 
-            c.innerHTML = rows.map(p => {
-                const b = findBagian(p.bagian, unitOf(p));
-                const [cbg, cfg] = BAGIAN_COLORS[b.color] || BAGIAN_COLORS.slate;
-                const done = assessmentList.filter(a => String(a.namaPeserta || '').trim().toLowerCase() === p.nama.trim().toLowerCase()).length;
-                const exp = isPesertaExpired(p), endL = pesertaEndLabel(p);
-                const glyph = b.img ? '' : `<svg style="position:absolute;right:10px;top:-8px;width:88px;height:88px;opacity:.16;color:${cfg}" aria-hidden="true"><use href="#b-${esc(b.icon || 'building')}"/></svg>`;
-                return `
-                <div class="card overflow-hidden flex flex-col ${exp ? 'opacity-70' : ''}">
-                    <div class="relative h-[68px]" style="background:${cbg}">
-                        ${glyph}
-                        ${exp ? '<span class="absolute left-3 top-3 px-2 py-0.5 rounded-full bg-slate-800 text-white text-[10px] font-black">Karyawan tetap</span>' : ''}
-                        ${p.batch ? `<span class="absolute right-3 top-3 px-2.5 py-1 rounded-full bg-white/85 text-[10px] font-black uppercase tracking-wide" style="color:${cfg}">${esc(p.batch)}</span>` : ''}
-                        <span class="absolute left-4 -bottom-6 w-14 h-14 rounded-full border-4 border-white flex items-center justify-center text-lg font-black text-white shadow" style="background:${cfg}">${esc(initialsOf(p.nama))}</span>
-                    </div>
-                    <div class="px-4 pt-8 pb-3 flex-1 space-y-2.5">
-                        <h4 class="font-extrabold text-slate-900 leading-tight break-words">${esc(p.nama)}</h4>
-                        <div class="space-y-1.5 text-xs text-slate-600">
-                            <div class="flex items-center gap-2"><span class="w-[22px] flex justify-center text-slate-400">${unitIcon(unitOf(p), '!w-4 !h-4')}</span><span class="font-bold text-slate-800 break-words">${esc(unitOf(p))}</span></div>
-                            <div class="flex items-center gap-2">${bagianLogo(b, 22)}<span class="font-bold text-slate-800 break-words">${esc(p.bagian)}</span></div>
-                            <div class="flex items-center gap-2"><span class="w-[22px] flex justify-center text-slate-400">${ic('map-pin', '!w-4 !h-4')}</span><span class="break-words">${esc(p.lokasi) || '-'}</span></div>
-                            <div class="flex items-center gap-2"><span class="w-[22px] flex justify-center text-slate-400">${ic('calendar', '!w-4 !h-4')}</span><span class="${exp ? 'text-slate-500' : endL ? '' : 'text-amber-600 font-bold'}">${endL ? (exp ? 'Masa SDP selesai ' : 'Masa SDP s.d. ') + endL : 'Batch belum terbaca'}</span></div>
-                        </div>
-                    </div>
-                    ${assessmentStatusHTML(p, exp)}
-                    <div class="px-3 py-2 border-t border-slate-100 flex items-center justify-between gap-2 bg-slate-50/60">
-                        <span class="text-[11px] font-bold ${done ? 'text-emerald-700' : 'text-slate-400'}">${done ? 'Dinilai ' + done + ' penguji' : 'Belum dinilai'}</span>
-                        <div class="flex gap-1.5">
-                            <button onclick="openPesertaModal('${esc(p.id)}')" class="w-9 h-9 rounded-lg bg-white border border-slate-200 text-slate-700 active:bg-slate-100 flex items-center justify-center" aria-label="Ubah">${ic('edit', '!w-4 !h-4')}</button>
-                            <button onclick="deletePeserta('${esc(p.id)}')" class="w-9 h-9 rounded-lg bg-red-50 text-red-600 active:bg-red-100 flex items-center justify-center" aria-label="Hapus">${ic('trash', '!w-4 !h-4')}</button>
-                        </div>
-                    </div>
-                </div>`;
-            }).join('');
+            c.innerHTML = rows.map(p => pesertaCardHTML(p, ptActiveId === p.id)).join('');
         }
 
         function deletePeserta(id) {
             const p = pesertaList.find(x => x.id === id); if (!p) return;
             if (!confirm(`Hapus peserta "${p.nama}" dari daftar?\n\nPenilaian lama atas peserta ini tetap tersimpan.`)) return;
             pesertaList = pesertaList.filter(x => x.id !== id);
+            closePesertaModal(); closeActivePeserta(true);
             commitPeserta('Peserta dihapus');
         }
+        function deletePesertaFromModal() { if (pesertaEditId) deletePeserta(pesertaEditId); }
+        function editPesertaFromCard(id) { closeActivePeserta(true); renderPesertaCards(); openPesertaModal(id); }
 
         // ---- Modal tambah / ubah ----
         function openPesertaModal(id) {
@@ -3273,6 +3297,7 @@
             fillUnitSelect($('ps-unit'), pesertaDraft.unit);
             updateBatchHint();
             $('ps-rename-hint').classList.toggle('hidden', !p);
+            $('ps-delete').classList.toggle('hidden', !p);
             $('ps-err').classList.add('hidden');
             $('dl-lokasi').innerHTML = uniq(pesertaList.map(x => x.lokasi)).map(v => `<option value="${esc(v)}">`).join('');
             $('dl-batch').innerHTML = uniq(pesertaList.map(x => x.batch)).map(v => `<option value="${esc(v)}">`).join('');
