@@ -101,6 +101,8 @@
 
         /* Logo di header: pil putih agar logo merah tetap terbaca di atas latar berwarna */
         .hb-wrap { display: flex; align-items: center; gap: .4rem; background: #fff; border-radius: .6rem; padding: .18rem .45rem; box-shadow: 0 1px 3px rgba(0,0,0,.18); flex-shrink: 0; }
+        .rb-wide { display: none; } @media (min-width: 640px) { .rb-wide { display: inline; } }
+        [data-menu][data-hidden] { display: none !important; } #btn-notif[data-off="1"] { display: none !important; }
         .hb { display: block; width: auto; object-fit: contain; }
         .hb-txt { font: 800 11px/1 'Plus Jakarta Sans', sans-serif; color: #334155; max-width: 7.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .hb-in, .hb-yc { height: 18px; } .hb-sato { height: 20px; } .hb-md { height: 22px; }
@@ -332,7 +334,7 @@
                 <span id="sync-pill" style="display:none" class="px-2 py-1 rounded-full text-[10px] font-bold inline-flex items-center gap-1 bg-white/15 text-white" title=""></span>
                 <span id="user-role-badge" class="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold inline-flex items-center gap-1"></span>
                 <button onclick="toggleNotif()" id="btn-notif" title="Notifikasi" aria-label="Notifikasi" class="etd-only hidden relative w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-yc-800 active:bg-yc-900 flex items-center justify-center"><svg class="ic !w-4 !h-4"><use href="#i-bell"/></svg><span id="notif-badge" style="display:none;position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:99px;background:#fbbf24;color:#451a03;font:800 10px/16px sans-serif;align-items:center;justify-content:center"></span></button>
-                <button onclick="openThemeModal()" id="btn-theme" title="Tema tampilan portal" aria-label="Tema tampilan portal" class="etd-only hidden w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-yc-800 active:bg-yc-900 flex items-center justify-center"><svg class="ic !w-4 !h-4"><use href="#b-palette"/></svg></button>
+                <button onclick="openThemeModal()" id="btn-theme" title="Pengaturan portal" aria-label="Pengaturan portal" class="etd-only hidden w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-yc-800 active:bg-yc-900 flex items-center justify-center"><svg class="ic !w-4 !h-4"><use href="#i-settings"/></svg></button>
                 <button onclick="logout()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-yc-800 active:bg-yc-900 flex items-center justify-center" aria-label="Keluar">
                     <svg class="ic !w-4 !h-4"><use href="#i-log-out"/></svg>
                 </button>
@@ -380,12 +382,12 @@
             <div id="dashboard-home-view" class="space-y-4">
                 <div class="rounded-2xl bg-gradient-to-r from-yc-700 to-yc-900 text-white px-4 py-4">
                     <h2 id="welcome-heading" class="text-lg font-extrabold">Selamat Datang</h2>
-                    <p class="text-xs text-yc-100 mt-0.5">Evaluasi presentasi & kualifikasi trainee Program SDP.</p>
+                    <p id="welcome-sub" class="text-xs text-yc-100 mt-0.5">Evaluasi presentasi & kualifikasi trainee Program SDP.</p>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <!-- Form Baru -->
-                    <button onclick="startNewForm()" class="card p-4 flex items-center gap-3 text-left active:bg-amber-50">
+                    <button data-menu="form" onclick="startNewForm()" class="card p-4 flex items-center gap-3 text-left active:bg-amber-50">
                         <span class="w-12 h-12 shrink-0 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-pen"/></svg></span>
                         <span class="flex-1 min-w-0">
                             <span class="block font-extrabold text-slate-900">Form Penilaian Baru</span>
@@ -395,7 +397,7 @@
                     </button>
 
                     <!-- Draft Tersimpan (BARU) -->
-                    <button onclick="openView('view-draft')" class="card p-4 flex items-center gap-3 text-left active:bg-sky-50">
+                    <button data-menu="draft" onclick="openView('view-draft')" class="card p-4 flex items-center gap-3 text-left active:bg-sky-50">
                         <span class="w-12 h-12 shrink-0 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-save"/></svg></span>
                         <span class="flex-1 min-w-0">
                             <span class="block font-extrabold text-slate-900">Draft Tersimpan</span>
@@ -405,17 +407,16 @@
                     </button>
 
                     <!-- Riwayat Terkirim -->
-                    <button onclick="openView('view-riwayat')" class="card p-4 flex items-center gap-3 text-left active:bg-amber-50">
+                    <button data-menu="riwayat" onclick="openView('view-riwayat')" class="card p-4 flex items-center gap-3 text-left active:bg-amber-50">
                         <span class="w-12 h-12 shrink-0 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-history"/></svg></span>
                         <span class="flex-1 min-w-0">
                             <span class="block font-extrabold text-slate-900">Riwayat Terkirim</span>
                             <span class="block text-xs text-slate-500">Hasil penilaian yang sudah dikirim</span>
                         </span>
-                        <span id="badge-count-riwayat" class="px-2.5 py-0.5 bg-teal-100 text-teal-800 rounded-full text-xs font-black">0</span>
                     </button>
 
                     <!-- Rekap Laporan -->
-                    <button onclick="openView('view-rekap')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-slate-50">
+                    <button data-menu="rekap" onclick="openView('view-rekap')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-slate-50">
                         <span class="w-12 h-12 shrink-0 rounded-xl bg-slate-900 text-white flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-table"/></svg></span>
                         <span class="flex-1 min-w-0">
                             <span class="block font-extrabold text-slate-900">Rekap Penilaian</span>
@@ -424,18 +425,8 @@
                         <svg class="ic text-slate-300"><use href="#i-chevron-right"/></svg>
                     </button>
 
-                    <!-- Log Pembaruan (ETD) -->
-                    <button onclick="openView('view-log')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-slate-50">
-                        <span class="w-12 h-12 shrink-0 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-history"/></svg></span>
-                        <span class="flex-1 min-w-0">
-                            <span class="block font-extrabold text-slate-900">Log Pembaruan</span>
-                            <span class="block text-xs text-slate-500">Jejak aktivitas portal · 16 bulan</span>
-                        </span>
-                        <span id="badge-count-log" class="px-2.5 py-0.5 bg-amber-100 text-amber-800 rounded-full text-xs font-black">0</span>
-                    </button>
-
                     <!-- Kelola Data (ETD) -->
-                    <button onclick="openView('view-kelola')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-teal-50">
+                    <button data-menu="kelola" onclick="openView('view-kelola')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-teal-50">
                         <span class="w-12 h-12 shrink-0 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-settings"/></svg></span>
                         <span class="flex-1 min-w-0">
                             <span class="block font-extrabold text-slate-900">Kelola Data</span>
@@ -445,7 +436,7 @@
                     </button>
 
                     <!-- Buat Laporan Assessment (ETD) -->
-                    <button onclick="openView('view-laporan')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-violet-50">
+                    <button data-menu="laporan" onclick="openView('view-laporan')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-violet-50">
                         <span class="w-12 h-12 shrink-0 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-file-text"/></svg></span>
                         <span class="flex-1 min-w-0">
                             <span class="block font-extrabold text-slate-900">Buat Laporan Assessment</span>
@@ -454,8 +445,17 @@
                         <svg class="ic text-slate-300"><use href="#i-chevron-right"/></svg>
                     </button>
 
+                    <!-- Log Pembaruan (ETD) -->
+                    <button data-menu="log" onclick="openView('view-log')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-slate-50">
+                        <span class="w-12 h-12 shrink-0 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-history"/></svg></span>
+                        <span class="flex-1 min-w-0">
+                            <span class="block font-extrabold text-slate-900">Log Pembaruan</span>
+                            <span class="block text-xs text-slate-500">Jejak aktivitas portal · 16 bulan</span>
+                        </span>
+                    </button>
+
                     <!-- Tempat Sampah -->
-                    <button onclick="openView('view-trash')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-red-50">
+                    <button data-menu="trash" onclick="openView('view-trash')" class="etd-only hidden card p-4 flex items-center gap-3 text-left active:bg-red-50">
                         <span class="w-12 h-12 shrink-0 rounded-xl bg-red-100 text-red-600 flex items-center justify-center"><svg class="ic !w-6 !h-6"><use href="#i-trash"/></svg></span>
                         <span class="flex-1 min-w-0">
                             <span class="block font-extrabold text-slate-900">Tempat Sampah</span>
@@ -701,7 +701,7 @@
                     <button onclick="smartBack()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-slate-600" aria-label="Kembali"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
                     <div>
                         <h2 class="text-lg font-extrabold text-slate-900 leading-tight">Log Pembaruan</h2>
-                        <p class="text-xs text-slate-500">Catatan aktivitas portal, disimpan 16 bulan</p>
+                        <p id="log-sub-txt" class="text-xs text-slate-500">Catatan aktivitas portal, disimpan 16 bulan</p>
                     </div>
                 </div>
                 <input id="log-search" type="search" oninput="renderLogView()" placeholder="Cari aktivitas, nama, unit" class="field !py-2 !rounded-xl h-10 w-full">
@@ -1148,14 +1148,15 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
     <div id="theme-modal" class="no-print fixed inset-0 z-50 hidden bg-black/60 flex items-end sm:items-center justify-center sm:p-4" onclick="if(event.target===this)closeThemeModal(false)">
         <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92dvh]">
             <div class="px-4 py-3 bg-yc-700 text-white rounded-t-3xl flex items-center justify-between gap-3">
-                <div><h3 class="font-extrabold text-base">Tema Tampilan Portal</h3><p class="text-[11px] text-white/80 font-semibold">Perubahan terlihat langsung · berlaku untuk semua pengguna</p></div>
+                <div><h3 class="font-extrabold text-base">Pengaturan Portal</h3><p class="text-[11px] text-white/80 font-semibold">Berlaku untuk semua pengguna</p></div>
                 <button onclick="closeThemeModal(false)" class="w-10 h-10 shrink-0 rounded-full bg-white/10 active:bg-white/20 flex items-center justify-center" aria-label="Tutup"><svg class="ic"><use href="#i-x"/></svg></button>
             </div>
+            <div id="tm-tabs" class="flex items-center gap-1.5 overflow-x-auto px-3 border-b border-slate-100" style="scrollbar-width:none;flex:none;min-height:52px;padding-top:10px;padding-bottom:10px"></div>
             <div id="theme-body" class="p-3 overflow-y-auto bg-slate-50"></div>
             <div class="p-3 border-t border-slate-100 flex gap-2">
                 <button onclick="tmReset()" title="Kembalikan ke bawaan" aria-label="Kembalikan ke bawaan" class="w-12 h-12 shrink-0 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center"><svg class="ic"><use href="#i-rotate"/></svg></button>
                 <button onclick="closeThemeModal(false)" class="flex-1 h-12 rounded-xl bg-slate-100 text-slate-700 font-bold">Batal</button>
-                <button onclick="closeThemeModal(true)" class="flex-1 h-12 rounded-xl bg-yc-600 active:bg-yc-800 text-white font-bold">Simpan</button>
+                <button onclick="saveAllSettings()" class="flex-1 h-12 rounded-xl bg-yc-600 active:bg-yc-800 text-white font-bold">Simpan</button>
             </div>
         </div>
     </div>
@@ -1325,7 +1326,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             kitakeren: { role: 'ETD', unit: null }
         };
         const DRAFT_KEY = 'yc_sdp_form_draft';
-        const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+        let THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
         const totalSteps = 13;          
         const SUMMARY_STEP = 12;
 
@@ -1379,8 +1380,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         let autosaveTimer = null;
 
         window.addEventListener('DOMContentLoaded', () => {
-            applyPortalCfg(portalCfg);
-            renderKriteriaForm();
+            renderKriteriaForm(); applyPortalCfg(portalCfg); applySysCfg(sysCfg);
             loadInitialData();
             checkSession();
             const form = $('assessment-form');
@@ -1961,6 +1961,11 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             if (currentUserRole === 'ETD') cloudUnsubs.push(subscribeLog(C));
 
             // 4. Pengaturan: bagian & peserta
+            sub(D(COL.setting, 'sistem_portal'), snap => {
+                if (snap.metadata.hasPendingWrites) return;
+                if (!snap.exists()) { if (!snap.metadata.fromCache && currentUserRole === 'ETD' && !jeq(sysCfg, SYS_DEF)) pushSysCloud(); return; }
+                const c = snap.data().cfg; if (c) { sysCfg = { ...JSON.parse(JSON.stringify(SYS_DEF)), ...c }; writeJSON(SYS_KEY, sysCfg); applySysCfg(sysCfg); }
+            });
             sub(D(COL.setting, 'tema_portal'), snap => {
                 if (snap.metadata.hasPendingWrites) return;
                 if (!snap.exists()) { if (!snap.metadata.fromCache && currentUserRole === 'ETD' && JSON.stringify(portalCfg) !== JSON.stringify(PORTAL_DEF)) pushPortalCloud(); return; }
@@ -1996,6 +2001,8 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             const pk = $('passkey-input').value;
             let acc = findAccount(pk);
             if (!acc && window.db && window.fsGetDoc && !handleLogin._tried) { handleLogin._tried = true; pullUnitsCloud().then(() => { handleLogin._tried = false; if (findAccount(pk)) handleLogin(new Event('submit')); else $('login-error').classList.remove('hidden'); }); return; }
+            if (acc && acc.role !== 'ETD' && sysCfg.maint && sysCfg.maint.on) { const le = $('login-error'); le.textContent = sysCfg.maint.text || 'Portal sedang dalam pemeliharaan.'; le.classList.remove('hidden'); return; }
+            $('login-error').textContent = 'Passkey salah, coba lagi.';
             if (acc) {
                 currentUserRole = acc.role;
                 currentUnit = acc.unit;
@@ -2044,9 +2051,9 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             const badge = $('user-role-badge');
             const isETD = currentUserRole === 'ETD';
             document.querySelectorAll('.etd-only').forEach(el => el.classList.toggle('hidden', !isETD));
-            badge.innerHTML = isETD ? `${ic('shield', '!w-3 !h-3')}<span class="rb-t hidden">ETD</span>` : `${ic('user', '!w-3 !h-3')}<span class="rb-t">Penguji</span>`; badge.title = isETD ? 'ETD' : 'Penguji';
+            badge.innerHTML = isETD ? `${ic('shield', '!w-3 !h-3')}<span class="rb-t rb-wide">ETD</span>` : `${ic('user', '!w-3 !h-3')}<span class="rb-t">Penguji</span>`; badge.title = isETD ? 'ETD' : 'Penguji';
             badge.className = 'px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold inline-flex items-center gap-1 ' + (isETD ? 'bg-slate-900 text-white' : 'bg-amber-100 text-amber-900');
-            $('welcome-heading').textContent = isETD ? 'Selamat Datang, Superadmin ETD' : `Selamat Datang, Penguji ${currentUnit}`;
+            $('welcome-heading').textContent = (sysCfg.welcomeHead || '').trim() ? sysCfg.welcomeHead : isETD ? 'Selamat Datang, Superadmin ETD' : `Selamat Datang, Penguji ${currentUnit}`;
             document.title = `Portal Assessment SDP - ${currentUnit || 'ETD'}`;
 
             goToHome();
@@ -2140,7 +2147,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
                     writeJSON('yc_sdp_drafts', draftList);
                 }
 
-                logEvent('submit', 'penilaian', `${payload.namaPenguji} submit nilai ke ${payload.namaPeserta} (${payload.sdpUnit})`, { unit: payload.sdpUnit, ref: payload.id, actor: currentUserRole === 'ETD' ? 'ETD' : 'Penguji ' + (currentUnit || ''), meta: { penguji: payload.namaPenguji, peserta: payload.namaPeserta, bagian: payload.sdpBagian, skor: Number(payload.scoreTotal).toFixed(1) } });
+                logEvent('submit', 'penilaian', `${payload.namaPenguji} submit nilai ke ${payload.namaPeserta} (${payload.sdpUnit})`, { unit: payload.sdpUnit, ref: payload.id, actor: currentUserRole === 'ETD' ? 'ETD' : 'Penguji ' + (currentUnit || ''), meta: { penguji: payload.namaPenguji, peserta: payload.namaPeserta, bagian: payload.sdpBagian, skor: Number(payload.scoreTotal).toFixed(1), peran: payload.peranPenguji, cabang: payload.sdpCabang, batch: payload.batch } });
                 if (!assessmentList.some(i => i.id === payload.id)) assessmentList.unshift(payload);
                 saveAssessments();
                 resetForm();
@@ -2210,7 +2217,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         function renderRiwayatCards() {
             const c = $('riwayat-cards-container');
             const myAssess = visibleAssessments();
-            $('badge-count-riwayat').textContent = myAssess.length;
+            { const _b = $('badge-count-riwayat'); if (_b) _b.textContent = myAssess.length; }
 
             if (!myAssess.length) {
                 c.innerHTML = `
@@ -2489,7 +2496,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         const unitPasskey = n => { const r = unitRec(n); if (r) return r.passkey || ''; return unitPassOv[n] || (BUILTIN_UNITS.find(b => b.name === n) || {}).passkey || ''; };
         function findAccount(key) {
             key = String(key || '').trim().toLowerCase(); if (!key) return null;
-            if (key === 'kitakeren') return PASSKEYS.kitakeren;
+            if (key === etdPasskey()) return PASSKEYS.kitakeren;
             const u = UNITS.find(n => unitPasskey(n).toLowerCase() === key);
             return u ? { role: 'USER', unit: u } : null;
         }
@@ -2616,7 +2623,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             const pass = $('unit-pass').value.trim();
             if (!/^\S{4,24}$/.test(pass)) return fail('Passkey 4–24 karakter, tanpa spasi.');
             const dup = UNITS.find(n => n !== unitEditName && unitPasskey(n).toLowerCase() === pass.toLowerCase());
-            if (dup || pass.toLowerCase() === 'kitakeren') return fail('Passkey sudah dipakai' + (dup ? ' oleh ' + dup : ' ETD') + '. Pilih yang lain.');
+            if (dup || pass.toLowerCase() === etdPasskey()) return fail('Passkey sudah dipakai' + (dup ? ' oleh ' + dup : ' ETD') + '. Pilih yang lain.');
             if (unitDraft.builtin) { unitPassOv[unitEditName] = pass; if (unitDraft.theme) unitThemeOv[unitEditName] = unitDraft.theme; else delete unitThemeOv[unitEditName]; closeUnitModal(); commitUnits('Unit ' + unitEditName + ' diperbarui'); applyThemeVars(); return; }
             const name = $('unit-name').value.trim().replace(/\s+/g, ' ');
             if (!name) return fail('Nama unit bisnis wajib diisi.');
@@ -2685,7 +2692,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         let tmDraft = null;
         const tmOpen = {};
         function openThemeModal() {
-            tmDraft = { ...portalCfg };
+            tmDraft = { ...portalCfg }; captureDefaults(); sysDraft = JSON.parse(JSON.stringify(sysCfg)); tmTab = 'tampilan'; krOpen = null;
             $('theme-modal').classList.remove('hidden'); document.body.style.overflow = 'hidden'; renderThemeModal();
         }
         function closeThemeModal(save) {
@@ -2695,7 +2702,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         }
         function tmSet(k, v) { tmDraft[k] = v; applyPortalCfg(tmDraft); renderThemeModal(); }
         function tmToggle(k) { tmOpen[k] = !tmOpen[k]; renderThemeModal(); }
-        function tmReset() { tmDraft = { ...PORTAL_DEF }; applyPortalCfg(tmDraft); renderThemeModal(); }
+        function tmReset() { if (tmTab === 'tampilan') { tmDraft = { ...PORTAL_DEF }; applyPortalCfg(tmDraft); } else sysDraft = JSON.parse(JSON.stringify(SYS_DEF)); renderThemeModal(); }
         function tmText(k, v) { tmDraft[k] = v; applyPortalCfg(tmDraft); }
         function renderThemeModal() {
             const d = tmDraft, sw = (c, on, fn, title, extra = '') => `<button type="button" onclick="${fn}" title="${title}" aria-label="${title}" class="w-8 h-8 shrink-0 rounded-full border-2 ${on ? 'border-slate-900' : 'border-white shadow'}" style="background:${c};${extra}"></button>`;
@@ -2720,20 +2727,22 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
                 sec('txt', 'Teks portal', 'Judul, login, footer',
                     inp('headTitle', 'Judul header', PORTAL_TITLE_DEF) + inp('loginTitle', 'Judul halaman login', 'Portal Assessment SDP') + inp('loginSub', 'Keterangan login', 'Masukkan passkey untuk melanjutkan') + inp('footer', 'Footer', 'ETD - Food Beverage Industry'))
             ].join('<div class="h-2"></div>');
-            $('theme-body').innerHTML = html;
+            $('tm-tabs').innerHTML = [['tampilan', 'Tampilan'], ['beranda', 'Beranda'], ['kriteria', 'Kriteria'], ['peran', 'Peran'], ['info', 'Info'], ['sistem', 'Sistem']].map(([k, l]) => `<button type="button" onclick="setTmTab('${k}')" style="height:32px;flex:none;line-height:1" class="px-3.5 rounded-full text-xs font-bold border-[1.5px] ${tmTab === k ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200'}">${l}</button>`).join('');
+            $('theme-body').innerHTML = tmTab === 'tampilan' ? html : renderSysTab();
         }
         loadPortalCfg();
         // =====================================================================
         // NOTIFIKASI & LOG PEMBARUAN (ETD)
         // =====================================================================
         const LOG_KEY = 'yc_sdp_log', NOTIF_READ_KEY = 'yc_sdp_notif_read', LOG_COL = 'log_pembaruan';
-        const LOG_TTL = 487 * 86400000, NOTIF_TTL = 3 * 86400000; // 16 bulan & 3 hari
+        let LOG_TTL = 487 * 86400000, NOTIF_TTL = 3 * 86400000; // 16 bulan & 3 hari
         const LOG_CATS = {
             penilaian: { l: 'Penilaian', c: '#0d9488', bg: '#ccfbf1', i: '#i-send' },
             data: { l: 'Data', c: '#b45309', bg: '#fef3c7', i: '#i-settings' },
             laporan: { l: 'Laporan', c: '#6d28d9', bg: '#ede9fe', i: '#i-file-text' },
             akses: { l: 'Akses', c: '#0369a1', bg: '#e0f2fe', i: '#i-user' },
-            tampilan: { l: 'Tampilan', c: '#be185d', bg: '#fce7f3', i: '#b-palette' }
+            tampilan: { l: 'Tampilan', c: '#be185d', bg: '#fce7f3', i: '#b-palette' },
+            sistem: { l: 'Sistem', c: '#475569', bg: '#e2e8f0', i: '#i-settings' }
         };
         let logList = [], notifRead = {}, logFilter = 'all', logFirstSnap = true, logSeen = new Set();
         function loadLog() { logList = readJSON(LOG_KEY, []); if (!Array.isArray(logList)) logList = []; notifRead = readJSON(NOTIF_READ_KEY, {}) || {}; logList.forEach(e => logSeen.add(e.id)); }
@@ -2750,9 +2759,10 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             writeJSON(NOTIF_READ_KEY, notifRead);
         }
         function logEvent(type, cat, text, o = {}) {
+            if (sysCfg.noLog && cat !== 'sistem') return;
             try {
                 const e = { id: 'lg-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), t: Date.now(), type, cat, text, unit: o.unit || currentUnit || '', actor: o.actor || (currentUserRole === 'ETD' ? 'ETD' : (currentUnit ? 'Penguji ' + currentUnit : '')), ref: o.ref || '' };
-                if (o.meta) e.meta = o.meta;
+                if (o.meta) e.meta = o.meta; if (o.detail) e.detail = o.detail;
                 addLog(e); pruneLog(); refreshLogUI();
                 if (cloudOK()) window.fsSetDoc(window.fsDoc(window.db, LOG_COL, e.id), JSON.parse(JSON.stringify(e))).catch(() => {});
             } catch (er) { console.warn(er); }
@@ -2847,15 +2857,188 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             rows.slice(0, 300).forEach(e => {
                 const g = day(e.t); if (g !== last) { html += `<div class="pt-2 pb-1 text-[11px] font-extrabold text-slate-400 uppercase tracking-wide">${esc(g)}</div>`; last = g; }
                 const c = LOG_CATS[e.cat] || LOG_CATS.data, link = e.ref && assessmentList.some(a => a.id === e.ref);
-                html += `<div ${link ? `onclick="openLogRef(logList.find(x=>x.id==='${e.id}'))" style="cursor:pointer"` : ''} class="card px-3 py-2.5 flex gap-2.5 items-center ${link ? 'active:bg-slate-50' : ''}">
-                    <span class="w-9 h-9 shrink-0 rounded-xl flex items-center justify-center" style="background:${c.bg};color:${c.c}"><svg class="ic !w-[18px] !h-[18px]"><use href="${c.i}"/></svg></span>
-                    <span class="flex-1 min-w-0"><span class="block text-[13px] font-bold text-slate-800 leading-snug">${esc(e.text)}</span><span class="block text-[11px] text-slate-400 font-semibold mt-0.5">${logClock(e.t)}${e.unit ? ' · ' + esc(e.unit) : ''}</span></span>
-                    ${link ? '<svg class="ic !w-4 !h-4 text-slate-300"><use href="#i-chevron-right"/></svg>' : ''}
+                const m = e.meta || {}, chips = [];
+                if (e.type === 'submit') { if (m.skor) chips.push('Skor ' + m.skor); if (m.bagian) chips.push(m.bagian); if (m.peran) chips.push(String(m.peran).replace(/\s*\(.*$/, '')); if (m.cabang) chips.push(m.cabang); if (m.batch) chips.push('Batch ' + m.batch); }
+                const dt = new Date(e.t).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + ' · ' + logClock(e.t);
+                html += `<div ${link ? `onclick="openLogRef(logList.find(x=>x.id==='${e.id}'))" style="cursor:pointer"` : ''} class="card px-2.5 py-2 flex gap-2 items-start ${link ? 'active:bg-slate-50' : ''}" style="border-radius:.8rem">
+                    <span class="w-7 h-7 shrink-0 rounded-lg flex items-center justify-center mt-0.5" style="background:${c.bg};color:${c.c}"><svg class="ic !w-3.5 !h-3.5"><use href="${c.i}"/></svg></span>
+                    <span class="flex-1 min-w-0"><span class="block text-[12px] font-bold text-slate-800 leading-snug">${esc(e.text)}</span>
+                    <span class="block text-[10px] text-slate-400 font-semibold mt-0.5">${esc(dt)}${e.actor ? ' · ' + esc(e.actor) : ''}${e.unit && !String(e.actor || '').includes(e.unit) ? ' · ' + esc(e.unit) : ''}</span>
+                    ${chips.length ? `<span class="flex flex-wrap gap-1 mt-1">${chips.map(x => `<span class="px-1.5 py-px rounded-md bg-slate-100 text-slate-500 text-[10px] font-bold">${esc(x)}</span>`).join('')}</span>` : ''}
+                    ${e.detail ? `<span class="block text-[10.5px] text-slate-500 mt-1 leading-snug">${esc(e.detail)}</span>` : ''}</span>
+                    ${link ? '<svg class="ic !w-3.5 !h-3.5 text-slate-300 mt-1.5"><use href="#i-chevron-right"/></svg>' : ''}
                 </div>`;
             });
             $('log-list').innerHTML = html;
         }
         loadLog();
+        // =====================================================================
+        // PENGATURAN SISTEM (ETD): beranda, kriteria, peran penguji, retensi, keamanan
+        // (Template Resume terkunci dan tidak dapat diubah dari sini)
+        // =====================================================================
+        const SYS_KEY = 'yc_sdp_sys_cfg';
+        const SYS_DEF = { welcomeSub: '', menus: {}, order: [], kriteria: {}, peran: {}, trashDays: 30, notifDays: 3, logMonths: 16, sdpMonths: 16, etdPass: '', welcomeHead: '', ann: { on: false, text: '', tone: 'info' }, maint: { on: false, text: '' }, noNotif: false, noLog: false, loginHint: '' };
+        const MENU_KEYS = ['form', 'draft', 'riwayat', 'rekap', 'log', 'trash', 'kelola', 'laporan'];
+        let sysCfg = JSON.parse(JSON.stringify(SYS_DEF)), sysDraft = null, MENU_DEF = {}, KRIT_ORIG = null, PERAN_ORIG = null, WELCOME_DEF = '';
+        const etdPasskey = () => 'kitakeren';
+        function loadSysCfg() { const d = readJSON(SYS_KEY, null) || {}; sysCfg = { ...JSON.parse(JSON.stringify(SYS_DEF)), ...d }; }
+        function captureDefaults() {
+            if (KRIT_ORIG) return;
+            KRIT_ORIG = JSON.parse(JSON.stringify(kriteriaList)); PERAN_ORIG = JSON.parse(JSON.stringify(PERAN_CONFIG));
+            MENU_KEYS.forEach(k => { const b = document.querySelector(`[data-menu="${k}"]`); if (!b) return; const sp = b.querySelectorAll('span.block'); MENU_DEF[k] = { t: sp[0] ? sp[0].textContent : k, s: sp[1] ? sp[1].textContent : '' }; });
+            const w = $('welcome-sub'); WELCOME_DEF = w ? w.textContent : '';
+        }
+        function applySysCfg(c) {
+            c = c || sysCfg; captureDefaults();
+            // Beranda
+            const w = $('welcome-sub'); if (w) w.textContent = (c.welcomeSub || '').trim() || WELCOME_DEF;
+            const order = (c.order && c.order.length ? c.order : []).concat(MENU_KEYS).filter((k, i, a) => a.indexOf(k) === i);
+            MENU_KEYS.forEach(k => {
+                const b = document.querySelector(`[data-menu="${k}"]`); if (!b) return;
+                const m = (c.menus || {})[k] || {}, sp = b.querySelectorAll('span.block');
+                if (sp[0]) sp[0].textContent = (m.t || '').trim() || MENU_DEF[k].t;
+                if (sp[1]) sp[1].textContent = (m.s || '').trim() || MENU_DEF[k].s;
+                b.style.order = order.indexOf(k); b.toggleAttribute('data-hidden', !!m.hide);
+            });
+            const wh = $('welcome-heading'); if (wh) { if (c.welcomeHead) wh.textContent = c.welcomeHead; wh.dataset.c = c.welcomeHead ? 1 : ''; }
+            let an = $('home-ann'); if (!an && w) { an = document.createElement('div'); an.id = 'home-ann'; w.parentNode.parentNode.insertBefore(an, w.parentNode.nextSibling); }
+            if (an) { const A = c.ann || {}, T = { info: ['#dbeafe', '#1e3a8a'], warn: ['#fef3c7', '#78350f'], ok: ['#dcfce7', '#14532d'], bad: ['#fee2e2', '#7f1d1d'] }[A.tone || 'info']; an.style.cssText = A.on && A.text ? `background:${T[0]};color:${T[1]};border-radius:1rem;padding:.65rem .9rem;font-size:13px;font-weight:700;line-height:1.4` : 'display:none'; an.textContent = A.text || ''; }
+            const nb = $('btn-notif'); if (nb) nb.dataset.off = c.noNotif ? 1 : '';
+            const lh = $('login-error'); if (lh) { let hh = $('login-hint'); if (!hh) { hh = document.createElement('p'); hh.id = 'login-hint'; hh.className = 'text-center text-[12px] text-slate-500 font-semibold'; lh.parentNode.insertBefore(hh, lh); } hh.textContent = c.loginHint || ''; }
+            // Kriteria
+            kriteriaList.forEach((it, i) => { const o = KRIT_ORIG[i], v = (c.kriteria || {})[it.id] || {}; it.title = (v.title || '').trim() || o.title; it.badge = (v.badge || '').trim() || o.badge; it.desc = (v.desc || '').trim() || o.desc; });
+            try { if ($('kriteria-container') && $('kriteria-container').children.length) { const st = currentStep; renderKriteriaForm(); if (typeof showStep === 'function' && $('view-form') && !$('view-form').classList.contains('hidden')) showStep(st); } } catch (e) {}
+            // Peran penguji
+            Object.keys(PERAN_CONFIG).forEach(u => { delete PERAN_CONFIG[u]; });
+            Object.entries(PERAN_ORIG).forEach(([u, l]) => { PERAN_CONFIG[u] = JSON.parse(JSON.stringify(l)); });
+            Object.entries(c.peran || {}).forEach(([u, l]) => { if (Array.isArray(l) && l.length) PERAN_CONFIG[u] = l; });
+            try { renderPeranOptions(); } catch (e) {}
+            // Retensi
+            THIRTY_DAYS = Math.max(1, +c.trashDays || 30) * 86400000; NOTIF_TTL = Math.max(1, +c.notifDays || 3) * 86400000;
+            LOG_TTL = Math.max(1, +c.logMonths || 16) * 30.4 * 86400000; SDP_MAX_MONTHS = Math.max(1, +c.sdpMonths || 16);
+            const lm = Math.max(1, +c.logMonths || 16), t1 = document.getElementById('log-sub-txt'), t2 = document.getElementById('log-menu-sub');
+            if (t1) t1.textContent = 'Catatan aktivitas portal, disimpan ' + lm + ' bulan'; if (b0 = document.querySelector('[data-menu="log"]')) { const s = b0.querySelectorAll('span.block')[1]; if (s && !((c.menus || {}).log || {}).s) s.textContent = 'Jejak aktivitas portal · ' + lm + ' bulan'; }
+            try { renderAll(); refreshLogUI(); } catch (e) {}
+        }
+        var b0;
+        async function pushSysCloud() {
+            if (!(window.db && window.fsSetDoc && window.fsDoc)) return false;
+            try { await window.fsSetDoc(window.fsDoc(window.db, 'pengaturan', 'sistem_portal'), JSON.parse(JSON.stringify({ cfg: sysCfg, updatedAt: Date.now() }))); return true; } catch (e) { console.error(e); toast('Pengaturan tersimpan lokal, gagal sinkron ke cloud', 'warn'); return false; }
+        }
+        async function pullSysCloud() {
+            try {
+                if (!(window.db && window.fsGetDoc && window.fsDoc)) return;
+                const s = await window.fsGetDoc(window.fsDoc(window.db, 'pengaturan', 'sistem_portal'));
+                if (s.exists() && s.data().cfg) { sysCfg = { ...JSON.parse(JSON.stringify(SYS_DEF)), ...s.data().cfg }; writeJSON(SYS_KEY, sysCfg); applySysCfg(); }
+            } catch (e) { console.warn(e); }
+        }
+        window.addEventListener('fs-ready', () => { pullSysCloud(); });
+
+        // ---- Perubahan & konfirmasi ----
+        const jeq = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+        function sysChanges() {
+            const P = portalCfg, D = tmDraft, S = sysCfg, X = sysDraft, ch = [];
+            const pk = (keys, label) => { if (!keys.every(k => jeq(P[k], D[k]))) ch.push(label); };
+            pk(['accent', 'uniform'], 'Tampilan · Warna utama'); pk(['bg', 'glow'], 'Tampilan · Latar halaman'); pk(['font', 'scale'], 'Tampilan · Huruf & ukuran');
+            pk(['radius'], 'Tampilan · Bentuk sudut'); pk(['headTitle', 'loginTitle', 'loginSub', 'footer'], 'Tampilan · Teks portal');
+            if ((S.welcomeSub || '') !== (X.welcomeSub || '')) ch.push('Beranda · Teks sambutan');
+            const mc = MENU_KEYS.filter(k => !jeq((S.menus || {})[k] || {}, (X.menus || {})[k] || {})).map(k => MENU_DEF[k].t);
+            if (mc.length) ch.push('Beranda · Menu (' + mc.join(', ') + ')');
+            if (!jeq(S.order || [], X.order || [])) ch.push('Beranda · Urutan menu');
+            const kc = kriteriaList.filter(it => !jeq((S.kriteria || {})[it.id] || {}, (X.kriteria || {})[it.id] || {})).map(it => it.id);
+            if (kc.length) ch.push('Kriteria penilaian · nomor ' + kc.join(', '));
+            const pc = Object.keys({ ...(S.peran || {}), ...(X.peran || {}) }).filter(u => !jeq((S.peran || {})[u] || null, (X.peran || {})[u] || null));
+            if (pc.length) ch.push('Peran penguji · ' + pc.join(', '));
+            if (['trashDays', 'notifDays', 'logMonths', 'sdpMonths'].some(k => +S[k] !== +X[k])) ch.push('Sistem · Masa simpan & notifikasi');
+            if (!jeq(S.ann || {}, X.ann || {})) ch.push('Info · Pengumuman beranda');
+            if (!jeq(S.maint || {}, X.maint || {})) ch.push('Info · Mode pemeliharaan');
+            if ((S.welcomeHead || '') !== (X.welcomeHead || '') || (S.loginHint || '') !== (X.loginHint || '')) ch.push('Info · Teks sambutan & login');
+            if (!!S.noNotif !== !!X.noNotif || !!S.noLog !== !!X.noLog) ch.push('Sistem · Fitur notifikasi & log');
+            return ch;
+        }
+        function confirmChanges(ch, yes) {
+            let o = $('chg-modal'); if (o) o.remove();
+            o = document.createElement('div'); o.id = 'chg-modal'; o.className = 'no-print fixed inset-0 z-[60] flex items-center justify-center p-4'; o.style.background = 'rgba(15,23,30,.55)';
+            o.innerHTML = `<div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-5 space-y-3" style="max-height:88dvh;overflow:auto">
+                <div class="flex items-center gap-2.5"><span class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center"><svg class="ic"><use href="#i-alert"/></svg></span><b class="text-base text-slate-900">Simpan perubahan?</b></div>
+                <p class="text-[13px] text-slate-600 leading-relaxed">Anda melakukan perubahan pada bagian berikut:</p>
+                <ul class="space-y-1.5">${ch.map(c => `<li class="text-[13px] font-bold text-slate-800 bg-slate-50 rounded-lg px-3 py-1.5">${esc(c)}</li>`).join('')}</ul>
+                <p class="text-[12px] text-slate-500 leading-relaxed">Perubahan berlaku untuk <b>semua pengguna</b> portal. Template Resume tidak terpengaruh.</p>
+                <div class="flex gap-2 pt-1"><button type="button" id="chg-no" class="flex-1 h-11 rounded-xl bg-slate-100 text-slate-700 font-bold">Kembali</button><button type="button" id="chg-yes" class="flex-1 h-11 rounded-xl bg-yc-600 active:bg-yc-800 text-white font-bold">Ya, simpan</button></div></div>`;
+            document.body.appendChild(o);
+            $('chg-no').onclick = () => o.remove(); $('chg-yes').onclick = () => { o.remove(); yes(); };
+        }
+        function saveAllSettings() {
+            const err = validateSys(); if (err) { toast(err, 'warn'); return; }
+            const ch = sysChanges();
+            if (!ch.length) { closeThemeModal(false); toast('Tidak ada perubahan', 'info'); return; }
+            confirmChanges(ch, () => {
+                portalCfg = { ...tmDraft }; writeJSON(PORTAL_KEY, portalCfg); pushPortalCloud();
+                sysCfg = JSON.parse(JSON.stringify(sysDraft)); writeJSON(SYS_KEY, sysCfg); pushSysCloud();
+                applyPortalCfg(portalCfg); applySysCfg(sysCfg);
+                $('theme-modal').classList.add('hidden'); document.body.style.overflow = '';
+                toast('Pengaturan disimpan untuk semua pengguna', 'success');
+                logEvent('sistem', 'sistem', 'ETD memperbarui pengaturan portal', { detail: ch.join(' · ') });
+            });
+        }
+        function validateSys() {
+            const x = sysDraft;
+            for (const k of ['trashDays', 'notifDays', 'logMonths', 'sdpMonths']) if (!(+x[k] >= 1)) return 'Masa simpan harus angka minimal 1.';
+            return '';
+        }
+
+        // ---- Tab editor ----
+        let tmTab = 'tampilan', krOpen = null, peUnit = null;
+        function sysOrder() { return (sysDraft.order && sysDraft.order.length ? sysDraft.order : []).concat(MENU_KEYS).filter((k, i, a) => a.indexOf(k) === i); }
+        function sysMenuSet(k, f, v) { sysDraft.menus[k] = { ...(sysDraft.menus[k] || {}), [f]: v }; }
+        function sysMove(k, d) { const o = sysOrder(), i = o.indexOf(k), j = i + d; if (j < 0 || j >= o.length) return; [o[i], o[j]] = [o[j], o[i]]; sysDraft.order = o; renderThemeModal(); }
+        function sysKr(id, f, v) { sysDraft.kriteria[id] = { ...(sysDraft.kriteria[id] || {}), [f]: v }; }
+        function sysPeran(u) { if (!sysDraft.peran[u]) sysDraft.peran[u] = JSON.parse(JSON.stringify(PERAN_CONFIG[u] || PERAN_CONFIG[DEFAULT_UNIT])); return sysDraft.peran[u]; }
+        function sysRoleSet(u, i, f, v) { const l = sysPeran(u); if (v) l[i][f] = v; else delete l[i][f]; }
+        function sysRoleAdd(u) { sysPeran(u).push({ v: 'PERAN BARU ' + (sysPeran(u).length + 1), t: 'Peran baru' }); renderThemeModal(); }
+        function sysRoleDel(u, i) { const l = sysPeran(u); if (l.length <= 1) return toast('Minimal satu peran', 'warn'); l.splice(i, 1); renderThemeModal(); }
+        function setTmTab(t) { tmTab = t; renderThemeModal(); }
+        function renderSysTab() {
+            const x = sysDraft, I = (v, ph, fn, ml) => `<input class="field !py-2 !rounded-xl" value="${esc(v || '')}" placeholder="${esc(ph || '')}" maxlength="${ml || 90}" oninput="${fn}">`;
+            const card = (t, b) => `<div class="rounded-2xl border border-slate-200 bg-white p-3 space-y-2"><div class="text-[12px] font-extrabold text-slate-500">${t}</div>${b}</div>`;
+            if (tmTab === 'beranda') {
+                const o = sysOrder();
+                return card('Teks sambutan', I(x.welcomeSub, WELCOME_DEF, "sysDraft.welcomeSub=this.value", 120)) + '<div class="h-2"></div>' +
+                    card('Menu beranda · urutan, nama, tampil/sembunyi', o.map((k, i) => { const m = x.menus[k] || {}; return `<div class="rounded-xl bg-slate-50 p-2 space-y-1.5"><div class="flex items-center gap-1.5"><b class="text-[12px] text-slate-700 flex-1 truncate">${esc(MENU_DEF[k].t)}</b>
+                        <button type="button" onclick="sysMove('${k}',-1)" ${i ? '' : 'disabled'} class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-500 flex items-center justify-center disabled:opacity-30"><svg class="ic !w-4 !h-4"><use href="#i-chevron-up"/></svg></button>
+                        <button type="button" onclick="sysMove('${k}',1)" ${i < o.length - 1 ? '' : 'disabled'} class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-500 flex items-center justify-center disabled:opacity-30"><svg class="ic !w-4 !h-4"><use href="#i-chevron-down"/></svg></button>
+                        <button type="button" onclick="sysMenuSet('${k}','hide',${!m.hide});renderThemeModal()" title="${m.hide ? 'Tampilkan' : 'Sembunyikan'}" class="w-8 h-8 rounded-lg border flex items-center justify-center ${m.hide ? 'bg-slate-200 border-slate-300 text-slate-400' : 'bg-white border-slate-200 text-slate-600'}"><svg class="ic !w-4 !h-4"><use href="#i-eye"/></svg></button></div>
+                        ${I(m.t, MENU_DEF[k].t, `sysMenuSet('${k}','t',this.value)`, 40)}${I(m.s, MENU_DEF[k].s, `sysMenuSet('${k}','s',this.value)`, 80)}</div>`; }).join(''));
+            }
+            if (tmTab === 'kriteria') {
+                return '<p class="text-[12px] text-slate-500 font-semibold mb-2">Ubah judul, label, dan penjelasan 11 kriteria. Format <code>&lt;strong&gt;</code> boleh dipakai di penjelasan.</p>' + kriteriaList.map(it => {
+                    const v = x.kriteria[it.id] || {}, open = krOpen === it.id, o = KRIT_ORIG[it.id - 1];
+                    return `<div class="rounded-2xl border border-slate-200 bg-white mb-1.5"><button type="button" onclick="krOpen=${open ? 'null' : it.id};renderThemeModal()" class="w-full min-h-[44px] px-3 flex items-center gap-2 text-left text-[13px] font-bold text-slate-700"><span class="w-6 h-6 rounded-full bg-slate-100 text-[11px] flex items-center justify-center shrink-0">${it.id}</span><span class="flex-1 truncate">${esc(v.title || o.title)}</span><svg class="ic !w-4 !h-4 text-slate-400" style="${open ? 'transform:rotate(180deg)' : ''}"><use href="#i-chevron-down"/></svg></button>
+                        ${open ? `<div class="px-3 pb-3 space-y-1.5">${I(v.title, o.title, `sysKr(${it.id},'title',this.value)`, 60)}${I(v.badge, o.badge, `sysKr(${it.id},'badge',this.value)`, 40)}<textarea class="field !rounded-xl" rows="5" placeholder="${esc(o.desc.replace(/<[^>]+>/g, ''))}" oninput="sysKr(${it.id},'desc',this.value)">${esc(v.desc || '')}</textarea><p class="text-[11px] text-slate-400">Kosongkan kolom untuk kembali ke teks bawaan.</p></div>` : ''}</div>`;
+                }).join('');
+            }
+            if (tmTab === 'peran') {
+                const u = peUnit && UNITS.includes(peUnit) ? peUnit : UNITS[0]; peUnit = u; const list = x.peran[u] || PERAN_CONFIG[u] || PERAN_CONFIG[DEFAULT_UNIT];
+                return `<select class="field !py-2 !rounded-xl mb-2" onchange="peUnit=this.value;renderThemeModal()">${UNITS.map(n => `<option ${n === u ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select>` +
+                    list.map((r, i) => `<div class="rounded-xl bg-white border border-slate-200 p-2 mb-1.5 space-y-1.5"><div class="flex gap-1.5">${I(r.t, 'Nama peran', `sysRoleSet('${esc(u)}',${i},'t',this.value)`, 60)}<button type="button" onclick="sysRoleDel('${esc(u)}',${i})" class="w-10 shrink-0 rounded-xl bg-red-50 text-red-600 flex items-center justify-center"><svg class="ic !w-4 !h-4"><use href="#i-trash"/></svg></button></div>${I(r.sub || r.inl || '', 'Keterangan (opsional)', `sysRoleSet('${esc(u)}',${i},'sub',this.value);sysRoleSet('${esc(u)}',${i},'inl','')`, 90)}</div>`).join('') +
+                    `<button type="button" onclick="sysRoleAdd('${esc(u)}')" class="w-full h-10 rounded-xl border-2 border-dashed border-slate-300 text-slate-500 text-sm font-bold">+ Tambah peran</button>`;
+            }
+            const num = (k, l, u) => `<label class="flex items-center gap-2 text-[13px] font-bold text-slate-700"><span class="flex-1">${l}</span><input type="number" min="1" class="field !py-1.5 !rounded-xl" style="width:5.5rem;text-align:center" value="${x[k]}" oninput="sysDraft.${k}=+this.value"><span class="text-[11px] text-slate-400 w-10">${u}</span></label>`;
+            const sw = (k, l, d) => `<label class="flex items-center gap-3 text-[13px] font-bold text-slate-700"><span class="flex-1">${l}${d ? `<span class="block text-[11px] font-semibold text-slate-400">${d}</span>` : ''}</span><input type="checkbox" ${x[k] ? 'checked' : ''} onchange="sysDraft.${k}=this.checked" style="width:20px;height:20px"></label>`;
+            if (tmTab === 'info') {
+                const an = x.ann || {}, mt = x.maint || {};
+                const tones = [['info', 'Biru', '#dbeafe'], ['warn', 'Kuning', '#fef3c7'], ['ok', 'Hijau', '#dcfce7'], ['bad', 'Merah', '#fee2e2']];
+                return card('Pengumuman di beranda', `<label class="flex items-center gap-3 text-[13px] font-bold text-slate-700"><span class="flex-1">Tampilkan pengumuman</span><input type="checkbox" ${an.on ? 'checked' : ''} onchange="sysDraft.ann.on=this.checked" style="width:20px;height:20px"></label>
+                    <textarea class="field !rounded-xl" rows="3" maxlength="300" placeholder="Tulis pengumuman untuk semua penguji" oninput="sysDraft.ann.text=this.value">${esc(an.text || '')}</textarea>
+                    <div class="flex gap-1.5">${tones.map(([k, l, c]) => `<button type="button" onclick="sysDraft.ann.tone='${k}';renderThemeModal()" class="flex-1 h-9 rounded-lg text-[12px] font-bold" style="background:${c};border:2px solid ${(an.tone || 'info') === k ? '#0f172a' : 'transparent'}">${l}</button>`).join('')}</div>`) + '<div class="h-2"></div>' +
+                    card('Mode pemeliharaan', `<label class="flex items-center gap-3 text-[13px] font-bold text-slate-700"><span class="flex-1">Tutup akses penguji<span class="block text-[11px] font-semibold text-slate-400">Hanya ETD yang bisa masuk</span></span><input type="checkbox" ${mt.on ? 'checked' : ''} onchange="sysDraft.maint.on=this.checked" style="width:20px;height:20px"></label>
+                    ${I(mt.text, 'Portal sedang diperbarui, coba lagi nanti.', "sysDraft.maint.text=this.value", 120)}`) + '<div class="h-2"></div>' +
+                    card('Halaman login & beranda', `${I(x.welcomeHead, 'Judul sambutan (mis. Halo, tim!)', "sysDraft.welcomeHead=this.value", 50)}${I(x.loginHint, 'Petunjuk di bawah kolom passkey', "sysDraft.loginHint=this.value", 90)}`);
+            }
+            return card('Masa simpan', num('trashDays', 'Tempat sampah', 'hari') + num('notifDays', 'Notifikasi tampil', 'hari') + num('logMonths', 'Log pembaruan', 'bulan') + num('sdpMonths', 'Masa SDP peserta aktif', 'bulan')) + '<div class="h-2"></div>' +
+                card('Fitur', sw('noNotif', 'Matikan notifikasi ETD', 'Ikon lonceng disembunyikan') + sw('noLog', 'Hentikan pencatatan log baru', 'Riwayat lama tetap tersimpan'));
+        }
+        loadSysCfg();
 
         function applyUnitTheme() {
             const h = document.documentElement;
@@ -2930,8 +3113,8 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
                 { v: 'MANAGER FUNGSIONAL (MGR. QC, ADM, SUPPORT/GA, LOGISTIK, DEVELOPMENT CK, dll.)', t: 'Manager Fungsional', sub: 'QC, ADM, Support/GA, Logistik, Development CK, dll.' },
                 { v: 'MENTOR', t: 'Mentor' }
             ],
-            'Mister Donut': PERAN_3,
-            'Washoku Sato': PERAN_3
+            'Mister Donut': PERAN_3.map(x => ({ ...x })),
+            'Washoku Sato': PERAN_3.map(x => ({ ...x }))
         };
         // Penguji unit memakai unitnya; ETD mengikuti unit peserta yang dipilih (default Yummy Choice)
         const peranUnit = () => currentUnit || ($('sdp-unit') && $('sdp-unit').value) || DEFAULT_UNIT;
@@ -4352,7 +4535,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         // =====================================================================
         // MASA SDP: peserta > 16 bulan sejak Batch (Bulan Tahun) = karyawan tetap
         // =====================================================================
-        const SDP_MAX_MONTHS = 16;
+        let SDP_MAX_MONTHS = 16;
         const BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
         const BULAN_ALIAS = {
             jan: 1, januari: 1, january: 1, feb: 2, februari: 2, pebruari: 2, february: 2, mar: 3, maret: 3, march: 3, apr: 4, april: 4,
