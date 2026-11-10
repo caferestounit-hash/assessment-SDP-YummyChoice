@@ -744,6 +744,7 @@
                             <svg class="ic !w-4 !h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                             <input type="search" id="pt-search" oninput="renderPesertaCards()" placeholder="Cari nama / lokasi / unit" class="field !py-1.5 !pl-9 !rounded-xl h-10 w-full">
                         </div>
+                        <button onclick="syncPesertaFromPenilaian()" title="Tambahkan peserta dari data penilaian" aria-label="Sinkron dari penilaian" class="h-10 w-10 shrink-0 bg-white border border-slate-200 active:bg-slate-100 text-slate-700 rounded-xl flex items-center justify-center"><svg class="ic"><use href="#i-rotate"/></svg></button>
                         <button onclick="openPesertaModal()" title="Tambah peserta" aria-label="Tambah peserta" class="h-10 w-10 shrink-0 bg-yc-600 active:bg-yc-800 text-white rounded-xl flex items-center justify-center"><svg class="ic"><use href="#i-plus"/></svg></button>
                     </div>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
@@ -1099,7 +1100,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
     </div>
 
     <!-- MODAL: TAMBAH / UBAH PESERTA SDP -->
-    <div id="peserta-modal" class="no-print fixed inset-0 z-50 hidden bg-black/60 flex items-end sm:items-center justify-center sm:p-4" onclick="if(event.target===this)closePesertaModal()">
+    <div id="peserta-modal" class="no-print fixed inset-0 z-50 hidden bg-black/60 flex items-end sm:items-center justify-center sm:p-4">
         <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92dvh]">
             <div class="px-4 py-3 bg-yc-700 text-white rounded-t-3xl flex items-center justify-between gap-3">
                 <h3 id="peserta-modal-title" class="font-extrabold text-base">Tambah Peserta SDP</h3>
@@ -1164,7 +1165,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         </div>
     </div>
 
-    <div id="unit-modal" class="no-print fixed inset-0 z-50 hidden bg-black/60 flex items-end sm:items-center justify-center sm:p-4" onclick="if(event.target===this)closeUnitModal()">
+    <div id="unit-modal" class="no-print fixed inset-0 z-50 hidden bg-black/60 flex items-end sm:items-center justify-center sm:p-4">
         <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92dvh]">
             <div class="px-4 py-3 bg-yc-700 text-white rounded-t-3xl flex items-center justify-between gap-3">
                 <h3 id="unit-modal-title" class="font-extrabold text-base">Tambah Unit Bisnis</h3>
@@ -1217,7 +1218,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         </div>
     </div>
 
-    <div id="bagian-modal" class="no-print fixed inset-0 z-50 hidden bg-black/60 flex items-end sm:items-center justify-center sm:p-4" onclick="if(event.target===this)closeBagianModal()">
+    <div id="bagian-modal" class="no-print fixed inset-0 z-50 hidden bg-black/60 flex items-end sm:items-center justify-center sm:p-4">
         <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92dvh]">
             <div class="px-4 py-3 bg-yc-700 text-white rounded-t-3xl flex items-center justify-between gap-3">
                 <h3 id="bagian-modal-title" class="font-extrabold text-base">Tambah Bagian SDP</h3>
@@ -2476,6 +2477,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             ok.forEach(i => assessmentList.unshift(i));
             assessmentList.sort((a, b) => (b.createdDate || 0) - (a.createdDate || 0));
             saveAssessments(); renderAll();
+            const sp = applyPesertaGap(pesertaGapFromAssessments(ok));
             let fail = 0;
             for (let i = 0; i < ok.length; i += 10) {
                 const res = await Promise.all(ok.slice(i, i + 10).map(it => { gasSync({ ...stripLocal(it), action: 'upsert' }); return cloudOK() ? withTimeout(cloudSet(COL.hasil, it.id, stripLocal(it)), 8000) : Promise.resolve(true); }));
@@ -2483,9 +2485,9 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
                 if (btn) btn.textContent = `Mengimpor ${Math.min(i + 10, ok.length)}/${ok.length}…`;
             }
             const skipped = impRows.length - ok.length, file = impFile;
-            logEvent('import', 'penilaian', `Impor ${ok.length} penilaian dari CSV`, { detail: `${file}${skipped ? ' · ' + skipped + ' baris dilewati' : ''}` });
+            logEvent('import', 'penilaian', `Impor ${ok.length} penilaian dari CSV`, { detail: `${file}${skipped ? ' · ' + skipped + ' baris dilewati' : ''}${sp.p ? ' · ' + sp.p + ' peserta baru' : ''}${sp.b ? ' · ' + sp.b + ' bagian baru' : ''}` });
             closeImportRekap();
-            toast(fail ? `${ok.length} data diimpor, ${fail} belum tersinkron ke cloud` : `${ok.length} data penilaian berhasil diimpor`, fail ? 'warn' : 'success');
+            toast((fail ? `${ok.length} data diimpor, ${fail} belum tersinkron ke cloud` : `${ok.length} data penilaian berhasil diimpor`) + (sp.p ? ` · ${sp.p} peserta baru masuk Kelola Data` : ''), fail ? 'warn' : 'success');
         }
 
         function exportRekapData() {
@@ -4304,6 +4306,41 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
         function commitPeserta(msg, what) {
             savePeserta(); refreshPesertaUI(); renderBagianList(); pushPesertaCloud();
             if (msg) { toast(msg, 'success'); logEvent('peserta', 'data', msg + (what ? ' · ' + what : '')); }
+        }
+
+        // ---- Sinkron master Peserta & Bagian dari data penilaian (mis. hasil impor) ----
+        function pesertaGapFromAssessments(list) {
+            const nm = x => String(x || '').trim().replace(/\s+/g, ' '), P = new Map(), B = new Map();
+            list.slice().sort((a, b) => (a.createdDate || 0) - (b.createdDate || 0)).forEach(a => {
+                const nama = nm(a.namaPeserta); if (!nama) return;
+                const unit = UNITS.includes(unitOfA(a)) ? unitOfA(a) : DEFAULT_UNIT, bagian = nm(a.sdpBagian), key = nama.toLowerCase();
+                if (bagian && !bagianList.some(b => b.name === bagian && b.unit === unit)) B.set(unit + '|' + bagian, { name: bagian, unit });
+                if (findPeserta(nama)) return;
+                let e = P.get(key); if (!e) { e = { nama, unit, bagian, lokasi: '', batch: '', t: a.createdDate || Date.now() }; P.set(key, e); }
+                if (!e.bagian && bagian) e.bagian = bagian;
+                if (!e.lokasi && nm(a.sdpCabang)) e.lokasi = nm(a.sdpCabang);
+                if (!e.batch) { const bp = parseBatch(a.batch); if (bp) e.batch = BULAN[bp.m - 1] + ' ' + bp.y; }
+            });
+            P.forEach(e => { if (!e.lokasi) e.lokasi = '-'; if (!e.batch) { const d = new Date(e.t); e.batch = BULAN[d.getMonth()] + ' ' + d.getFullYear(); } });
+            return { p: [...P.values()], b: [...B.values()] };
+        }
+        function applyPesertaGap(g) {
+            if (!g.p.length && !g.b.length) return { p: 0, b: 0 };
+            const stamp = Date.now().toString(36);
+            g.b.forEach((x, i) => { if (!bagianList.some(b => b.name === x.name && b.unit === x.unit)) bagianList.push({ id: 'bg-' + stamp + i, name: x.name, unit: x.unit, icon: 'building', color: 'teal' }); });
+            g.p.forEach((e, i) => { if (!findPeserta(e.nama)) pesertaList.push({ id: 'ps-' + stamp + i + Math.random().toString(36).slice(2, 5), nama: e.nama, unit: e.unit, bagian: e.bagian, lokasi: e.lokasi, batch: e.batch, nik: '' }); });
+            if (g.b.length) commitBagian();
+            if (g.p.length) commitPeserta();
+            return { p: g.p.length, b: g.b.length };
+        }
+        function syncPesertaFromPenilaian() {
+            if (currentUserRole !== 'ETD') return;
+            const g = pesertaGapFromAssessments(assessmentList);
+            if (!g.p.length && !g.b.length) { toast('Semua peserta di data penilaian sudah ada di daftar', 'info'); return; }
+            if (!confirm(`Ditemukan ${g.p.length} peserta${g.b.length ? ' dan ' + g.b.length + ' bagian' : ''} di data penilaian yang belum ada di Kelola Data.\n\nTambahkan sekarang? (lokasi diambil dari kolom Cabang, batch dari kolom Batch)`)) return;
+            const r = applyPesertaGap(g);
+            logEvent('peserta', 'data', `Sinkron dari penilaian: ${r.p} peserta${r.b ? ', ' + r.b + ' bagian' : ''} ditambahkan`);
+            toast(`${r.p} peserta${r.b ? ' dan ' + r.b + ' bagian' : ''} ditambahkan`, 'success');
         }
 
         function renameBagianInPeserta(oldName, unit, newName) {
