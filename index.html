@@ -751,7 +751,7 @@
                         <select id="pt-f-unit" onchange="renderPesertaCards()" class="field !py-1.5 !px-2.5 !rounded-xl h-9"></select>
                         <select id="pt-f-bagian" onchange="renderPesertaCards()" class="field !py-1.5 !px-2.5 !rounded-xl h-9"></select>
                         <select id="pt-f-batch" onchange="renderPesertaCards()" class="field !py-1.5 !px-2.5 !rounded-xl h-9"></select>
-                        <select id="pt-f-status" onchange="renderPesertaCards()" class="field !py-1.5 !px-2.5 !rounded-xl h-9"><option value="">Semua status</option><option value="aktif">Aktif (&le; 16 bln)</option><option value="selesai">Selesai SDP</option></select>
+                        <select id="pt-f-status" onchange="renderPesertaCards()" class="field !py-1.5 !px-2.5 !rounded-xl h-9"><option value="">Semua status</option><option value="aktif">Aktif (&le; 16 bln)</option><option value="selesai">Lewat 16 bln</option></select>
                     </div>
                     <div class="flex items-center justify-between gap-2 px-0.5">
                         <div class="flex items-center gap-2.5 text-[11px] font-bold text-slate-500 min-w-0">
@@ -1465,7 +1465,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
                 if (!document.querySelector('input[name="peran_penguji"]:checked')) { showError(0, 'Pilih peran penguji.', $('peran-group')); return false; }
                 if (!$('peserta-nama').value.trim()) { showError(0, 'Pilih nama peserta yang dinilai.', $('peserta-nama')); return false; }
                 { const _u = findPeserta($('peserta-nama').value); if (_u && currentUnit && unitOf(_u) !== currentUnit) { showError(0, `Peserta ini bukan bagian dari unit ${currentUnit}.`, $('peserta-nama')); return false; } }
-                { const _p = findPeserta($('peserta-nama').value); if (_p && isPesertaExpired(_p)) { showError(0, `${_p.nama} sudah melewati masa SDP ${SDP_MAX_MONTHS} bulan (karyawan tetap), tidak perlu dinilai lagi.`, $('peserta-nama')); return false; } }
+                { const _p = findPeserta($('peserta-nama').value); if (_p && isPesertaExpired(_p)) { showError(0, `${_p.nama} sudah melewati masa SDP ${SDP_MAX_MONTHS} bulan, tidak perlu dinilai lagi.`, $('peserta-nama')); return false; } }
                 if (!$('sdp-bagian').value || !$('sdp-cabang').value.trim()) { showError(0, 'Data peserta belum lengkap (bagian / lokasi). Minta ETD melengkapinya di Kelola Data.', $('peserta-nama')); return false; }
                 return true;
             }
@@ -1695,7 +1695,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             if (!expiredDraft) applyPesertaFromMaster(d.namaPeserta); // pakai data terbaru dari master bila ada
             else {
                 ['sdp-bagian', 'sdp-cabang', 'sdp-batch', 'sdp-unit'].forEach(i => { $(i).value = ''; });
-                toast(`${d.namaPeserta} sudah melewati ${SDP_MAX_MONTHS} bulan (karyawan tetap), tidak perlu dinilai lagi`, 'warn');
+                toast(`${d.namaPeserta} sudah melewati masa SDP ${SDP_MAX_MONTHS} bulan, tidak perlu dinilai lagi`, 'warn');
             }
             updateBagianPreview();
             
@@ -4457,11 +4457,10 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
             const exp = isPesertaExpired(p), endL = pesertaEndLabel(p);
             const glyph = b.img ? '' : `<svg style="position:absolute;right:10px;top:-8px;width:88px;height:88px;opacity:.16;color:${cfg}" aria-hidden="true"><use href="#b-${esc(b.icon || 'building')}"/></svg>`;
             return `
-            <div onclick="togglePesertaActive('${esc(p.id)}')" class="card overflow-hidden flex flex-col cursor-pointer ${exp ? 'opacity-70' : ''} ${active ? 'ring-2 ring-amber-400' : ''}">
+            <div onclick="togglePesertaActive('${esc(p.id)}')" class="card overflow-hidden flex flex-col cursor-pointer ${active ? 'ring-2 ring-amber-400' : ''}" ${exp ? 'style="opacity:.6;filter:saturate(.45)"' : ''}>
                 <div class="relative h-[68px]" style="background:${cbg}">
                     ${glyph}
-                    ${exp ? '<span class="absolute left-3 top-3 px-2 py-0.5 rounded-full bg-slate-800 text-white text-[10px] font-black">Karyawan tetap</span>' : ''}
-                    ${p.batch ? `<span class="absolute right-3 top-3 px-2.5 py-1 rounded-full bg-white/85 text-[10px] font-black uppercase tracking-wide" style="color:${cfg}">${esc(p.batch)}</span>` : ''}
+                                        ${p.batch ? `<span class="absolute right-3 top-3 px-2.5 py-1 rounded-full bg-white/85 text-[10px] font-black uppercase tracking-wide" style="color:${cfg}">${esc(p.batch)}</span>` : ''}
                     <span class="absolute left-4 -bottom-6 w-14 h-14 rounded-full border-4 border-white flex items-center justify-center text-lg font-black text-white shadow" style="background:${cfg}">${esc(initialsOf(p.nama))}</span>
                 </div>
                 <div class="px-4 pt-8 pb-3 flex-1 space-y-2.5">
@@ -4470,7 +4469,7 @@ window.SPELL_PACK={"id":"H4sIAAAAAAACA1S8efwUR3YnuO/FkZFRcWVlZNb5q2r1JXe7u+22fE1
                         <div class="flex items-center gap-2"><span class="w-[22px] flex justify-center text-slate-400">${unitIcon(unitOf(p), '!w-4 !h-4')}</span><span class="font-bold text-slate-800 break-words">${esc(unitOf(p))}</span></div>
                         <div class="flex items-center gap-2">${bagianLogo(b, 22)}<span class="font-bold text-slate-800 break-words">${esc(p.bagian)}</span></div>
                         <div class="flex items-center gap-2"><span class="w-[22px] flex justify-center text-slate-400">${ic('map-pin', '!w-4 !h-4')}</span><span class="break-words">${esc(p.lokasi) || '-'}</span></div>
-                        <div class="flex items-center gap-2"><span class="w-[22px] flex justify-center text-slate-400">${ic('calendar', '!w-4 !h-4')}</span><span class="${exp ? 'text-slate-500' : endL ? '' : 'text-amber-600 font-bold'}">${endL ? (exp ? 'Masa SDP selesai ' : 'Masa SDP s.d. ') + endL : 'Batch belum terbaca'}</span></div>
+                        <div class="flex items-center gap-2"><span class="w-[22px] flex justify-center text-slate-400">${ic('calendar', '!w-4 !h-4')}</span><span class="${exp ? 'text-slate-500' : endL ? '' : 'text-amber-600 font-bold'}">${endL ? 'Masa SDP s.d. ' + endL : 'Batch belum terbaca'}</span></div>
                     </div>
                 </div>
                 ${assessmentStatusHTML(p, exp)}
